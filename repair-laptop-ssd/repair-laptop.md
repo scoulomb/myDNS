@@ -7,16 +7,16 @@ Change HDD drive of HP Pavillon TS Sleekbook 14 (from `esc`, `f1`, system inform
 My HP laptop stop working.
 Laptop was turned on and displayed a screen error.
 Making a fresh install results in an error.
-Some days before the issue the hard drive wa making noise.
+Some days before the issue the hard drive was making noise.
 In start-up diagnostic tool, short DST test was failing sporadically.
 
 ## Change or repair
 
 On Darty market place there is some affordable Dell laptop for 300-400 euros.
 However there would not be a big performance gap.
-Laptop was born in 2013 (according to diagnostic tool `esc`, `F1`, system information)
+Laptop was born in 2013 (visible in diagnostic tool at start-up `esc`, `F1`, system information)
 
-My needs is a web browser, and some programming tool like Minikube, Python,
+My needs is a web browser, and some programming tool like Docker/Minikube, Python, git.
 Thus  decided to repair the laptop and replace the HDD by SSD.
 
 
@@ -30,10 +30,10 @@ I bought for ~35 euros (ten times cheaper than a new laptop)
 
 ### Sources
 
-I followed [ifixit tutorial](https://www.ifixit.com/Guide/HP+Pavilion+Sleekbook+15-b142dx+Hard+Drive+Replacement/37449#)
+I followed:
+- [ifixit tutorial](https://www.ifixit.com/Guide/HP+Pavilion+Sleekbook+15-b142dx+Hard+Drive+Replacement/37449#).
 It is not mentioned but we should removed all the screws !!
-
-This video on [youtube](https://www.youtube.com/watch?v=wsGItvoqMvE&t=674s) is also excellent.
+- This [youtube](https://www.youtube.com/watch?v=wsGItvoqMvE&t=674s) video.
 
 ### Steps
 
@@ -61,13 +61,15 @@ SSD drive is much ligther!
 
 Here was my biggest issue.
 `ESC`, `F9` for boot device options was selected but ignored.
-It is going to a `grub` bash like.
+It is defaulting to a `grub` bash like.
 I can not access the BIOS.
 
 ### Some hints
 
 I did not find any documentation with a clear solution.
+
 Here is what helped me:
+
 - [Ubuntu doc](https://help.ubuntu.com/community/BootFromUSB)
 
 ````buildoutcfg
@@ -92,6 +94,7 @@ chainloader /efi/manjaro/grubx64.efi
 boot
 ````
 
+We can give tothe chainloader the EFI path.
 Combining the 2 leads to this solution proposal.
 
  
@@ -120,12 +123,18 @@ grub > chainloader (hd0,msdos1)/efi/boot/BOOTx64.efi
 grub > boot
 ````
 
-Tips: if you have q qwery keybaord use it :)
+Tips: if you have a qwerty keybaord use it :)
 
 #### Nexts
 
-This will start diagnostic and setup screen. As shown in the video [here](https://photos.google.com/photo/AF1QipNO36jxwfN2lD1MG8AxkP4I0t34ntT8IFYinkKf).
-(all medias are copied locally except this video, order is respected)
+This will start diagnostic and setup screen. As shown in the video [here](https://photos.app.goo.gl/6EY93UydRE2kGNZd8).
+
+<!---
+All medias are copied in this repo except this video,
+Checkmedia 6 pic montage/6 pic setup in cloud/phone/here + video in cloud/phone OK, other not SOT (downl, sent)
+Video issue when reading in laptop working via logged in google photo app OK
+order is respected)
+-->
 
 ![Step 2](./pictures/setup2.jpg)
 
@@ -137,7 +146,7 @@ You may have to restart a new setup and repeat command above again
 
 ![Step 4](./pictures/setup4.jpg)
 
-After that, it starts diagnostic (as in the video, it is a second time) and we reach setup screen
+After that, it starts diagnostic (as in the video, it is a second time, OK) and we reach setup screen
 
 ![Step 5](./pictures/setup5.jpg)
 
@@ -154,8 +163,34 @@ At every startup note HP logo is now present,
 Tested with other jack cable and working.
 Order a new one.
 
-## Setup soft 
+## Setup software
 
 - [Minikube](https://github.com/scoulomb/myk8s/blob/master/Setup/MinikubeSetup/BARE_SETUP_README.md)
 try other driver?
--chrome (lfd)
+- [Chrome](https://www.google.fr/chrome/) or  Chromum using using Ubuntu software center (search on top left) - lfd
+I will take option 1 install chrome [from deb package](https://unix.stackexchange.com/questions/159094/how-to-install-a-deb-file-by-dpkg-i-or-by-apt):
+
+````
+sudo apt install /path/to/package/name.deb
+````
+
+- Python 3 already there, type `python3`
+- Same for git, but import my [config](https://github.com/scoulomb/dev_vm/blob/custom/saltstack/salt/common/git/gitconfig)
+
+````
+# Using custom branch
+# Otherwise sed
+curl https://raw.githubusercontent.com/scoulomb/dev_vm/custom/saltstack/salt/common/git/gitconfig?token=ABAT3YIIMOW7FXGUXSYDYMC6Y623I >~/.gitconfig 
+````
+
+Install diff-so-fancy
+
+
+````
+sudo apt install npm
+sudo npm install -g diff-so-fancy
+````
+
+
+
+
