@@ -24,7 +24,7 @@ Thus  decided to repair the laptop and replace the HDD by SSD.
 
 I bought for ~35 euros (ten times cheaper than a new laptop)
 - [An opening tool](https://www.amazon.fr/gp/product/B00NCFIVH4/ref=ppx_yo_dt_b_asin_title_o01_s02?ie=UTF8&psc=1)
-- [Crucial SSD Interne BX500](120 Go, 3D NAND, SATA, 2,5 pouces) (https://www.amazon.fr/gp/product/B07G3L3DRK/ref=ppx_yo_dt_b_asin_title_o01_s01?ie=UTF8&psc=1)
+- [Crucial SSD Interne BX500 - 120 Go, 3D NAND, SATA, 2,5 pouces](https://www.amazon.fr/gp/product/B07G3L3DRK/ref=ppx_yo_dt_b_asin_title_o01_s01?ie=UTF8&psc=1)
 
 ## Replacing the Hard drive
 
