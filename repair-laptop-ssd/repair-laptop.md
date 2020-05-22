@@ -158,3 +158,4 @@ Order a new one.
 
 - [Minikube](https://github.com/scoulomb/myk8s/blob/master/Setup/MinikubeSetup/BARE_SETUP_README.md)
 try other driver?
+-chrome (lfd)
