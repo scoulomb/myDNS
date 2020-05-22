@@ -138,6 +138,7 @@ All medias are copied in this repo except this video,
 Checkmedia 6 pic montage/6 pic setup in cloud/phone/here + video in cloud/phone OK, other not SOT (downl, sent)
 Video issue when reading in laptop working via logged in google photo app OK
 order is respected)
+video in gif too big
 -->
 
 ![Step 2](./pictures/setup2.jpg)
