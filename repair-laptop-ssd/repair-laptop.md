@@ -41,11 +41,15 @@ It is not mentioned but we should removed all the screws !!
 
 ![Step 2](./pictures/montage2.jpg)
 
+Remove connector keyboard (open connector)
+
 ![Step 3](./pictures/montage3.jpg)
 
 SSD drive is much ligther!
 
 ![Step 4](./pictures/montage4.jpg)
+
+Remove connector moherboard (open connector)
 
 ![Step 5](./pictures/montage5.jpg)
 
