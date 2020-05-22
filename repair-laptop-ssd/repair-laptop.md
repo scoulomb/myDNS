@@ -39,6 +39,8 @@ It is not mentioned but we should removed all the screws !!
 
 ![Step 1](./pictures/montage1.jpg)
 
+I had nitrile gloves at home, I used them for their anti-static effect and avoid to cut myself.
+
 ![Step 2](./pictures/montage2.jpg)
 
 Remove connector keyboard (open connector)
