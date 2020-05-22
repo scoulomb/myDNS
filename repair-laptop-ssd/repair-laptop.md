@@ -1,6 +1,6 @@
 # Repair HP Laptop
 
-Change HDD drive of HP Pavillon TS Sleekbook 14
+Change HDD drive of HP Pavillon TS Sleekbook 14 (from `esc`, `f1`, system information)
 
 ## Issue 
 
