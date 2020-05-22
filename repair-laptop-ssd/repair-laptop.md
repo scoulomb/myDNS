@@ -146,3 +146,13 @@ And we setup Ubuntu on the SSD (we can see a 120 gb drive along with a 32gb whic
 
 At every startup note HP logo is now present,
  
+
+## Sound issue 
+
+Tested with other jack cable and working.
+Order a new one.
+
+## Setup soft 
+
+- [Minikube](https://github.com/scoulomb/myk8s/blob/master/Setup/MinikubeSetup/BARE_SETUP_README.md)
+try other driver?
