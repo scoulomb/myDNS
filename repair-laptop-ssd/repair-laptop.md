@@ -43,6 +43,8 @@ This video on [youtube](https://www.youtube.com/watch?v=wsGItvoqMvE&t=674s) is a
 
 ![Step 3](./pictures/montage3.jpg)
 
+SSD drive is much ligther!
+
 ![Step 4](./pictures/montage4.jpg)
 
 ![Step 5](./pictures/montage5.jpg)
