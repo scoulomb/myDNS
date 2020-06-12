@@ -4,11 +4,11 @@
 
 ### Pointing to IP using local DNS
 
-I am using nslook to find ip of google
+I am using `nslookup` to find ip of `google.com`.
 Adding a custom a record (toto pointing to google IP)
-restart thr service, do nslookup and specify localhost
-then in `/etc/resolv.conf`, I editt to poin to localhost DNS
-And when doing curl I reach google !
+restart thw service, do `nslookup toto.mylabserver.com localhost`, and working
+then in `/etc/resolv.conf`, I edit to point to localhost DNS
+And when doing `curl` I reach google website !
 
 ### Playing with forward zone file
 
