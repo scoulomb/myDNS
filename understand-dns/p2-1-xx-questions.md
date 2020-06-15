@@ -1,5 +1,7 @@
 # DNS
 
+Run script in [summary](./p2-1-configure-forward-zone-summary.md)
+
 ## ADD: Forward zone go further
 
 ### Pointing to IP using local DNS

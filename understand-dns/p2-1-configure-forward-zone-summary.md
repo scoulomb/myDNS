@@ -2,16 +2,27 @@
 
 ## Configure forward zone summary
 
+<!--
+We automate this with a sed
+https://fabianlee.org/2018/10/28/linux-using-sed-to-insert-lines-before-or-after-a-match/
+
 ````
 vim /etc/named.conf
-
 # Insert the zone configuration just before the include statements at the bottom of the file:
-
 
 zone "mylabserver.com" {
 type master;
 file "/var/named/fwd.mylabserver.com.db";
 };
+````
+
+-->
+
+````
+sudo su
+
+# Insert the zone configuration just before the include statements at the bottom of the file:
+sed -i '/^include.*named.rfc1912.zones.*/i zone "mylabserver.com" { type master; file "/var/named/fwd.mylabserver.com.db"; };' /etc/named.conf
 
 named-checkconf
 
@@ -45,4 +56,5 @@ chgrp named /var/named/fwd.mylabserver.com.db
 systemctl restart named
 
 nslookup mailprod.mylabserver.com localhost
+nslookup nameserver.mylabserver.com localhost
 ````
