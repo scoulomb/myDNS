@@ -1,6 +1,6 @@
 # DNS
 
-Run script in [summary](./p2-1-configure-forward-zone-summary.md)
+Run script in [summary](p2-1-summary-configure-forward-zone.md)
 
 ## ADD: Forward zone go further
 
@@ -327,7 +327,7 @@ If uncomment A record we do not have IP.
 
 #### Can I remove entry with same name as the zone
 
-Taking example from [summary](./p2-1-configure-forward-zone-summary.md) and removing nameserver.
+Taking example from [summary](p2-1-summary-configure-forward-zone.md) and removing nameserver.
 
 ````
 cat << EOF >  /var/named/fwd.mylabserver.com.db
@@ -364,7 +364,7 @@ zone mylabserver.com/IN: not loaded due to errors.
 
 Sp we have to keep it
 
-Reapply [summary](./p2-1-configure-forward-zone-summary.md)  (except sed) to restore state.
+Reapply [summary](p2-1-summary-configure-forward-zone.md)  (except sed) to restore state.
 
 #### Can I override a public entry in my local DNS
 

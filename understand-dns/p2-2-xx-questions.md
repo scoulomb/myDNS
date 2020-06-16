@@ -176,7 +176,7 @@ I would guess that this might rather be a case of them using the same template f
 
 it does not make sense
 
-I will run [reverse zone summary](./p2-2-configure-reverse-zone-summary.md).
+I will run [reverse zone summary](p2-2-summary-configure-reverse-zone.md).
 
 Then I keep MX and add a host record:
 
