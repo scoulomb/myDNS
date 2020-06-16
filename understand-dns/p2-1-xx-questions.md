@@ -296,7 +296,7 @@ nslookup mylabserver.com localhost
 nslookup -type=mx mylabserver.com localhost
 ````
 
-Note the nslookup which is particular:
+###### Note the nslookup which is particular
 
 ````shell script
 [root@server1 cloud_user]# nslookup -type=mx mailprod.mylabserver.com localhost
@@ -318,6 +318,7 @@ Address:        ::1#53
 mylabserver.com mail exchanger = 20 mailbackup.mylabserver.com.
 mylabserver.com mail exchanger = 10 mailprod.mylabserver.com.
 ````
+It uses the zone in the named.
 
 If uncomment A record we do not have IP.
 

@@ -2,18 +2,6 @@
 
 ## Create a Reverse Zone File
 
----
-[2020-06-16 Commit what is added OK all OK we are HERE]
-
- https://linuxacademy.com/community/posts/show/topic/49680-dns-reverse-zone-lab
- https://serverfault.com/questions/1021169/mx-record-in-a-reverse-zone
- [Canonical CNAME case](./p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?)
-
-And also how mix ptr and arecord?
-STOP
-reverse for PTR and CNAME? shouldwork
-
-----
 
 We will see how to configure the zone in `/etc/named.conf` and create the Start of Authority record as well as other records in the reverse zone file. Then we'll test our configuration with a reverse query.
 
@@ -35,12 +23,14 @@ To get started, we need to log in to our terminal using the provided lab credent
 First, we need to record the IP address for the primary interface for the lab server:
 
 ````
+sudo su
+
 ifconfig -a
 ifconfig -a | grep -A 3 eth0 | grep inet | head -n 1 | cut -d ' ' -f 10 > ip.txt
 cat ip.txt
 ````
 
-Copy the IP address to a document for later use. => `10.0.1.33`
+Copy the IP address to a document for later use. => `10.0.1.118`
 Note It matches the given private ip!
 
 ### Add the Reverse Zone Configuration
@@ -65,7 +55,7 @@ In our case
 ````
 vim /etc/named.conf
 
-zone "1.0.10.in-addr.arpa" {
+zone "1.0.10" {
     type master;
     file "/var/named/1.0.10.db";
 };
@@ -98,7 +88,7 @@ cat << EOF >  /var/named/1.0.10.db
 ; aaa       IN      PTR       nameserver.mylabserver.com.
 ; bbb       IN      PTR       mailprod.mylabserver.com.
 ; ccc       IN      PTR       mailbackup.mylabserver.com.
-240         IN      PTR       nameserver.mylabserver.com.
+118         IN      PTR       nameserver.mylabserver.com.
 ; which is last octet of my IP
 ; Mail Exchange Records
 @        IN    MX    10    mailprod.mylabserver.com.
@@ -106,7 +96,8 @@ cat << EOF >  /var/named/1.0.10.db
 EOF
 ````
 
-Note the aaa, bbb, and ccc. Those will be the last octet in the actual IP address of whichever server they belong to. If the IP address of nameserver.mylabserver.com is 10.0.1.23, then that line would read:
+Note the aaa, bbb, and ccc. Those will be the last octet in the actual IP address of whichever server they belong to. 
+If the IP address of nameserver.mylabserver.com is 10.0.1.23, then that line would read:
 
 
 Save the document with :wq.
@@ -126,7 +117,6 @@ It was due to bad whitespace in LXA (todo: report issue).
 It is explained here, also with cat EOF as done with fw zone we should escpae the `\$` at the beginning of the file.
 
 
-
 Note: It is expected to see errors for missing A or AAAA records as we did not create those records as part of this exercise.
 Indeed I had the warning:
 
@@ -138,15 +128,13 @@ zone 1.0.10.db.in-addr.arpa/IN: loaded serial 10030
 OK
 ````
 
-________Question if done does warning not mentioned?
-
 Change the File Permissions and the Group Owner
 Next, we need to change the file permissions and the group owner for /var/named/xx.xx.xxx.db:
 
 Change the file permissions for /var/named/xx.xx.xxx.db:
 
 ```
- /var/named/xx.xx.xxx.db
+/var/named/xx.xx.xxx.db
 chmod 760 /var/named/1.0.10.db
 ```
 
@@ -167,25 +155,12 @@ Run a query to test the configuration (note that x.x.x.x is the full IP address 
 
 ````
 nslookup x.x.x.x localhost
-nslookup 10.0.1.240 localhost
+nslookup 10.0.1.118 localhost
 ````
 
 Output is 
 
 ````
-[root@server1 cloud_user]# nslookup 10.0.1.240 localhost
-240.1.0.10.in-addr.arpa name = nameserver.mylabserver.com.
+[root@server1 cloud_user]# nslookup 10.0.1.118 localhost
+118.1.0.10.in-addr.arpa name = nameserver.mylabserver.com.
 ````
-
-____question: get revere record of a CNAME, and of a MX?
-https://linuxacademy.com/cp/socialize/index/type/community_post/id/49680
-
-use local when private DNS do forwarding? vpn 
-
-check DNS in k8s
-try nslook up with infobloxip as paramto check if i can get test.locfor non reg
-
-que fait le look up d un reverse
-a.toto.net ip1
-b.toto.net ip1
-

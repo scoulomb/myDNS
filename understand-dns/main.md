@@ -14,6 +14,9 @@
     - [Infoblox comparison](./p2-1-yy-infoblox-comparison.md)
     - [Note on recursvive and authoritative](./p2-1-zz-note-on-recursive-and-authoritative-dns.md)
 - [Configure reverse zone](./p2-2-configure-reverse-zone.md)
+    - [Summary](./p2-2-configure-reverse-zone-summary.md)
+    - [Personal questions](./p2-2-xx-questions.md)
+- [DNS querying](./p2-3-DNS-querying.md)
 
 #### Part 3
 
