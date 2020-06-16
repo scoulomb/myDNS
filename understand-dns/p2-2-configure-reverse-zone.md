@@ -3,8 +3,11 @@
 ## Create a Reverse Zone File
 
 ---
-[HERE]
- 
+[2020-06-16 Commit what is added OK all OK we are HERE]
+
+ https://linuxacademy.com/community/posts/show/topic/49680-dns-reverse-zone-lab
+ https://serverfault.com/questions/1021169/mx-record-in-a-reverse-zone
+ [Canonical CNAME case](./p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?)
 
 And also how mix ptr and arecord?
 STOP

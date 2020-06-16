@@ -11,5 +11,12 @@
 - [Configure forward zone](./p2-1-configure-forward-zone.md)
     - [Summary](./p2-1-configure-forward-zone-summary.md)
     - [Personal questions](./p2-1-xx-questions.md)
+    - [Infoblox comparison](./p2-1-yy-infoblox-comparison.md)
     - [Note on recursvive and authoritative](./p2-1-zz-note-on-recursive-and-authoritative-dns.md)
 - [Configure reverse zone](./p2-2-configure-reverse-zone.md)
+
+#### Part 3
+
+- [Make a chroot jail](./p3-1-chroot-jail.md)
+- [Configure forward DNS](./p3-2-Configure-DNS-forwarder.md)
+

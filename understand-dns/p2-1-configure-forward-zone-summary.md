@@ -19,6 +19,7 @@ file "/var/named/fwd.mylabserver.com.db";
 -->
 
 ````
+ssh cloud_user@3.80.8.88
 sudo su
 
 # Insert the zone configuration just before the include statements at the bottom of the file:
