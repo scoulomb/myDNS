@@ -34,3 +34,4 @@ This is why here in [forward zone question](./p2-1-xx-questions.md#Can-I-remove-
 I could not remove it.
 Also [reverse zone question](./p2-2-xx-questions.md#Can-I-remove-entry-with-same-name-as-the-zone),
 Note we were able to remove it.
+STOP HERE OK

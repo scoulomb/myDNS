@@ -3,7 +3,13 @@
 ## Create a Reverse Zone File summary
 
 ````
+ssh cloud_user@3.80.8.88
 sudo su
+````
+
+Note we consider setup is already done as in the lab otherwise do steps described in [dns cache section](./p1-1-dns-cache.md) after login an root.
+
+````
 
 export HOST_PRIVATE_IP=$(ifconfig -a | grep -A 3 eth0 | grep inet | head -n 1 | cut -d ' ' -f 10)
 echo $HOST_PRIVATE_IP

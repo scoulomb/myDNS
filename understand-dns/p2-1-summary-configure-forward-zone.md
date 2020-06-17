@@ -18,10 +18,15 @@ file "/var/named/fwd.mylabserver.com.db";
 
 -->
 
+
 ````
 ssh cloud_user@3.80.8.88
 sudo su
+````
 
+Note we consider setup is already done as in the lab otherwise do steps described in [dns cache section](./p1-1-dns-cache.md) after login an root.
+
+````
 # Insert the zone configuration just before the include statements at the bottom of the file:
 sed -i '/^include.*named.rfc1912.zones.*/i zone "mylabserver.com" { type master; file "/var/named/fwd.mylabserver.com.db"; };' /etc/named.conf
 

@@ -1,4 +1,13 @@
-# Resolve the IP for google.com
+# DNS
+
+````
+ssh cloud_user@3.80.8.88
+sudo su
+yum install -y bind bind-utils
+````
+
+
+## Resolve the IP for google.com
 
 ````shell script
 host -t a google.com
@@ -16,7 +25,7 @@ dig google.com
 Resolve-DnsName -Name google.fr -Server 8.8.8.8
 ````
 
-# Display the name servers for the google.com domain:
+## Display the name servers for the google.com domain:
 
 ````shell script
 host -t ns google.com
@@ -34,7 +43,7 @@ dig ns google.com
 Resolve-DnsName -Name google.com -Type ns -Server 8.8.8.8
 ````
 
-# Resolve the IP address for ns4.google.com
+## Resolve the IP address for ns4.google.com
 
 ````shell script
 host -t a ns4.google.com
@@ -53,7 +62,7 @@ dig ns4.google.com
 Resolve-DnsName -Name ns4.google.com  -Server 8.8.8.8
 ````
 
-# Display the mail servers for google.com:
+## Display the mail servers for google.com:
  
 ````shell script
 host -t mx google.com
@@ -70,7 +79,6 @@ dig -t mx google.com
 ````shell script
 Resolve-DnsName -Name google.com -Type mx -Server 8.8.8.8
 ````
-
 
 
 In `Resolve-DnsName`, I am using google recursive DNS.
