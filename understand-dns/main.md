@@ -17,7 +17,9 @@
     - [Summary](p2-2-summary-configure-reverse-zone.md)
     - [Personal questions](./p2-2-xx-questions.md)
 - [DNS querying](./p2-3-DNS-querying.md)
-
+    - [Summary](./p2-3-summary-DNS-querying.md)
+    - [Personal questions](./p2-3-xx-questions.md)
+    
 #### Part 3
 
 - [Make a chroot jail](./p3-1-chroot-jail.md)

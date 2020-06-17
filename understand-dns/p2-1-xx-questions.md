@@ -297,7 +297,7 @@ nslookup -type=mx mylabserver.com localhost
 ````
 
 ###### Note the nslookup which is particular
-
+(level above)
 ````shell script
 [root@server1 cloud_user]# nslookup -type=mx mailprod.mylabserver.com localhost
 Server:         localhost
