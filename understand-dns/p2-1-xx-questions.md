@@ -366,6 +366,36 @@ Sp we have to keep it
 
 Reapply [summary](p2-1-summary-configure-forward-zone.md)  (except sed) to restore state.
 
+More details in `systemctl status named.service` and `journalctl -xe`.
+
+````shell script
+[root@server1 cloud_user]# named-checkzone mylabserver.com /var/named/fwd.mylabserver.com.db
+zone mylabserver.com/IN: NS 'nameserver.mylabserver.com' has no address records (A or AAAA)
+zone mylabserver.com/IN: not loaded due to errors.
+[root@server1 cloud_user]# systemctl restart named
+Job for named.service failed because the control process exited with error code. See "systemctl status named.service" and "journalctl -xe" for details.
+[root@server1 cloud_user]#
+[root@server1 cloud_user]# systemctl status named.service
+● named.service - Berkeley Internet Name Domain (DNS)
+   Loaded: loaded (/usr/lib/systemd/system/named.service; enabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Wed 2020-06-17 12:16:25 UTC; 10s ago
+  Process: 11672 ExecStop=/bin/sh -c /usr/sbin/rndc stop > /dev/null 2>&1 || /bin/kill -TERM $MAINPID (code=exited, status=0/SUCCESS)
+  Process: 1596 ExecStart=/usr/sbin/named -u named -c ${NAMEDCONF} $OPTIONS (code=exited, status=0/SUCCESS)
+  Process: 11682 ExecStartPre=/bin/bash -c if [ ! "$DISABLE_ZONE_CHECKING" == "yes" ]; then /usr/sbin/named-checkconf -z "$NAMEDCONF"; else echo "Checking of zone files is disabled"; fi (code=exited, status=1/FAILURE)
+ Main PID: 1598 (code=exited, status=0/SUCCESS)
+
+Jun 17 12:16:25 server1 bash[11682]: _default/mylabserver.com/IN: bad zone
+Jun 17 12:16:25 server1 bash[11682]: zone localhost.localdomain/IN: loaded serial 0
+Jun 17 12:16:25 server1 bash[11682]: zone localhost/IN: loaded serial 0
+Jun 17 12:16:25 server1 bash[11682]: zone 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa/IN: loaded serial 0
+Jun 17 12:16:25 server1 bash[11682]: zone 1.0.0.127.in-addr.arpa/IN: loaded serial 0
+Jun 17 12:16:25 server1 bash[11682]: zone 0.in-addr.arpa/IN: loaded serial 0
+Jun 17 12:16:25 server1 systemd[1]: named.service: control process exited, code=exited status=1
+Jun 17 12:16:25 server1 systemd[1]: Failed to start Berkeley Internet Name Domain (DNS).
+Jun 17 12:16:25 server1 systemd[1]: Unit named.service entered failed state.
+Jun 17 12:16:25 server1 systemd[1]: named.service failed.
+[root@server1 cloud_user]#
+````
 #### Can I override a public entry in my local DNS
 
 
