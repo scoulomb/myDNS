@@ -117,8 +117,7 @@ zone mylabserver.com/IN: not loaded due to errors.
 </p>
 </details>
 
-Answer is NO. And it does not make sense.
-
+Answer is NO. And it does not make sense. We would turn into circle.
 
 #### Canonical CNAME case
 

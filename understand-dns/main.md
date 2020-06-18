@@ -12,6 +12,7 @@
     - [Summary](p2-1-summary-configure-forward-zone.md)
     - [Personal questions](./p2-1-xx-questions.md)
     - [Infoblox comparison](./p2-1-yy-infoblox-comparison.md)
+    - [Infoblox namespace](./p2-1-yy-infoblox-namespace.md)
     - [Note on recursvive and authoritative](./p2-1-zz-note-on-recursive-and-authoritative-dns.md)
 - [Configure reverse zone](./p2-2-configure-reverse-zone.md)
     - [Summary](p2-2-summary-configure-reverse-zone.md)

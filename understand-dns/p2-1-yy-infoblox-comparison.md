@@ -3,7 +3,7 @@
 ## Infoblox API overview
 
 ````
-export API_ENDPOINT="x.x.x.x"
+export API_ENDPOINT="x.x.x.x" # or FQDN to DNS
 export USERNAME=""
 export PASSWORD=""
 echo -n "$USERNAME:$PASSWORD" > ~/admin-credentials
