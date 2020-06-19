@@ -47,6 +47,9 @@ cat << EOF >  /var/named/fwd.mylabserver.com.db
 nameserver       IN      A       172.31.18.93
 mailprod         IN      A       172.31.18.30
 mailbackup       IN      A       172.31.18.72
+scoulomb         IN      A       42.42.42.42
+; AAAA records definitions
+scoulombipv6     IN      AAAA    2001:db8:85a3:8d3:1319:8a2e:370:7348
 ; Canonical Name/Alias
 dns        IN    CNAME    nameserver.mylabserver.com.
 ; Mail Exchange Records
@@ -63,4 +66,11 @@ systemctl restart named
 
 nslookup mailprod.mylabserver.com localhost
 nslookup nameserver.mylabserver.com localhost
+nslookup scoulomb.mylabserver.com localhost
+nslookup scoulombipv6.mylabserver.com localhost
 ````
+
+I added `scoulomb` to
+ - have A record with different name as zone and not linked to MX.
+ and `scoulombipv6` record to:
+ - have a AAAA record

@@ -69,7 +69,84 @@ Address: 172.31.18.94
 
 Answer is yes.
 
+#### Can I have A and AAAA records with same DNS name?
 
+<details>
+<summary>Details...</summary>
+<p>
+
+````
+cat << EOF >  /var/named/fwd.mylabserver.com.db
+\$TTL    86400
+@       IN      SOA     nameserver.mylabserver.com. root.mylabserver.com. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                      86400         ; Minimum TTL
+)
+; Name Server
+@        IN      NS       nameserver.mylabserver.com.
+; A Record Definitions
+nameserver       IN      A       172.31.18.93
+mailprod         IN      A       172.31.18.30
+mailbackup       IN      A       172.31.18.72
+scoulomb         IN      A       42.42.42.42
+; AAAA records definitions
+scoulomb     IN      AAAA    2001:db8:85a3:8d3:1319:8a2e:370:7348
+; Canonical Name/Alias
+dns        IN    CNAME    nameserver.mylabserver.com.
+; Mail Exchange Records
+@        IN    MX    10    mailprod.mylabserver.com.
+@        IN    MX    20    mailbackup.mylabserver.com.
+EOF
+
+named-checkzone mylabserver.com /var/named/fwd.mylabserver.com.db
+systemctl restart named
+nslookup scoulomb.mylabserver.com localhost
+
+````
+
+Output is:
+
+````shell script
+[root@server1 cloud_user]# nslookup scoulomb.mylabserver.com localhost
+Server:         localhost
+Address:        ::1#53
+
+Name:   scoulomb.mylabserver.com
+Address: 42.42.42.42
+Name:   scoulomb.mylabserver.com
+Address: 2001:db8:85a3:8d3:1319:8a2e:370:7348
+
+[root@server1 cloud_user]# nslookup -type=A scoulomb.mylabserver.com localhost
+Server:         localhost
+Address:        ::1#53
+
+Name:   scoulomb.mylabserver.com
+Address: 42.42.42.42
+
+[root@server1 cloud_user]# nslookup -type=AAAA scoulomb.mylabserver.com localhost
+Server:         localhost
+Address:        ::1#53
+
+Name:   scoulomb.mylabserver.com
+Address: 2001:db8:85a3:8d3:1319:8a2e:370:7348
+
+[root@server1 cloud_user]# man nslookup | grep -A 4 "type=value"
+           querytype=value
+
+           type=value
+               Change the type of the information query.
+
+               (Default = A; abbreviations = q, ty)
+````
+
+</p>
+</details>
+
+Answer is yes.
+Note default type is AAAA + A, unlike doc which says it is A.
 
 #### Can I have 1 A record and 1 CNAME with same DNS name
 
@@ -324,7 +401,7 @@ If uncomment A record we do not have IP.
 </p>
 </details>
 
-#### Can I remove entry with same name as the zone
+#### Can I remove entry with same name as the zone?
 
 Taking example from [summary](p2-1-summary-configure-forward-zone.md) and removing nameserver.
 
@@ -402,8 +479,49 @@ Jun 17 12:16:25 server1 systemd[1]: named.service failed.
 <summary>Details...</summary>
 <p>
 
-````
+##### Before changes
 
+````shell script
+[root@server1 cloud_user]# nslookup google.com localhost
+Server:         localhost
+Address:        ::1#53
+
+Non-authoritative answer:
+Name:   google.com
+Address: 172.253.63.138
+Name:   google.com
+Address: 172.253.63.139
+Name:   google.com
+Address: 172.253.63.101
+Name:   google.com
+Address: 172.253.63.113
+Name:   google.com
+Address: 172.253.63.102
+Name:   google.com
+Address: 172.253.63.100
+Name:   google.com
+Address: 2607:f8b0:4004:c08::8a
+
+[root@server1 cloud_user]# nslookup microsoft.com
+Server:         10.0.0.2
+Address:        10.0.0.2#53
+
+Non-authoritative answer:
+Name:   microsoft.com
+Address: 40.113.200.201
+Name:   microsoft.com
+Address: 104.215.148.63
+Name:   microsoft.com
+Address: 13.77.161.179
+Name:   microsoft.com
+Address: 40.76.4.15
+Name:   microsoft.com
+Address: 40.112.72.205
+
+````
+Doing the override
+
+````
 vim /etc/named.conf
 # Insert
 zone "com" {
@@ -438,6 +556,7 @@ chgrp named /var/named/fwd.com.db
 systemctl restart named
 
 nslookup google.com localhost
+nslookup microsoft.com localhost
 ````
 
 Output is :
@@ -449,9 +568,17 @@ Address:        ::1#53
 
 Name:   google.com
 Address: 42.42.42.42
+
+[root@server1 cloud_user]# nslookup microsoft.com localhost
+Server:         localhost
+Address:        ::1#53
+
+** server can't find microsoft.com: NXDOMAIN
+
+[root@server1 cloud_user]#
 ````
 
-It enables to understand naming convention.
+It enables to understand naming convention and shows we shadow the zone (microsoft)
 
 </p>
 </details>

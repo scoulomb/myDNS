@@ -123,7 +123,7 @@ google.com mail is handled by 20 alt1.aspmx.l.google.com.
 
 ## Run the nslookup Command
 
-### Resolve the IP for google.com
+### Resolve the IP for google.com with nslookup
 
 ````
 nslookup google.com
