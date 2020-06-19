@@ -15,10 +15,14 @@ Azure choice is to provide an authoritative DNS only.
 > It does not provide a recursive DNS service.
 > Cloud Services and VMs in Azure are automatically configured to use a recursive DNS service that is provided separately as part of Azure's infrastructure.
 
+**Source**: https://docs.microsoft.com/en-us/azure/dns/dns-domain-delegation
+
 The following image shows an example DNS query.
 The contoso.net and partners.contoso.net are Azure DNS zones.
 
 ![Azure image](../../resources/azure-image.png).
+
+**Source**: https://docs.microsoft.com/en-us/azure/dns/dns-domain-delegation
 
 > 1. The client requests www.partners.contoso.net from their local DNS server.
 > 2. The local DNS server does not have the record so it makes a request to their root name server.
@@ -34,3 +38,6 @@ The contoso.net and partners.contoso.net are Azure DNS zones.
 
 Each delegation actually has two copies of the NS records; one in the parent zone pointing to the child, and another in the child zone itself. 
 The 'contoso.net' zone contains the NS records for 'contoso.net' (in addition to the NS records in 'net'). These records are called authoritative NS records and they sit at the apex of the child zone.
+
+
+**Source**: https://docs.microsoft.com/en-us/azure/dns/dns-domain-delegation
