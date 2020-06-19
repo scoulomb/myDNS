@@ -10,35 +10,38 @@ This from LXA - LPIC-2 Topic 207.
 
 #### Part 1
 
-- [DNS cache](./basic-bind-lxa/p1-1-dns-cache.md)
-- [RNDC key](./basic-bind-lxa/p1-2-rndc-key.md)
+- [DNS cache](1-basic-bind-lxa/p1-1-dns-cache.md)
+- [RNDC key](1-basic-bind-lxa/p1-2-rndc-key.md)
 
 #### Part 2
 
-- [Configure forward zone](./basic-bind-lxa/p2-1-configure-forward-zone.md)
-    - [Summary](./basic-bind-lxa/p2-1-summary-configure-forward-zone.md)
-    - [Personal questions](./basic-bind-lxa/p2-1-xx-questions.md)
-    - [Note on recursvive and authoritative](./basic-bind-lxa/p2-1-zz-note-on-recursive-and-authoritative-dns.md)
-- [Configure reverse zone](./basic-bind-lxa/p2-2-configure-reverse-zone.md)
-    - [Summary](./basic-bind-lxa/p2-2-summary-configure-reverse-zone.md)
-    - [Personal questions](./basic-bind-lxa/p2-2-xx-questions.md)
-- [DNS querying](./basic-bind-lxa/p2-3-DNS-querying.md)
-    - [Summary](./basic-bind-lxa/p2-3-summary-DNS-querying.md)
-    - [Personal questions](./basic-bind-lxa/p2-3-xx-questions.md)
+- [Configure forward zone](1-basic-bind-lxa/p2-1-configure-forward-zone.md)
+    - [Summary](1-basic-bind-lxa/p2-1-summary-configure-forward-zone.md)
+    - [Personal questions](1-basic-bind-lxa/p2-1-xx-questions.md)
+    - [Note on recursvive and authoritative](1-basic-bind-lxa/p2-1-zz-note-on-recursive-and-authoritative-dns.md)
+- [Configure reverse zone](1-basic-bind-lxa/p2-2-configure-reverse-zone.md)
+    - [Summary](1-basic-bind-lxa/p2-2-summary-configure-reverse-zone.md)
+    - [Personal questions](1-basic-bind-lxa/p2-2-xx-questions.md)
+- [DNS querying](1-basic-bind-lxa/p2-3-DNS-querying.md)
+    - [Summary](1-basic-bind-lxa/p2-3-summary-DNS-querying.md)
+    - [Personal questions](1-basic-bind-lxa/p2-3-xx-questions.md)
     
 #### Part 3
 
-- [Make a chroot jail](./basic-bind-lxa/p3-1-chroot-jail.md)
-- [Configure forward DNS](./basic-bind-lxa/p3-2-Configure-DNS-forwarder.md)
+- [Make a chroot jail](1-basic-bind-lxa/p3-1-chroot-jail.md)
+- [Configure forward DNS](2-advanced-bind/Configure-DNS-forwarder.md)
 
+### Advanced bind
+[here]
+- [Bind view](./2-advanced-bind/bind-view.md)
 
 ### DNS solutions providers
 
 #### Infoblox
 
-- [Infoblox comparison](DNS-solution-providers/1-Infoblox/infoblox-comparison.md)
-- [Infoblox namespace](DNS-solution-providers/1-Infoblox/infoblox-namespace.md)
+- [Infoblox comparison](3-DNS-solution-providers/1-Infoblox/infoblox-comparison.md)
+- [Infoblox namespace](3-DNS-solution-providers/1-Infoblox/infoblox-namespace.md)
 
 #### Azure
 
-- [Azure authoritative DNS](./DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md)
+- [Azure authoritative DNS](3-DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md)

@@ -289,7 +289,7 @@ Where `mylaberver.com` would have another soa registered in `com` domain.
  
 See that: https://en.wikipedia.org/wiki/Domain_name_registrar
 
-See all this applied to [Azure DNS](../DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md).
+See all this applied to [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md).
 
 
 
