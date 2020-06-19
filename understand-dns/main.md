@@ -20,12 +20,14 @@ This from LXA - LPIC-2 Topic 207.
     - [Personal questions](1-basic-bind-lxa/p2-1-xx-questions.md)
     - [Note on recursvive and authoritative](1-basic-bind-lxa/p2-1-zz-note-on-recursive-and-authoritative-dns.md)
 - [Configure reverse zone](1-basic-bind-lxa/p2-2-configure-reverse-zone.md)
-    - [Summary](1-basic-bind-lxa/p2-2-summary-configure-reverse-zone.md)
+    - [Summary](1-basic-bind-lxa/with-archlinux-p2-2-summary-configure-reverse-zone.md)
     - [Personal questions](1-basic-bind-lxa/p2-2-xx-questions.md)
 - [DNS querying](1-basic-bind-lxa/p2-3-DNS-querying.md)
     - [Summary](1-basic-bind-lxa/p2-3-summary-DNS-querying.md)
     - [Personal questions](1-basic-bind-lxa/p2-3-xx-questions.md)
-    
+- With ArchLinux local setup
+    - [With ArchLinux - Configure forward zone](1-basic-bind-lxa/with-archlinux-p2-1-summary-configure-forward-zone.md)
+    - [With ArchLinux - Configure reverse zone](1-basic-bind-lxa/with-archlinux-p2-2-summary-configure-reverse-zone.md)  
 #### Part 3
 
 - [Make a chroot jail](1-basic-bind-lxa/p3-1-chroot-jail.md)

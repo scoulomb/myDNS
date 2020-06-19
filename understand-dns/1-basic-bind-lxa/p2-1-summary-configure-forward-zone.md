@@ -2,6 +2,8 @@
 
 ## Configure forward zone summary
 
+[With ArchLinux equivalent - Configure forward zone](with-archlinux-p2-1-summary-configure-forward-zone.md)
+ 
 <!--
 We automate this with a sed
 https://fabianlee.org/2018/10/28/linux-using-sed-to-insert-lines-before-or-after-a-match/
