@@ -7,7 +7,7 @@ ssh cloud_user@3.80.8.88
 sudo su
 ````
 
-Note we consider setup is already done as in the lab otherwise do steps described in [dns cache section](./p1-1-dns-cache.md) after login an root.
+Note we consider setup is already done as in the lab otherwise do steps described in [dns cache section](p1-1-dns-cache.md) after login an root.
 
 ````
 

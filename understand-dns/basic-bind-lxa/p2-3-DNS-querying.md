@@ -37,11 +37,11 @@ systemctl enable named
 ````
 
 
-Note: exact same as [dns cache section](./p1-1-dns-cache.md).
+Note: exact same as [dns cache section](p1-1-dns-cache.md).
 (no need to go through VM)
 
-In LXA they start and enable named it is not needed actually here! as we are not using the cache as  in [dns cache section](./p1-1-dns-cache.md).
-In [forward](./p2-1-summary-configure-forward-zone.md) and [reverse](./p2-2-summary-configure-reverse-zone.md) zone lab, this setup was pre-configured.
+In LXA they start and enable named it is not needed actually here! as we are not using the cache as  in [dns cache section](p1-1-dns-cache.md).
+In [forward](p2-1-summary-configure-forward-zone.md) and [reverse](p2-2-summary-configure-reverse-zone.md) zone lab, this setup was pre-configured.
 
 Note operations are (I reordered and added when missing): 
 - Resolve the IP for google.com
@@ -239,7 +239,7 @@ google.com      mail exchanger = 10 aspmx.l.google.com.
 Authoritative answers can be found from:
 ````
 
-Same was done here in [part 2 questions](./p2-1-xx-questions.md#Note-the-nslookup-which-is-particular)
+Same was done here in [part 2 questions](p2-1-xx-questions.md#Note-the-nslookup-which-is-particular)
 
 Note corresponding A,AAAA records:
 

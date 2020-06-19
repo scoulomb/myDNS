@@ -1,6 +1,6 @@
 # DNS
 
-## Infoblox API overview
+## Infoblox API overview and comparison with BIND
 
 ````
 export API_ENDPOINT="x.x.x.x" # or FQDN to DNS
@@ -91,7 +91,7 @@ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
 
 ## Infoblox comparision with questions section
 
-### [Can I have 2 A records with same DNS name?](./p2-1-xx-questions.md#Can-I-have-2-A-records-with-same-DNS-name?)
+### [Can I have 2 A records with same DNS name?](../../basic-bind-lxa/p2-1-xx-questions.md#Can-I-have-2-A-records-with-same-DNS-name?)
 Answer is yes with bind
 
 In Infoblox it is not possible to create 2 host records with same name.
@@ -106,7 +106,7 @@ For instance it is not possible to create a CNAME with same name as host record.
 
 To reproduce the same same we would need to create 1 Infoblox host record with 2 IP addresses.
 
-### [Canonical CNAME case](./p2-1-xx-questions.md#Canonical-CNAME-case)
+### [Canonical CNAME case](../../basic-bind-lxa/p2-1-xx-questions.md#Canonical-CNAME-case)
 
 Implementation of this with Infoblox could be:
 - 1 CNAME record and (1 host record xor 1 A record)

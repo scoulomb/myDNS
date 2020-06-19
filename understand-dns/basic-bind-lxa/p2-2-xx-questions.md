@@ -4,7 +4,7 @@
 
 ### MX records on reverse zone warning
 
-Details on MX record given in this reverse zone [question](./p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?).
+Details on MX record given in this reverse zone [question](p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?).
 In the lab we have same warning for reverse zone.
 If we remove those MX, disappear? 
 Yes warning disappear (same as in forward zone, in all case we have an output, checked)
@@ -255,7 +255,7 @@ Address: 172.31.18.93
 ````
 
 For MX records.
-From [forward zone question](./p2-1-xx-questions.md#Note-the-nslookup-which-is-particular)
+From [forward zone question](p2-1-xx-questions.md#Note-the-nslookup-which-is-particular)
 
 ```shell script
 [root@server1 cloud_user]# nslookup -type=mx mylabserver.com localhost
@@ -290,13 +290,13 @@ It would mean we have address like `scoulomb@1.0.10.in-addr.arpa`.
 
 ### Reverse look up of MX
 
-See [question](./p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?).
+See [question](p2-1-xx-questions.md#What-happens-if-I-do-not-define-a-A-record-matching-a-MX-record?).
 Given that we usually have a A record matching a MX record. We will do the reverse look with the help of the PTR record matching the A record.  
 (see comment in servfault question, and reply in lxa)
 
 ### Can I remove entry with same name as the zone
 
-As in [forward zone question](./p2-1-xx-questions.md#Can-I-remove-entry-with-same-name-as-the-zone)
+As in [forward zone question](p2-1-xx-questions.md#Can-I-remove-entry-with-same-name-as-the-zone)
 
 <details>
 <summary>Details...</summary>

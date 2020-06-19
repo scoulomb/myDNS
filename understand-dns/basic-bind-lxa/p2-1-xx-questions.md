@@ -241,7 +241,7 @@ Answer is yes.
 
 #### What happens if I do not define a A record matching a MX record?
 
-See [reverse section](./p2-2-configure-reverse-zone.md)
+See [reverse section](p2-2-configure-reverse-zone.md)
 
 https://en.wikipedia.org/wiki/MX_record
 > The host name must map directly to one or more address records (A, or AAAA) in the DNS, and must not point to any CNAME records.
@@ -462,5 +462,5 @@ Answer is yes
 
 ### Playing with nslookup
 
-See example of mx in section above (we also type soa in note on [recusive and authoritative](./p2-1-zz-note-on-recursive-and-authoritative-dns.md).
+See example of mx in section above (we also type soa in note on [recusive and authoritative](p2-1-zz-note-on-recursive-and-authoritative-dns.md).
 

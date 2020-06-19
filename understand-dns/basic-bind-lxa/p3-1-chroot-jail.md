@@ -27,9 +27,9 @@ To complete this lab we'll need to set up a chroot jail and then create a forwar
 Use the credentials on the hands-on lab page to log in, via SSH, as cloud_user to the provided server.
 Gain root privileges with sudo -i.
 
-**Note** : As mentionned in [fw zone summary](./p2-1-summary-configure-forward-zone.md) and 
-[rev zone summary](./p2-2-summary-configure-reverse-zone.md), 
-we consider setup is already done as in the lab otherwise do steps described in [dns cache section](./p1-1-dns-cache.md) after login an root.
+**Note** : As mentionned in [fw zone summary](p2-1-summary-configure-forward-zone.md) and 
+[rev zone summary](p2-2-summary-configure-reverse-zone.md), 
+we consider setup is already done as in the lab otherwise do steps described in [dns cache section](p1-1-dns-cache.md) after login an root.
 
 ## Set up the chroot Jail for the BIND Service
 
@@ -57,7 +57,7 @@ Created symlink from /etc/systemd/system/multi-user.target.wants/named-chroot.se
 ````
 I have no symlink when it is not the `named-chroot`
 
-Everything in hidden section is exactly the same as [fw zone summary(2nd part)](./p2-1-summary-configure-forward-zone.md).
+Everything in hidden section is exactly the same as [fw zone summary(2nd part)](p2-1-summary-configure-forward-zone.md).
 Except they change zone name to chroot-zone (this we do not care)
 AND THAT AT THE END WE RESTART named-chroot and not named:
 

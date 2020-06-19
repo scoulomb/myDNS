@@ -74,7 +74,7 @@ $ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
 
 It is clearly visible here that I can not create Host, AAAA and A with same name as CNAME.
 And it makes sense to prevent this, otherwise we would turn into circle.
-Same point is raised in questions [here](./p2-1-xx-questions.md#can-i-have-1-a-record-and-1-cname-with-same-dns-name).
+Same point is raised in questions [here](../../basic-bind-lxa/p2-1-xx-questions.md#can-i-have-1-a-record-and-1-cname-with-same-dns-name).
 
 And for the retrieve (more a find) I have to make the distinction:
 
