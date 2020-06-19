@@ -139,7 +139,7 @@ mylabserver.com nameserver = nameserver.mylabserver.com.
  
 ### Recursive DNS and authoritative DNS 
 
-![recusive dns](./resources/What-is-the-difference-between-Authoritative-and-Recursive-DNS-Nameservers.jpg)
+![recusive dns](../resources/What-is-the-difference-between-Authoritative-and-Recursive-DNS-Nameservers.jpg)
 
 **Source**: https://umbrella.cisco.com/blog/difference-authoritative-recursive-dns-nameservers
 
@@ -288,6 +288,8 @@ And this `soa` record would be register in top level domain (`mylabserver.com`).
 Where `mylaberver.com` would have another soa registered in `com` domain.
  
 See that: https://en.wikipedia.org/wiki/Domain_name_registrar
+
+See all this applied to [Azure DNS](../DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md).
 
 
 

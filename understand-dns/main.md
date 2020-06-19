@@ -36,5 +36,9 @@ This from LXA - LPIC-2 Topic 207.
 
 #### Infoblox
 
-- [Infoblox comparison](DNS-solution-providers/Infoblox/infoblox-comparison.md)
-- [Infoblox namespace](DNS-solution-providers/Infoblox/infoblox-namespace.md)
+- [Infoblox comparison](DNS-solution-providers/1-Infoblox/infoblox-comparison.md)
+- [Infoblox namespace](DNS-solution-providers/1-Infoblox/infoblox-namespace.md)
+
+#### Azure
+
+- [Azure authoritative DNS](./DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md)
