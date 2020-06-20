@@ -8,6 +8,11 @@ Make a clean setup
 
 <!--
 Unlike lab setup we need to install and enable named 
+Setup was done in [dns cache section](./p1-1-dns-cache.md).
+Note  yum install -y bind bind-utils and here it is bind-tools,
+In ubuntu it is:
+ sudo apt-get install bind9
+ sudo apt-get install bind9-utils
 -->
 
 Command below are not needed if we run [fw zone summary with Archlinux](with-archlinux-p2-1-summary-configure-forward-zone.md).
