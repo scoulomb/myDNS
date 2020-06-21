@@ -158,6 +158,7 @@ Name:   scoulomb.mylabserver.com
 Address: 42.42.42.42
 ```
 
+###### Google refused
 
 Note that for this case only when doing recursion it is forbidden 
 
@@ -185,7 +186,7 @@ Address: 42.42.42.42
 
 Note the DNS server address which is service ip and pod ip
 
-### target source-ip-app from another pod
+### target DNS from another pod
 
 We will run DNS query from this client pod which has `nslookup` pre-installed:
 

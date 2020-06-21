@@ -1,7 +1,11 @@
-do dns forwarder 
-[here where 3 is ok and explore azure and the view]
+
+[I AM HERE], all before ok YES
+
+
+Next azure and view
 Note that in BIND API we have view/zone.
 voir mail
+
 ## Bind view
 
 see
@@ -12,3 +16,5 @@ https://docs.microsoft.com/en-us/azure/dns/private-dns-overview#:~:text=Split%2D
 https://docs.microsoft.com/en-us/rest/api/dns/zones/createorupdate 
 
 fix k8s doc in source ip
+
+synthese azure infoblox bind?tab comparatif

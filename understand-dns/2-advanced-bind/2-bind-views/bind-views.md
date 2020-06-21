@@ -381,7 +381,7 @@ Address: 41.41.41.41
 Note that in BIND API we have view/zone.
 Zone are inside a view.
 
-See [next section where will do DNS forwarding](../Configure-DNS-forwarder.md).
+See [next section where will do DNS forwarding](../3-bind-forwarders/dns-forwarding.md).
 
 
 

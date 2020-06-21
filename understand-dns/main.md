@@ -31,7 +31,7 @@ This from LXA - LPIC-2 Topic 207.
 #### Part 3
 
 - [Make a chroot jail](1-basic-bind-lxa/p3-1-chroot-jail.md)
-- [Configure forward DNS](2-advanced-bind/Configure-DNS-forwarder.md)
+
 
 ### Advanced bind
 
@@ -40,6 +40,7 @@ This from LXA - LPIC-2 Topic 207.
     - [Understand source IP in k8s](./2-advanced-bind/1-bind-in-docker-and-kubernetes/2-understand-source-ip-in-k8s.md)
     - [Deploy named in a pod](./2-advanced-bind/1-bind-in-docker-and-kubernetes/3-deploy-named-in-a-pod.md)  
 - [Bind view](./2-advanced-bind/2-bind-views/bind-views.md)
+- [Configure forward DNS](./2-advanced-bind/3-bind-forwarders/dns-forwarding.md)
 
 ### DNS solutions providers
 
