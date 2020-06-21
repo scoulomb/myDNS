@@ -6,11 +6,12 @@
 
 Objective is to understand what is the source IP when targeting a pod from:
 - a node 
-    - using POD IP
     - using service with type ClusterIP
+    - using POD IP
  - another pod
-    - using POD IP
     - using service with type ClusterIP
+    - using POD IP
+
     
 The part of `using service with type ClusterIP`  is covered in K8s website in the section [Using Source IP/Source IP for Services with Type=ClusterIP](https://kubernetes.io/docs/tutorials/services/source-ip/#source-ip-for-services-with-type-clusterip).
 
@@ -33,6 +34,30 @@ I will start a pod running a nginx which showing source ip address:
 kubectl create deployment source-ip-app --image=k8s.gcr.io/echoserver:1.4
 ````
 
+We can target it directly
+
+```shell script
+# kubectl exec -it source-ip-app-7c79c78698-tv6ft -- /bin/sh -c 'curl 127.0.0.1:8080'
+CLIENT VALUES:
+client_address=127.0.0.1
+command=GET
+real path=/
+query=nil
+request_version=1.1
+request_uri=http://127.0.0.1:8080/
+
+SERVER VALUES:
+server_version=nginx: 1.10.0 - lua: 10001
+
+HEADERS RECEIVED:
+accept=*/*
+host=127.0.0.1:8080
+user-agent=curl/7.47.0
+BODY:
+-no body in request-[root@archlinux docker-bind-dns]#
+```
+
+Note the `client_address=127.0.0.1`
 
 And expose it through a service
 

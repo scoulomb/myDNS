@@ -5,18 +5,21 @@
 To simulate hosts with different subnets, my idea is to:
 - Deploy a pod with bind in k8s cluster
 - Query this DNS server from:
+    - its pod itself (as we would have done if DNS would be deployed in node directly) (source ip is [`127.0.0.1`](./2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip))
     - a node 
-        - using POD IP
-        - using service with type ClusterIP
+        - using service with type ClusterIP (source ip is  [`10.0.2.15`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
+        - using POD IP   (source ip is  [`172.17.0.1`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
      - another pod
-        - using POD IP
-        - using service with type ClusterIP
-        
-This pod with bind replaces the [nginx showing source ip](2-understand-source-ip-in-k8s.md) from previous section
+        - using service with type ClusterIP (source ip is  [`172.17.0.0/16`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
+        - using POD IP  (source ip is  [`172.17.0.0/16`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
+
+`172.17.0.0/16` is POD CIDR (pod IP address range).
+    
+This DNS pod with bind replaces the [nginx showing source ip](2-understand-source-ip-in-k8s.md) from previous section
 Client will perform `nslookup` instead of `curl` queries.
 
 As observed before the source IP would be different if coming from a node or a given pod.
-We can also deploy 50 client pod to have different IP range.
+We can also deploy 50 client pod to have different IP range with `172.17.0.0/16`
 
 In a first we will deploy see how to deploy a POD with basic bind configuration.
 
@@ -50,6 +53,8 @@ kubectl delete po ubuntu-dns --force --grace-period=0
 kubectl run ubuntu-dns --image=dns-ubuntu --restart=Never --image-pull-policy=Never -- /bin/sh -c "systemctl start named;systemctl enable named;sleep 3600"
 ````
 
+Be careful with the tag to load last image.
+
 Then we can target it from pod itself
 
 ````
@@ -82,6 +87,8 @@ Address:        127.0.0.1#53
 Name:   scoulomb.mylabserver.com
 Address: 42.42.42.42
 ````
+
+Note it is another source IP!
 
 We will also expose this DNS pod with a service:
 
@@ -270,6 +277,8 @@ EOF
 ```
 http://www.subnet-calculator.com/subnet.php?net_class=B
 
+
+Note the DNS server address which is service IP when service is used, and POD IP when POD IP is used in the answer.
 
 ### Note on Core DNS
 
