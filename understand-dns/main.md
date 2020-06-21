@@ -34,8 +34,12 @@ This from LXA - LPIC-2 Topic 207.
 - [Configure forward DNS](2-advanced-bind/Configure-DNS-forwarder.md)
 
 ### Advanced bind
-[here]
-- [Bind view](./2-advanced-bind/bind-view.md)
+
+- Bind in docker and k8s (pre-requisite for views)
+    - [Intro](./2-advanced-bind/1-bind-in-docker-and-kubernetes/1-intro.md)
+    - [Understand source IP in k8s](./2-advanced-bind/1-bind-in-docker-and-kubernetes/2-understand-source-ip-in-k8s.md)
+    - [Deploy named in a pod](./2-advanced-bind/1-bind-in-docker-and-kubernetes/3-deploy-named-in-a-pod.md)  
+- [Bind view](./2-advanced-bind/2-bind-views/bind-views.md)
 
 ### DNS solutions providers
 

@@ -1,12 +1,13 @@
 # DNS 
-[here where provider ok]
+[here where 3 is ok and explore azure and the view]
+view is under the zone?
 voir mail
 ## Bind view
 
 https://docstore.mik.ua/orelly/networking_2ndEd/dns/ch10_06.htm
 
 
-view is under the zone
+
 see
 https://docs.microsoft.com/en-us/azure/dns/private-dns-overview
 https://docs.microsoft.com/en-us/rest/api/dns/privatedns/privatezones/createorupdate
@@ -14,3 +15,5 @@ https://opdhsblobprod01.blob.core.windows.net/contents/4a6d75bb3af747de838e6ccc9
 https://docs.microsoft.com/en-us/azure/dns/private-dns-overview#:~:text=Split%2Dhorizon%20DNS%20support.,use%20inside%20your%20virtual%20network.
 https://en.wikipedia.org/wiki/Split-horizon_DNS
 https://docs.microsoft.com/en-us/rest/api/dns/zones/createorupdate 
+
+port forwarding 53 I can t do nslookup from host
