@@ -100,7 +100,7 @@ Operation made above are similar to [2-understand-source-ip-in-k8s/deploy sectio
 And operations below are similar to the remaining of this same [document](./2-understand-source-ip-in-k8s.md#Get-nginx-service-and-pod-ip).
 
 
-###  Get nginx service and pod ip
+###  Get DNS service and pod ip
 
 #### Service IP is 
 
@@ -181,10 +181,9 @@ Address:        172.17.0.45#53
 
 Name:   scoulomb.mylabserver.com
 Address: 42.42.42.42
-
+```
 
 Note the DNS server address which is service ip and pod ip
-```
 
 ### target source-ip-app from another pod
 
