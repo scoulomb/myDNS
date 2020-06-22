@@ -1,6 +1,12 @@
 # Bind views
 
 In this section we will study bind views.
+
+From [networking_2ndEd](https://docstore.mik.ua/orelly/networking_2ndEd/dns/ch10_06.htm):
+> BIND 9 introduced views, another mechanism that's very useful in firewalled environments. Views allow you to present one name server configuration to one community of hosts and a different configuration to another community. 
+
+It means that DNS response will depends on source IP (the subnet it belongs) of the requestor.
+
 Previous [section](../1-bind-in-docker-and-kubernetes/1-intro.md), is a prerequisite, but this should be self-sufficient.
 Views are also know as [Split horizon DNS, cf. Wikipedia](https://en.wikipedia.org/wiki/Split-horizon_DNS).
 

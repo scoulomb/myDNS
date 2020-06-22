@@ -51,4 +51,13 @@ This from LXA - LPIC-2 Topic 207.
 
 #### Azure
 
-- [Azure authoritative DNS](3-DNS-solution-providers/2-Azure-DNS/azure-autho-rec.md)
+- [Azure authoritative vs recursive DNS](3-DNS-solution-providers/2-Azure-DNS/1-Azure-authoritative-vs-recursive-dns.md)
+- [Azure authoritative DNS](3-DNS-solution-providers/2-Azure-DNS/2-Azure-authoritative-DNS.md)
+- [Azure DNS REST API](3-DNS-solution-providers/2-Azure-DNS/3-Azure-rest-api.md)
+- [Azure views](3-DNS-solution-providers/2-Azure-DNS/4-Azure-views.md)
+- [Azure API details](3-DNS-solution-providers/2-Azure-DNS/5-azure-api-details.md)
+
+#### Comparison
+
+- [Compare bind9, Azure and Infoblox DNS API](3-DNS-solution-providers/compare-api.md)
+
