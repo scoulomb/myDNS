@@ -46,8 +46,8 @@ This from LXA - LPIC-2 Topic 207.
 
 #### Infoblox
 
-- [Infoblox comparison](3-DNS-solution-providers/1-Infoblox/infoblox-comparison.md)
-- [Infoblox namespace](3-DNS-solution-providers/1-Infoblox/infoblox-namespace.md)
+- [Infoblox comparison](3-DNS-solution-providers/1-Infoblox/2-Infoblox-parallel-question-with-bind.md)
+- [Infoblox namespace](3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md)
 
 #### Azure
 
@@ -57,7 +57,12 @@ This from LXA - LPIC-2 Topic 207.
 - [Azure views](3-DNS-solution-providers/2-Azure-DNS/4-Azure-views.md)
 - [Azure API details](3-DNS-solution-providers/2-Azure-DNS/5-azure-api-details.md)
 
-#### Comparison
+### Google
 
-- [Compare bind9, Azure and Infoblox DNS API](3-DNS-solution-providers/compare-api.md)
+- [Google DNS API](3-DNS-solution-providers/3-Google-DNS/1-Google-DNS.md)
 
+#### Analysis
+
+- [Comparison table: bind9, Azure and Infoblox DNS AP ](4-Analysis/1-comparison-table.md)
+- [Compare APIs](4-Analysis/2-compare-apis.md)
+- [Toward a k8s APIs](4-Analysis/3-towards-a-k8s-like-api.md)

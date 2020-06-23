@@ -130,3 +130,4 @@ ping myVM01.private.contoso.com
 ping db.private.contoso.com
 ````
 
+We could try it for free here: https://azure.microsoft.com/en-us/pricing/details/dns/ 

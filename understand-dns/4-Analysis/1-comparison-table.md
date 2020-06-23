@@ -1,0 +1,63 @@
+# Compare APIs                                                                              
+
+In order to design a DNS auto API.
+We assessed how different DNS API providers are working.
+For this we compare 4 different API structures which are:
+- Bind9
+- Infloblox 2.x
+- Azure DNS 
+- Google DNS
+
+For the following operations:
+
+- View creation
+- Zone creation inside a view
+- Record creation inside a zone
+- Map a network inside a view
+
+Below are the comparison tables:                                                                                                                                                                            
+                                                                                                                                                                                         
+| Techno       | View creation |  
+| --------     | ----------- |
+| Bind9        | `view "myview1" { match-clients { "view1"; }; [ZONE DEF]};` | 
+| Infoblox 2.x | `curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.11/networkview?_return_fields%2B=name&_return_as_object=1" -d '{"name":"view1"}'` | 
+| Azure DNS    | To have view equivalent we should create a zone with same name using public and private API                                                                                                                                                                                    
+| Google DNS   | Use private DNS zone
+                                                                              
+| Techno       | Zone creation (inside a view)
+| --------     | ----------- | 
+| Bind9        |`zone "mylabserver.com" { type master; file "/etc/bind/view1-fwd.mylabserver.com.db"; }; ` |
+| Infoblox 2.x | `curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.11/zone_auth?_return_fields%2B=fqdn,network_view&_return_as_object=1" -d '{"fqdn": "mylabserver.com","view": "view1"}'` |
+| Azure Public DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/mylabserver.com?api-version=2018-05-01`
+| Azure Private DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/mylabserver.com?api-version=2018-09-01`
+| Google DNS   | `POST https://dns.googleapis.com/dns/v1/projects/{project}/mylabserver.com` (body omitted) |
+
+View is not mandatory, in bind API the zone can be created outside of a view. 
+Infoblox use a default view.
+For Azure DNS to not use view, do not create the same zone with public and private API. 
+For Google do not create zone with same name in different project with private and or public visibility
+ 
+                                                                                                                                                                                               
+| Techno       |  Record (set) creation (inside a zone) |
+| --------     | ----------- 
+| Bind9        |  `scoulomb  IN  A 41.41.41.41` |
+| Infoblox 2.x | `curl -k -u admin:infoblox -H "Content-Type: application/json" -X POST -d '{"name":"mylabserver.com","view":"view1","ipv4addrs":[{"ipv4addr":"41.41.41.41"}]}' https://$API_ENDPOINT/wapi/v2.5/record:host`
+| Azure Public DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/mylbaserver.com/A/scoulomb?api-version=2018-05-01`
+| Azure Private DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/mylabserver.com/A/scoulomb?api-version=2018-09-01`
+| Google DNS   | `POST https://dns.googleapis.com/dns/v1/projects/{project}/managedZones/{managedZone}/changes -d '{"kind":"dns#resourceRecordSet","name":"example.com.","rrdatas":["1.2.3.4"],"ttl":86400,"type":"A"}'`
+
+| Techno       |  Map a network to a view |
+| --------     | ----------- 
+| Bind9        |  `acl "view1" { 172.17.0.0/28; };` |
+| Infoblox 2.x |  `curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.11/network?_return_fields%2B=network&_return_as_object=1 " -d '{"network":"172.17.0.0/28","network_view": "test"}'`|
+| Azure Public DNS | `NA`
+| Azure Private DNS | [Procedure on Azure website](https://docs.microsoft.com/en-us/azure/dns/private-dns-getstarted-portal#link-the-virtual-network)
+| Google DNS  | This is managed in `ZoneCreation body` with field `privateVisibilityConfig`                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                       
+**Source for comparison:**    
+
+- [Bind 9](../2-advanced-bind/2-bind-views/docker-bind-dns)                                                                                                                     
+- [Infoblox](../3-DNS-solution-providers/1-Infoblox/2-Infoblox-parallel-question-with-bind.md#View-and-Zone-creation)
+- [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS)
+- [Google DNS](../3-DNS-solution-providers/3-Google-DNS/1-Google-DNS.md)
+- [View comparision](1-comparison-table.md)

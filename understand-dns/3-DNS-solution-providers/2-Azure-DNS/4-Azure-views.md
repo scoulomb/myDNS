@@ -8,6 +8,7 @@ https://docs.microsoft.com/en-us/azure/dns/private-dns-overview#:~:text=Split%2D
 This what they call `Split-horizon DNS support.`
 > Split-horizon DNS support. With Azure DNS, you can create zones with the same name that resolve to different answers from within a virtual network and from the public internet. A typical scenario for split-horizon DNS is to provide a dedicated version of a service for use inside your virtual network.
 
+It is same as view: https://en.wikipedia.org/wiki/Split-horizon_DNS 
 
 From:
 - https://docs.microsoft.com/en-us/azure/dns/private-dns-getstarted-portal
@@ -24,5 +25,6 @@ This is why in [2](./2-Azure-authoritative-DNS.md#private-dns) there was a link 
 > This scenario can be realized with Azure DNS by creating a Public DNS zone as well as a Private Zone, with the same name.
 
 So view implementation in Azure is performed by create a publicZone and a privateZone with the same name (zone being something like `mylabserver.com`) 
+
 
 
