@@ -5,13 +5,13 @@
 To simulate hosts with different subnets, my idea is to:
 - Deploy a pod with bind in k8s cluster
 - Query this DNS server from:
-    - its pod itself (as we would have done if DNS would be deployed in node directly) (source ip is [`127.0.0.1`](./2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip))
+    - its pod itself (as we would have done if DNS would be deployed in node directly) (source ip is [`127.0.0.1`](2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip))
     - a node 
-        - using service with type ClusterIP (source ip is  [`10.0.2.15`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
-        - using POD IP   (source ip is  [`172.17.0.1`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
+        - using service with type ClusterIP (source ip is  [`10.0.2.15`](2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
+        - using POD IP   (source ip is  [`172.17.0.1`](2-understand-source-ip-in-k8s.md#target-source-ip-app-from-the-node))
      - another pod
-        - using service with type ClusterIP (source ip is  [`172.17.0.0/16`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
-        - using POD IP  (source ip is  [`172.17.0.0/16`](./2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
+        - using service with type ClusterIP (source ip is  [`172.17.0.0/16`](2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
+        - using POD IP  (source ip is  [`172.17.0.0/16`](2-understand-source-ip-in-k8s.md#target-source-ip-app-from-another-pod))
 
 `172.17.0.0/16` is POD CIDR (pod IP address range).
     
@@ -96,8 +96,8 @@ We will also expose this DNS pod with a service:
 kubectl expose pod ubuntu-dns --port 53 --protocol=UDP
 ```
 
-Operation made above are similar to [2-understand-source-ip-in-k8s/deploy section](./2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip).
-And operations below are similar to the remaining of this same [document](./2-understand-source-ip-in-k8s.md#Get-nginx-service-and-pod-ip).
+Operation made above are similar to [2-understand-source-ip-in-k8s/deploy section](2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip).
+And operations below are similar to the remaining of this same [document](2-understand-source-ip-in-k8s.md#Get-nginx-service-and-pod-ip).
 
 
 ###  Get DNS service and pod ip
@@ -105,9 +105,9 @@ And operations below are similar to the remaining of this same [document](./2-un
 #### Service IP is 
 
 ```shell script
-[root@archlinux misc-notes]# kubectl expose pod ubuntu-dns --port 53 --protocol=UDP
+[root@archlinux myDNS]# kubectl expose pod ubuntu-dns --port 53 --protocol=UDP
 service/ubuntu-dns exposed
-[root@archlinux misc-notes]# k get svc ubuntu-dns
+[root@archlinux myDNS]# k get svc ubuntu-dns
 NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
 ubuntu-dns   ClusterIP   10.102.106.236   <none>        53/UDP    55s
 ```
@@ -121,7 +121,7 @@ DNS_SVC_CLUSTER_IP=$(kubectl get svc ubuntu-dns -o jsonpath={'.spec.clusterIP'})
 So that 
 
 ```shell script
-[root@archlinux misc-notes]# echo $DNS_SVC_CLUSTER_IP
+[root@archlinux myDNS]# echo $DNS_SVC_CLUSTER_IP
 10.102.106.236
 ```
 
@@ -129,7 +129,7 @@ So that
 ### POD IP
 
 ```shell script
-[root@archlinux misc-notes]# k get pods -o wide | grep dns
+[root@archlinux myDNS]# k get pods -o wide | grep dns
 ubuntu-dns              1/1     Running   0          7m38s   172.17.0.45   archlinux   <none>           <none>
 ```
 
@@ -141,7 +141,7 @@ DNS_POD_IP=$( kubectl get pods ubuntu-dns -o jsonpath={.status.podIP})
 So that 
 
 ```shell script
-[root@archlinux misc-notes]# echo $DNS_POD_IP
+[root@archlinux myDNS]# echo $DNS_POD_IP
 172.17.0.45
 ```
 

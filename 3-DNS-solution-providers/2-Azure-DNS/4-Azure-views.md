@@ -20,7 +20,7 @@ Quoting the [doc](https://docs.microsoft.com/en-us/azure/dns/private-dns-scenari
 > For example, you may have a private and public version of your application that has different functionality or behavior, but you want to use the same domain name for both versions. 
 
 It is exactly same scenario as [bind here](../../2-advanced-bind/2-bind-views/bind-views.md)
-This is why in [2](./2-Azure-authoritative-DNS.md#private-dns) there was a link between a private zone and a network.
+This is why in [2](2-Azure-authoritative-DNS.md#private-dns) there was a link between a private zone and a network.
 
 > This scenario can be realized with Azure DNS by creating a Public DNS zone as well as a Private Zone, with the same name.
 

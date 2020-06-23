@@ -46,7 +46,7 @@ mylabserver.com mail exchanger = 20 mailbackup.mylabserver.com.
 mylabserver.com mail exchanger = 10 mailprod.mylabserver.com.
 ````
 
-- Default type is A and AAAA (cf. [questions](./p2-1-xx-questions.md#Can-I-have-A-and-AAAA-records-with-same-DNS-name?))
+- Default type is A and AAAA (cf. [questions](p2-1-xx-questions.md#Can-I-have-A-and-AAAA-records-with-same-DNS-name?))
 - We can also that I had to specify MX for mail exchange.
 - For CNAME it was not necessary to apply the type as it applies A type.
 
@@ -89,7 +89,7 @@ Name:   nameserver.mylabserver.com
 Address: 172.31.18.93
 ````
 
-Cf. [questions](./p2-1-xx-questions.md#Can-I-remove-entry-with-same-name-as-the-zone?))
+Cf. [questions](p2-1-xx-questions.md#Can-I-remove-entry-with-same-name-as-the-zone?))
 
 
 ### There are 2 special records ns and soa
@@ -169,11 +169,11 @@ These answers contain important information for each domain, like IP addresses.
 #### Both 
 
 Same DNS server can be a recursive and authoritative.
-For instance our local DNS is recursive as shown in [part 1](./p1-1-dns-cache.md)
-But it is authoritative for the domain we defined in the forward zone file cf. [summary](./p2-1-summary-configure-forward-zone.md).
+For instance our local DNS is recursive as shown in [part 1](p1-1-dns-cache.md)
+But it is authoritative for the domain we defined in the forward zone file cf. [summary](p2-1-summary-configure-forward-zone.md).
 
-When we target directly (`/etc/resolv.conf` or parameter in nslookup) the DNS which is the authority for a zone (cf. [questions](./p2-1-xx-questions.md#Can-I-override-a-public-entry-in-my-local-DNS)) no recursion is performed.
-It is the reason why [part 1](./p1-1-dns-cache.md) or here in [DNS querying](./p2-3-DNS-querying.md#Resolve-the-IP-for-google.com-with-nslookup).
+When we target directly (`/etc/resolv.conf` or parameter in nslookup) the DNS which is the authority for a zone (cf. [questions](p2-1-xx-questions.md#Can-I-override-a-public-entry-in-my-local-DNS)) no recursion is performed.
+It is the reason why [part 1](p1-1-dns-cache.md) or here in [DNS querying](p2-3-DNS-querying.md#Resolve-the-IP-for-google.com-with-nslookup).
 We have `Non-authoritative answer` in response unlike the look up made in at beginning of [file](#Basic-records), where it is the authority.
 
 Btw in the nslookup answer we can see it is authoritative one
@@ -211,7 +211,7 @@ Address: 2607:f8b0:4004:c0b::5e
 ````
 
 
-Same when we override the com zone in [questions](./p2-1-xx-questions.md#Can-I-override-a-public-entry-in-my-local-DNS)
+Same when we override the com zone in [questions](p2-1-xx-questions.md#Can-I-override-a-public-entry-in-my-local-DNS)
 It became authoritative for com zone
 
 For a DNS to not be authoritative, we dot define zone.

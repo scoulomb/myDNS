@@ -70,7 +70,7 @@ kubectl expose deployment source-ip-app --name=clusterip --port=80 --target-port
 #### Service IP is 
 
 ````shell script
-[root@archlinux misc-notes]# kubectl get svc clusterip
+[root@archlinux myDNS]# kubectl get svc clusterip
 NAME        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
 clusterip   ClusterIP   10.100.147.242   <none>        80/TCP    55m
 ````
@@ -83,7 +83,7 @@ SVC_CLUSTER_IP=$(kubectl get svc clusterip -o jsonpath={.spec.clusterIP})
 So that 
 
 ````shell script
-[root@archlinux misc-notes]# echo $SVC_CLUSTER_IP
+[root@archlinux myDNS]# echo $SVC_CLUSTER_IP
 10.100.147.242
 ````
 
@@ -91,9 +91,9 @@ So that
 #### POD IP
 
 ````shell script
-[root@archlinux misc-notes]# kubectl get pods -o wide
+[root@archlinux myDNS]# kubectl get pods -o wide
 NAME                             READY   STATUS    RESTARTS   AGE    IP           NODE        NOMINATED NODE   READINESS GATES
-source-ip-app-7c79c78698-c956w   1/1     Running   0          7m4s   172.17.0.5   archlinux   <none>           <none> [root@archlinux misc-notes]#
+source-ip-app-7c79c78698-c956w   1/1     Running   0          7m4s   172.17.0.5   archlinux   <none>           <none> [root@archlinux myDNS]#
 ````
 
 We can store it
@@ -102,7 +102,7 @@ We can store it
 POD_IP=$( kubectl get pods source-ip-app-7c79c78698-c956w -o jsonpath={.status.podIP})
 
 ````shell script
-[root@archlinux misc-notes]# echo $POD_IP
+[root@archlinux myDNS]# echo $POD_IP
 172.17.0.5
 ````
 
@@ -111,7 +111,7 @@ POD_IP=$( kubectl get pods source-ip-app-7c79c78698-c956w -o jsonpath={.status.p
 #### SVC CLUSTER IP
 
 ````shell script
-[root@archlinux misc-notes]# curl $SVC_CLUSTER_IP
+[root@archlinux myDNS]# curl $SVC_CLUSTER_IP
 CLIENT VALUES:
 client_address=10.0.2.15
 command=GET
@@ -133,7 +133,7 @@ BODY:
 #### POD IP directly 
 
 ````shell script
-[root@archlinux misc-notes]# curl $POD_IP:8080
+[root@archlinux myDNS]# curl $POD_IP:8080
 CLIENT VALUES:
 client_address=172.17.0.1
 command=GET
@@ -150,18 +150,18 @@ accept=*/*
 host=172.17.0.5:8080
 user-agent=curl/7.69.1
 BODY:
--no body in request-[root@archlinux misc-notes]#
+-no body in request-[root@archlinux myDNS]#
 ````
 
 
 #### Get node source ip
 
 ````shell script
-[root@archlinux misc-notes]# ip addr | grep eth0
+[root@archlinux myDNS]# ip addr | grep eth0
 2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic eth0
 
-[root@archlinux misc-notes]# ip addr | grep -A 2 docker0:
+[root@archlinux myDNS]# ip addr | grep -A 2 docker0:
 4: docker0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
     link/ether 02:42:bb:f2:66:8f brd ff:ff:ff:ff:ff:ff
     inet 172.17.0.1/16 brd 172.17.255.255 scope global docker0
