@@ -293,7 +293,12 @@ See all this applied to [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS/1-Az
 
 
 
+See later it is similar explanation given here OK:
+- https://jvns.ca/blog/how-updating-dns-works/
+(We can see NS record can be a A record and it is called record in link below)
+> in practice, 99.99% of the time it’ll already have the address of the .com nameservers cached, but we’re pretending we’re really starting from scratch
 
-
+It is the recursive. I assume authoritative caches nothings.
+- https://howdns.works/ep7/
 
 
