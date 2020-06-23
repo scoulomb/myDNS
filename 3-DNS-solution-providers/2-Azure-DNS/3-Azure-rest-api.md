@@ -15,7 +15,7 @@ Source is:
 - https://docs.microsoft.com/en-us/rest/api/dns/zones/createorupdate
 - https://docs.microsoft.com/en-us/rest/api/dns/privatedns/privatezones/createorupdate
 
-## Create a RecordSet
+## Create a RecordSet inside a Zone
 
 ````shell script
 # Public REST API

@@ -1,5 +1,7 @@
 # Azure views
 
+## View creation, Zone creation inside a view  
+
 How to implement view in Azure?
 
 From:
@@ -27,4 +29,6 @@ This is why in [2](2-Azure-authoritative-DNS.md#private-dns) there was a link be
 So view implementation in Azure is performed by create a publicZone and a privateZone with the same name (zone being something like `mylabserver.com`) 
 
 
+## Map a network inside a view
 
+[Procedure on Azure website](https://docs.microsoft.com/en-us/azure/dns/private-dns-getstarted-portal#link-the-virtual-network)

@@ -65,7 +65,7 @@ Where body is
 POST https://dns.googleapis.com/dns/v1/projects/{project}/managedZones/{managedZone}/changes
 ````
 
-Where for instance bodt for A record creation is
+Where for instance body for A record creation is
 
 ````shell script
 {
@@ -92,8 +92,6 @@ We also use private zone for split view:
 
 From: https://cloud.google.com/blog/products/networking/introducing-private-dns-zones-resolve-to-keep-internal-networks-concealed
 
-For this we create different project:
-https://cloud.google.com/dns/docs/overview
-With same zone.
+For this we create different projects (https://cloud.google.com/dns/docs/overview) using same zone.
 
 Guess for azure also unlimited with different resource group.
