@@ -1,0 +1,19 @@
+---
+# https://docs.ansible.com/ansible/latest/modules/nios_host_record_module.html#nios-host-record-module
+- hosts: all
+  remote_user: vagrant
+  tasks:
+  - name: configure an ipv4 host record
+    nios_host_record:
+      name: "test.uat.dns"
+      ipv4:
+        - address: 1.1.1.1
+        - address: 1.1.1.2
+      state: present
+      provider:
+        host: "$DNS_INSTANCE"
+        username: "USERNAME"
+        password: "PASSWORD"
+    connection: local
+    become: yes
+    become_user: vagrant

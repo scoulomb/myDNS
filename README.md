@@ -50,6 +50,7 @@ This from LXA - LPIC-2 Topic 207.
 
 - [Infoblox comparison](3-DNS-solution-providers/1-Infoblox/2-Infoblox-parallel-question-with-bind.md)
 - [Infoblox namespace](3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md)
+- [Infoblox wiht Ansible](3-DNS-solution-providers/1-Infoblox/4-Ansible-API/README.md)
 
 #### Azure
 
