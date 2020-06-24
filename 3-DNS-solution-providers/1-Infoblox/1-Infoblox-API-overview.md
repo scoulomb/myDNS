@@ -130,6 +130,31 @@ curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$
 "192.168.1.0/24","network_view": "test"}'
 
 ````
+## Infoblox TTL
+
+
+<details>
+  <summary>Infoblox has also a TTL at record level, we can define TTL at zone and global level</summary>
+  
+  
+````json
+{
+    "name": "testttl.test.loc",
+    "view": "default",
+    "ipv4addrs": [{
+        "ipv4addr": "4.4.4.2"
+    }, {
+        "ipv4addr": "4.4.4.5"
+    }],
+	  "ttl": 3600,
+	  "use_ttl": true
+}
+````
+
+It is similar in bind9: https://www.zytrax.com/books//dns/apa/ttl.html
+> The default TTL for the zone is defined in BIND9 by the $TTL directive which must appear at the beginning of the zone file, that is, before any RR to which it will apply. This $TTL is used for any Resource Record which does not explicitly set the 'ttl' field.
+
+</details>
 
 Source**: [Infoblox REST API Nios 8.5 ref](https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf) (p13/56)
 

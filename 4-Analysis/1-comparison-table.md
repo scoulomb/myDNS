@@ -42,9 +42,36 @@ For Google do not create zone with same name in different project with private a
 | --------     | ----------- 
 | Bind9        |  `scoulomb  IN  A 41.41.41.41` |
 | Infoblox 2.x | `curl -k -u admin:infoblox -H "Content-Type: application/json" -X POST -d '{"name":"mylabserver.com","view":"view1","ipv4addrs":[{"ipv4addr":"41.41.41.41"}]}' https://$API_ENDPOINT/wapi/v2.5/record:host`
-| Azure Public DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/mylbaserver.com/A/scoulomb?api-version=2018-05-01`
-| Azure Private DNS | `curl -X PUT https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/mylabserver.com/A/scoulomb?api-version=2018-09-01`
-| Google DNS   | `POST https://dns.googleapis.com/dns/v1/projects/{project}/managedZones/{managedZone}/changes -d '{"kind":"dns#resourceRecordSet","name":"example.com.","rrdatas":["1.2.3.4"],"ttl":86400,"type":"A"}'`
+| Azure Public DNS | `curl -X PUT -d '{"properties":{"metadata":{"key1":"value1"},"ttl":3600,"aRecords":[{"ipv4Address":"1.2.3.4"}]}}' https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/dnsZones/mylbaserver.com/A/scoulomb?api-version=2018-05-01`
+| Azure Private DNS | `curl -X PUT -d '{"properties":{"metadata":{"key1":"value1"},"ttl":3600,"aRecords":[{"ipv4Address":"1.2.3.4"}]}}' https://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/privateDnsZones/mylabserver.com/A/scoulomb?api-version=2018-09-01`
+| Google DNS   | `curl -X POST  -d '{"kind":"dns#resourceRecordSet","name":"example.com.","rrdatas":["1.2.3.4"],"ttl":86400,"type":"A"}' https://dns.googleapis.com/dns/v1/projects/{project}/managedZones/{managedZone}/changes`
+
+
+I choose record set, no separate A record (cf. [Infoblox](../3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#POST-A) where it seems possible for Infoblox.
+ Unlike Azure and Google which seems to have only record set: 
+- [Azure](https://docs.microsoft.com/en-us/rest/api/dns/recordsets)).
+- [Google](https://cloud.google.com/dns/docs/reference/v1/resourceRecordSets)
+Difference is that we do not have an array.
+In Infoblox it also creates a PTR record when reversed zone defined [See](2-compare-apis.md#ptr-record). 
+
+<details>
+  <summary>Infoblox has also a TTL at record level, we can define TTL at zone and global level</summary>
+  
+
+````json
+{
+    "name": "testttl.test.loc",
+    "view": "default",
+    "ipv4addrs": [{
+        "ipv4addr": "4.4.4.2"
+    }, {
+        "ipv4addr": "4.4.4.5"
+    }],
+	  "ttl": 3600,
+	  "use_ttl": true
+}
+````
+</details>
 
 | Techno       |  Map a network to a view |
 | --------     | ----------- 
@@ -57,7 +84,7 @@ For Google do not create zone with same name in different project with private a
 **Source for comparison:**    
 
 - [Bind 9](../2-advanced-bind/2-bind-views/docker-bind-dns)                                                                                                                     
-- [Infoblox](../3-DNS-solution-providers/1-Infoblox/2-Infoblox-parallel-question-with-bind.md#View-and-Zone-creation)
+- [Infoblox](../3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#Infoblox-View-and-Zone-creation)
 - [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS)
 - [Google DNS](../3-DNS-solution-providers/3-Google-DNS/1-Google-DNS.md)
 - [View comparision](1-comparison-table.md)

@@ -143,7 +143,8 @@ Name:   google.com
 Address: 2607:f8b0:4004:814::200e
 ````
 
-We can use `-type A`, `man nslookup` say default is A, but it will not return AAAA.
+We can use `-type A`, `man nslookup` say default is A and then AAAA.
+See [here](../../4-Analysis/2-compare-apis.md#Parallel-with-nslookup-and-dig-API)
 
 ````shell script
 [root@server1 cloud_user]# nslookup -type=A google.com

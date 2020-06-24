@@ -146,7 +146,7 @@ Address: 2001:db8:85a3:8d3:1319:8a2e:370:7348
 </details>
 
 Answer is yes.
-Note default type is AAAA + A, unlike doc which says it is A.
+Note default type is AAAA + A (cf. [here](../4-Analysis/2-compare-apis.md#Parallel-with-nslookup-and-dig-API))
 
 #### Can I have 1 A record and 1 CNAME with same DNS name
 

@@ -46,7 +46,7 @@ mylabserver.com mail exchanger = 20 mailbackup.mylabserver.com.
 mylabserver.com mail exchanger = 10 mailprod.mylabserver.com.
 ````
 
-- Default type is A and AAAA (cf. [questions](p2-1-xx-questions.md#Can-I-have-A-and-AAAA-records-with-same-DNS-name?))
+- Default type is A and AAAA (cf. [here](../4-Analysis/2-compare-apis.md#Parallel-with-nslookup-and-dig-API)))
 - We can also that I had to specify MX for mail exchange.
 - For CNAME it was not necessary to apply the type as it applies A type.
 

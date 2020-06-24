@@ -1,6 +1,6 @@
 # Towards a k8s like API
 
-## Option A: View in path
+## Choice A: View in path
 
 For a k8s look like API for DNS we could put the view in the path (it would look like a k8s [namespace](2-compare-apis.md#Parallel-with-k8s-api).
 With in path:
@@ -21,7 +21,7 @@ It is the choice made by [Google DNS API](../3-DNS-solution-providers/3-Google-D
 => option 2: should we have a different or same API path for close but different object
 -->
 
-## Option B: Adding zone in path
+## Choice B: Adding zone in path
 
 We could also split DNS name with a zone.
 This can be convenient if using Azure otherwise we would have to infer the zone to use their API which can be painful.
