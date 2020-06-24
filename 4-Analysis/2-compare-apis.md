@@ -1,5 +1,52 @@
 # Compare with other APIs: Bind9, Azure and Infoblox
 
+## Notes on record set creation API
+
+### Infoblox host record
+
+I choose Infoblox HostRecord for comparison in [comparison table](1-comparison-table.md).
+And not a separate Infoblox A record (cf. [Infoblox](../3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#POST-A)).
+Main difference between Infoblox A and Host is that we do not have an array.
+Infoblox Host also creates a PTR record when reversed zone defined [See](2-compare-apis.md#ptr-record).
+
+Unlike Infoblox, Azure and Google seems to have only record set: 
+- [Azure](https://docs.microsoft.com/en-us/rest/api/dns/recordsets).
+- [Google](https://cloud.google.com/dns/docs/reference/v1/resourceRecordSets)
+But their record set does not only support A records.
+
+HostRecord terminology is confusing because  it is synonym of [A record](https://www.ntchosting.com/encyclopedia/dns/host/#:~:text=The%20DNS%20A%20record,and%20its%20matching%20IP%20address).
+But in short an Infoblox host record is record set of A records with automatic PTR creation (and possibility to create alias) and is different from Infoblox A record (which is a real A record)
+Thus if we map DNS HostRecord concept to an Infoblox host record we should be aware of this distinction.
+
+"Infoblox host record" and "azure record set" refer to same FQDN, unlike google API.
+
+
+### API comparison
+
+- Infoblox has different body and path (`record:cname`, `record:host`, even if `:` it is a different path) per record type
+ (though we can do CNAME equivalent with alias).
+
+- Google record set is interesting unlike Infoblox API and Azure we always have the same:
+    - API path and kind
+    - same and body for all record types
+
+Cf. https://cloud.google.com/dns/docs/reference/v1/resourceRecordSets
+
+Distinction is made in `body.rrdata` attributes (like a k8s `spec` field) but path is unique unlike k8s.
+
+https://cloud.google.com/dns/docs/records/json-record
+
+- In Azure
+https://docs.microsoft.com/en-us/rest/api/dns/recordsets/createorupdate
+    - Path is different by record type 
+    - Same body for all record
+Not kind in body but distinction is made by a nested key in properties: "ARecords", "CNAMERecord".
+Nothing seems to prevent different record type in same set from the JSON, but when looking at API path we see it is not possible.
+
+Set in perspective with [k8s API is interesting](#Parallel-with-k8s-api).
+
+
+
 ## Zone management at record creation step
 
 - Bind manages zone with a configuration file containing the record link in the named:  [Example](../2-advanced-bind/2-bind-views/docker-bind-dns/named.conf).
@@ -13,6 +60,8 @@ For a our API we can wonder if we should set the zone in the path or not.
 - Bind manages view as optional wrapper around the zone:  [Example](../2-advanced-bind/2-bind-views/docker-bind-dns/named.conf).
 - Infoblox manages view as an optional field (default value is `default`) in the top level hierarchy of the body: [Example](../3-DNS-solution-providers/1-Infoblox/2-Infoblox-parallel-question-with-bind.md)
 - Azure DNS manages view by defining same zone in public API and private API: [Example](../3-DNS-solution-providers/2-Azure-DNS/4-Azure-views.md), Distinction is made in the path.
+
+It impacts the search, see [here](../3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#views) similar to check on type [here](../3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md).
 
 ## Retrieve 
 
@@ -240,9 +289,12 @@ So it is redundant with API path and explain why it is not in the spec section.
 More visible for CronJob: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#cronjob-v1beta1-batch
 `POST /apis/batch/v1beta1/namespaces/{namespace}/cronjobs`
 
-### Link with Azure
+### Link with Azure, Google
 
 See [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS/5-azure-api-details.md)
 Azure API has also a metadata field.
 Record name is not present in the body (same intent in k8s as not in the k8s spec part).
+But it is in the retrieve  (not in metadata though). See fqdn field here: https://docs.microsoft.com/en-us/rest/api/dns/recordsets/createorupdate#arecord
 
+In both Azure and Google we have same idea in k8s API of share structure and different spec (cf. `rrdata`, and "aRecords"... keys)
+Azure API is very close to k8s we have the type in the URI, and a field per type which look like the kind.

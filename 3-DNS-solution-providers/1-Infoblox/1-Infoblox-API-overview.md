@@ -158,3 +158,90 @@ It is similar in bind9: https://www.zytrax.com/books//dns/apa/ttl.html
 
 Source**: [Infoblox REST API Nios 8.5 ref](https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf) (p13/56)
 
+## Views
+
+
+````shell script
+curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+        -H "Content-Type: application/json" \
+        -X POST \
+        -d '{"name":"test-infoblox-api-view.test.loc","view":"default","ipv4addrs":[{"ipv4addr":"4.4.4.2"}]}' \
+        https://$API_ENDPOINT/wapi/v2.5/record:host
+
+curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+        -H "Content-Type: application/json" \
+        -X POST \
+        -d '{"name":"test-infoblox-api-view.test.loc", "view":"another_view", "ipv4addrs":[{"ipv4addr":"4.4.4.2"}]}' \
+        https://$API_ENDPOINT/wapi/v2.5/record:host
+
+curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/record:host?name=test-infoblox-api-view.test.loc"
+
+curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/record:host?name=test-infoblox-api-view.test.loc&view=default"
+
+````
+
+Output is 
+
+
+````shell script
+[vagrant@archlinux ~]$ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+>         -H "Content-Type: application/json" \
+>         -X GET \
+>         "https://$API_ENDPOINT/wapi/v2.5/record:host?name=test-infoblox-api-view.test.loc"
+[
+    {
+        "_ref": "record:host/<uid>:test-infoblox-api-view.test.loc/another_view",
+        "ipv4addrs": [
+            {
+                "_ref": "record:host_ipv4addr/<uid>:4.4.4.2/test-infoblox-api-view.test.loc/another_view",
+                "configure_for_dhcp": false,
+                "host": "test-infoblox-api-view.test.loc",
+                "ipv4addr": "4.4.4.2"
+            }
+        ],
+        "name": "test-infoblox-api-view.test.loc",
+        "view": "another_view"
+    },
+    {
+        "_ref": "record:host/<uid>:test-infoblox-api-view.test.loc/default",
+        "ipv4addrs": [
+            {
+                "_ref": "record:host_ipv4addr/<uid>:4.4.4.2/test-infoblox-api-view.test.loc/default",
+                "configure_for_dhcp": false,
+                "host": "test-infoblox-api-view.test.loc",
+                "ipv4addr": "4.4.4.2"
+            }
+        ],
+        "name": "test-infoblox-api-view.test.loc",
+        "view": "default"
+    }
+]
+[vagrant@archlinux ~]
+$ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
+>         -H "Content-Type: application/json" \
+>         -X GET \
+>         "https://$API_ENDPOINT/wapi/v2.5/record:host?name=test-infoblox-api-view.test.loc&view=default"
+[
+    {
+        "_ref": "record:host/<uid>:test-infoblox-api-view.test.loc/default",
+        "ipv4addrs": [
+            {
+                "_ref": "record:host_ipv4addr/<uid>:4.4.4.2/test-infoblox-api-view.test.loc/default",
+                "configure_for_dhcp": false,
+                "host": "test-infoblox-api-view.test.loc",
+                "ipv4addr": "4.4.4.2"
+            }
+        ],
+        "name": "test-infoblox-api-view.test.loc",
+        "view": "default"
+    }
+]
+````
+
+So we have to mention the view in the search.

@@ -40,12 +40,27 @@ It opens the possibility to create zone, even if not currently wanted.
 
 Given point raised [here](2-compare-apis.md#Parallel-with-nslookup-API), though we can not create CNAME and A record with same DNS name
 A user has to know what type is the record.
-This why we could propose an API extension later like:
+This why we could propose an API extension later.
 
-- `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}/{relative-DNS-Name}` # (`GET`, `POST`, `PUT`, `DELETE`)
-- `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}/` # (`GET` [LIST]) with {record-type}=> `CNAME`, `A` etc
-- `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/` # (`GET` [LIST]) # To retrieve indifferently `A`, `AAAA`, `CNAME` in same API operation 
+As a result we could have 
+
+
+- GET, PUT, DELETE,POST: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}/{relative-DNS-Name}`
+
+Retrieve, full modify or deletion of an existing DNS resource 
+Creation of a DNS resource
+
+- GET: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}`
+
+List of DNS resource of a given type. Could also perform a search at this level. 
+
+- GET: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}`
+
+List of DNS resource without specifying the type. Could also perform search, without mentioning the type at this endpoint level.
+
 
 <!--
 => Option 5: should we have a different or same API path for close but different object
 -->
+
+
