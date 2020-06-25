@@ -45,7 +45,7 @@ This why we could propose an API extension later.
 As a result we could have 
 
 
-- GET, PUT, DELETE,POST: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}/{relative-DNS-Name}`
+- GET, PUT, DELETE,POST: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/{record-type}/{relative-DNS-name}`
 
 Retrieve, full modify or deletion of an existing DNS resource 
 Creation of a DNS resource
@@ -56,8 +56,8 @@ List of DNS resource of a given type. Could also perform a search at this level.
 
 - GET: `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}`
 
-List of DNS resource without specifying the type. Could also perform search, without mentioning the type at this endpoint level.
-
+This would not block us to list DNS resource without specifying the type.  Could also perform search, without mentioning the type at this endpoint level.
+`/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}?relative-DNS-name=my-vm`
 
 <!--
 => Option 5: should we have a different or same API path for close but different object
