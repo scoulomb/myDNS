@@ -14,6 +14,9 @@ ADD OPTIONAL.FIX (after sent)
 - cd: resource versioning juge ok
 - v0: spec.ipv4 is not an array, as we will allow only a 1-1 mapping => multi pillars (allowed it as evolution and + views, ask more details)
 - prx comment in [proposal](4-Analysis/4-private-proposal.md) 
+
+- fix k8s doc in [source ip](2-advanced-bind/1-bind-in-docker-and-kubernetes/2-understand-source-ip-in-k8s.md#doc-typo)
+
 ### DONE
 
 - reorganize aconf page and api details DONE OK
@@ -32,7 +35,6 @@ STOP OK CONFIRM MAIL OK
 
 - Mail links Azure OK
 - Try API for real SKIP
-- fix k8s doc in source ip
 - nslookup default type A then AAAA OKOK
 - check TTL? at record level, global level OK DONE                                                                                                                                                                                                                                                                                                                                         
 -  https://github.com/scoulomb/myDNS/blob/master/4-Analysis/2-compare-apis.md#view-management OK
