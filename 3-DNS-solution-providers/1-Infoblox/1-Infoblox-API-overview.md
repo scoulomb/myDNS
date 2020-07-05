@@ -90,7 +90,7 @@ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
 ````
 
 
-## Infoblox View and Zone creation
+## Infoblox Network view, View and Zone creation
 
 
 From https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf (p55):
@@ -166,7 +166,7 @@ echo $direct_view_id
 ````
 
 This one will appear in UI in dns/zones unkike indirect one.
-We will see [later](#Then-create-a-host-record-within-a-zone) that this view is attached to the default network.
+We will see [later](#Then-create-a-host-record-within-a zone in the 2 different views) that this view is attached to the default network.
 
 #### And create an authoritative zone within a view
 
@@ -461,7 +461,7 @@ Output is
 We can see default network view is used.
 
         
-### API Impact and wrap-up
+### API Impact and wrapup
 
 From record perspective confirms a record belongs to view and a view is attached to a network view.
 
@@ -471,11 +471,14 @@ Thus we have a
 - one or several zones zone inside a view 
 => we can define a zone multiple time in different views (dns query result will be based on networks attached to the view via network view). Cf [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views).
 - a view is attached to a single network view, a network view can be attached to several views (cf default.$networkName and custom view attached to a network). Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and-assign-it-to-a-network-view?).
--  one or several networks can be attached to network view. #Cf [here](#Add-a-network-within-a-network-view).
+-  one or several networks can be attached to network view. Cf [here](#Add-a-network-within-a-network-view).
 
-Default view is attached to default network view.Cf [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
-default.$networkName view is attached to $networkName network view (at network view creation). Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
-Any custom view can be attached to a network view explicitly. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and assign-it-to-a-network-view?).
+Appliance behavior:
+
+1. Default view is attached to default network view.Cf [here](#We-could-create-a-custom-view-directly-without-network) and [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
+2. default.$networkName view is attached to $networkName network view (at network view creation). Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
+3. Any custom view created explicitly can be attached to a network view explicitly. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and assign-it-to-a-network-view?).
+4. When creating a view explicitly it is attached by default to the default network view. Cf [here](#We-could-create-a-custom-view-directly-without-network).
 
 It is compliant with this doc:
 https://docs.infoblox.com/display/NAG8/Chapter+18+DNS+Views
@@ -494,6 +497,70 @@ https://docs.infoblox.com/display/NAG8/Chapter+18+DNS+Views
 Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and assign-it-to-a-network-view?) for last bullet.
 
 All of this shown in experience.
+
+### Why do we need this network view?
+
+From: https://docs.infoblox.com/display/nios84/Configuring+Network+Views
+
+> A network view is a single routing domain with its own networks and shared networks. A network view can contain both IPv4 and IPv6 networks. All networks must belong to a network view.
+> You can manage the networks in one network view independently of the other network views.
+> Because network views are mutually exclusive, the networks in each view can have overlapping address spaces with multiple duplicate IP addresses without impacting network integrity.
+
+Cf [here](#Add-a-network-within-a-network-view).
+
+> A Grid member can serve one network view only, but a network view can be served by multiple Grid members.
+> The NIOS appliance provides one default network view. You can rename the default view and change its settings, but you cannot delete it. There must always be at least one network view in the appliance. If you do not need to manage overlapping IP address spaces in your organization, you can use the system-defined network view for all your networks. 
+
+> **You do not need to create additional network views. But if there are overlapping IP address spaces and you need more than one network view, you can create up to 1000 network views.**
+
+**This means we will usually use 1 and 4 behavior from [wrap-up](#API-Impact-and-wrapup)**
+
+> Each network view must be associated with at least one DNS view. The default network view is always associated with the default DNS view, which also cannot be deleted.
+
+Cf [here](#We-could-create-a-custom-view-directly-without-network) and [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
+
+> When you create a network view, the appliance automatically creates a corresponding DNS view with the same name as the network view, but with "default" prepended to the name. You can then rename that system-defined DNS view, but you cannot delete it.
+
+Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
+
+> A network view can be associated with multiple DNS views (as shown in Figure 25.12), but a DNS view cannot be associated with more than one network view. Each network view must be associated with a unique set of DNS views.
+
+### How to have a different answer based on client ip with the view mechanism as done with bind9
+
+It is not performed with network view!
+From: https://docs.infoblox.com/display/NAG8/Configuring+DNS+Views
+
+> You can add up to 1000 DNS views. When you add a DNS view, specify the following:
+> - The network view in which you are creating the DNS view.
+> - A Match Clients list specifying the hosts allowed access to the DNS view.
+> **If you do not define a list, the appliance allows all hosts to access the DNS view.** For more information, see [Defining Match Clients Lists](https://docs.infoblox.com/display/NAG8/Configuring+DNS+Views#ConfiguringDNSViews-bookmark1694)
+> - Whether recursive queries are allowed.
+When a name server is authoritative for the zones in a DNS view, you can disable recursion since your name server should be able to respond to the queries without having to query other servers.
+if you want to allow a Grid member to respond to recursive queries from specific IP addresses, you can create an empty DNS view, that is, one that has no zones in it, and enable recursion. 
+
+First bullet is the one we have seen before.
+
+To have equivalent we need 
+>  A Match Clients list specifying the hosts allowed access to the DNS view.
+ 
+And from [same page](https://docs.infoblox.com/display/NAG8/Configuring+DNS+Views#ConfiguringDNSViews-bookmark1694):
+
+> Defining a Match Destinations List
+> You can define a Match Destinations list that identifies destination addresses and TSIG keys that are allowed access to a DNS view. When the NIOS appliance receives a DNS request from a client, it tries to match the destination address or TSIG key in the incoming message with its Match Destination list to determine which DNS view, if any, the client can access. After the appliance determines that a host can access a DNS view, it checks the zone level settings to determine whether it can provide the service that the host is requesting for that zone.
+> You can define a Match Destination list when you edit an existing DNS view as follows:
+
+Then we have the question what happens if several ACL match the view.
+This was asked for bind9 in [Serverfault](https://serverfault.com/questions/784576/with-bind-9-how-can-i-match-clients-in-multiple-views).
+
+> It can't be done the way you want to achieve it. View matching stops at the first match, and outside views, only one default set of entries can exist. A client can match only one set of zones.
+
+And we find same behavior for Infoblox view [in same page doc](https://docs.infoblox.com/display/NAG8/Configuring+DNS+Views):
+> Managing the Order of DNS Views
+> When a member receives a query from a DNS client, it checks the Match Client lists in the order the DNS views are listed in the Order of DNS Views table of the DNS Views tab in the DNS Member editor. The NIOS appliance can order DNS views automatically, or you can order the DNS views manually.
+
+This way we uderstand why UI has an ACL at view level.
+It seems not possible to edit view ACL with API.
+Some view does not appear in UI (did not go further).
 
 ## Infoblox TTL
 
