@@ -90,7 +90,7 @@ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
 ````
 
 
-## Infoblox Network view, View and Zone creation
+## Infoblox Network view and View and Zone creation
 
 
 From https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf (p55):
@@ -558,9 +558,13 @@ And we find same behavior for Infoblox view [in same page doc](https://docs.info
 > Managing the Order of DNS Views
 > When a member receives a query from a DNS client, it checks the Match Client lists in the order the DNS views are listed in the Order of DNS Views table of the DNS Views tab in the DNS Member editor. The NIOS appliance can order DNS views automatically, or you can order the DNS views manually.
 
-This way we uderstand why UI has an ACL at view level.
+This way we understand why UI has an ACL at view level.
 It seems not possible to edit view ACL with API.
 Some view does not appear in UI (did not go further).
+
+It is similar to [F5 route domain](https://techdocs.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/tmos-routing-administration-11-6-0/8.html):
+> A route domain is a configuration object that isolates network traffic for a particular application on the network.
+> Because route domains segment network traffic, you can assign the same IP address or subnet to multiple nodes on a network, provided that each instance of the IP address resides in a separate routing domain.
 
 ## Infoblox TTL
 
