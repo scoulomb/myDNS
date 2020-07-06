@@ -574,6 +574,8 @@ It is similar to [F5 route domain](https://techdocs.f5.com/kb/en-us/products/big
 > A route domain is a configuration object that isolates network traffic for a particular application on the network.
 > Because route domains segment network traffic, you can assign the same IP address or subnet to multiple nodes on a network, provided that each instance of the IP address resides in a separate routing domain.
 
+See link with [Terraform plugin](https://github.com/scoulomb/myIaC/blob/master/terraform/README-terraform-infoblox.md#a-record).
+
 ## Infoblox TTL
 
 
