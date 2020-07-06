@@ -317,10 +317,22 @@ Output is
 ````
 
 Answer is yes.
+
+In Infoblox UI, not we have the network dropdown at top left where was can see the view attached to that network.
+
+![Network view in Infoblox UI](./medias/net_view.png)
+
+We need several view to make the view list appear.
+<!--
+Add this when did Terraform in my IaC OK
+And test delete from UI
+https://github.com/scoulomb/myIaC/blob/master/terraform/README-terraform-infoblox.md
+If apply all proc here will be same result OK
+
+-->
  
 #### Add a network within a network view
 
-This will enable to redirect to a zone or another based on client IP address.
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/network?_return_fields%2B=network&_return_as_object=1 " -d '{"network":
@@ -332,10 +344,6 @@ export network_id=$(curl -k -u $USERNAME:$PASSWORD \
         "https://$API_ENDPOINT/wapi/v2.5/network?network_view=scoulomb-nw" |  jq .[0]._ref |  tr -d '"')
 echo $network_id
 ````
-
-(consider equivalent of bind ACL, I guess changing ACL in view can impact network)
-
-
 
 #### Clean up
 
