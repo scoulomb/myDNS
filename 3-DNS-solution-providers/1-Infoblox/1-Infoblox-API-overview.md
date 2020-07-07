@@ -496,7 +496,6 @@ https://docs.infoblox.com/display/NAG8/Chapter+18+DNS+Views
 > You can create additional network and DNS views
 >
 > The default DNS view initially allows all IP addresses access, and has the same recursion setting as the Grid. You can change these properties and rename the default DNS view, but you cannot delete it. 
-> (I guess ACL which impacts the network)
 >
 > When you create a network view, the appliance automatically creates a corresponding DNS view with "default." prepended to the name of the network view. 
 > 
@@ -557,6 +556,7 @@ And from [same page](https://docs.infoblox.com/display/NAG8/Configuring+DNS+View
 > You can define a Match Destinations list that identifies destination addresses and TSIG keys that are allowed access to a DNS view. When the NIOS appliance receives a DNS request from a client, it tries to match the destination address or TSIG key in the incoming message with its Match Destination list to determine which DNS view, if any, the client can access. After the appliance determines that a host can access a DNS view, it checks the zone level settings to determine whether it can provide the service that the host is requesting for that zone.
 > You can define a Match Destination list when you edit an existing DNS view as follows:
 
+This list is known as an ACL.
 Then we have the question what happens if several ACL match the view.
 This was asked for bind9 in [Serverfault](https://serverfault.com/questions/784576/with-bind-9-how-can-i-match-clients-in-multiple-views).
 
@@ -701,3 +701,13 @@ See above for creation or replace by existing zone (tested both).
 However if we do a nslookup only record in default view is [visible](#Parenthesis-on-default-view-and-nslookup) in our setup (no restart impact as existing view leads to same results?).
 
 The fact it returns records in different view is used [here](#And-create-an-authoritative-zone-within-a-view).
+
+
+##### Network view direct access
+
+DNS View, network view and ACL.
+And why some Infoblox client use network view at record creation (dynamic IP allocation)
+
+- https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#api-impact-and-wrapup
+- https://github.com/scoulomb/myIaC/blob/master/terraform/README-terraform-infoblox-part2-resource.md#a-record-unused-fields
+- https://github.com/scoulomb/myDNS/blob/master/4-Analysis/1-comparison-table.md (where network view is not acl)
