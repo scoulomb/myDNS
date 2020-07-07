@@ -73,3 +73,6 @@ To https://github.com/scoulomb/misc-notes.git
 [12:39][master]✓ ~/dev/misc-notes
 ➤
 ````
+
+vpn ti push to git hub no need to disconnect vpn
+do ➤ sudo systemd-resolve --flush-caches
