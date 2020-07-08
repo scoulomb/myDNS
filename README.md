@@ -70,4 +70,5 @@ This from LXA - LPIC-2 Topic 207.
 
 - [Comparison table: bind9, Infoblox, Azure and Google DNS API](4-Analysis/1-comparison-table.md)
 - [Compare APIs](4-Analysis/2-compare-apis.md)
+- [Toward a k8s APIs - Explore k8s API](4-Analysis/3-a-towards-a-k8s-like-api-explore-k8s-api)
 - [Toward a k8s APIs](4-Analysis/3-towards-a-k8s-like-api.md)
