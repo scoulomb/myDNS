@@ -133,28 +133,3 @@ And metadata has name, zone and view.
 
 I excluded network view from path and body: https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#network-view-direct-access.
 But could include for dynamic IP allocation.
-
-
-#### Side Notes
- 
-##### Labels/annotations are in metadata and not at top level
-
-````shell script
-➤ k create deployment toto --image=nginx --dry-run=client -o yaml | head -n 10                                                                                                vagrant@archlinuxapiVersion: apps/v1
-kind: Deployment
-metadata:
-  creationTimestamp: null
-  labels:
-    app: toto
-  name: toto
-spec:
-  replicas: 1
-  selector:
-
-
-➤ k get deployment toto -o yaml | head -n 5                                                                                                                                   vagrant@archlinuxapiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "1"
-````

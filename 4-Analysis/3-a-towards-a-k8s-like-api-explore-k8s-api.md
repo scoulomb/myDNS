@@ -529,3 +529,40 @@ In context of GitOps it is interesting to have this metadata for controller to d
 Also for listing operation,
  
 `apiVersion` in body also redundant with path. 
+
+
+#### Side Notes
+ 
+##### Labels/annotations are in metadata and not at top level
+
+````shell script
+➤ k create deployment toto --image=nginx --dry-run=client -o yaml | head -n 10                                                                                                vagrant@archlinuxapiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: toto
+  name: toto
+spec:
+  replicas: 1
+  selector:
+
+
+➤ k get deployment toto -o yaml | head -n 5                                                                                                                                   vagrant@archlinuxapiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+````
+
+##### Apply vs create
+
+See [myk8s here](https://github.com/scoulomb/myk8s/blob/7c530b14194d95ca7176a9077cf27782679f5fa2/Deployment/advanced/article.md#load-new-software-version-v2-and-trigger-a-new-deployment) and [here](https://github.com/scoulomb/myk8s/blob/1e2db05beff94342a751767ffd28493568044423/Master-Kubectl/cheatsheet.md#generate-manifest):
+In kubectl we can easily guess (not checked):
+- `k apply` is declarative (if resource does not exist do `POST`, if exist perform diff and `PUT/PATCH` new conf) 
+- `k create/run` is imperative (`POST` and error if object is not created).
+If need update need `k replace` which will do the PUT.
+
+We can see go client is used in kubectl:
+- https://github.com/kubernetes/client-go/blob/cf84c08bad11b3ad990800f50914f8114d28a6c3/kubernetes/typed/core/v1/pod.go#L115
+- https://github.com/kubernetes/kubectl/blob/d838edc0263aa1efd6c533d880c0f111567e57f1/pkg/cmd/run/run.go#L39
