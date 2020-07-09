@@ -289,7 +289,9 @@ As in p56 of Infoblox PDF we can see custom direct view creation use default net
 And default.scoulomb-nw view uses scoulomb-nw network view.
 Same record is created in zone with same name but 2 different view.
 
-#### Can I decide to make custom direct view creation and assign it to a network view?
+#### Can I decide to make custom direct view creation
+
+and assign it to a network view?
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view-2", "network_view": "scoulomb-nw"}'
@@ -477,8 +479,8 @@ Thus we have a
 
 - one or several records inside a zone 
 - one or several zones zone inside a view 
-=> we can define a zone multiple time in different views (dns query result will be based on networks attached to the view via network view). Cf [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views).
-- a view is attached to a single network view, a network view can be attached to several views (cf default.$networkName and custom view attached to a network). Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and-assign-it-to-a-network-view?).
+=> we can define a zone multiple time in different views (dns query result will be based on ACLs attached to the view). Cf [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views).
+- a view is attached to a single network view, a network view can be attached to several views (cf default.$networkName and custom view attached to a network). Cf [here](#Can-I-decide-to-make-custom-direct-view-creation).
 -  one or several networks can be attached to network view. Cf [here](#Add-a-network-within-a-network-view).
 
 Appliance behavior:
@@ -568,7 +570,9 @@ And we find same behavior for Infoblox view [in same page doc](https://docs.info
 
 This way we understand why UI has an ACL at view level.
 It seems not possible to edit view ACL with API.
-Some view does not appear in UI (did not go further).
+View appears when correct network view is selected. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation).
+(view can be attached to a single network view, but not the contrary)
+
 
 It is similar to [F5 route domain](https://techdocs.f5.com/kb/en-us/products/big-ip_ltm/manuals/product/tmos-routing-administration-11-6-0/8.html):
 > A route domain is a configuration object that isolates network traffic for a particular application on the network.

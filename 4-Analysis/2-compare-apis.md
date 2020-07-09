@@ -289,6 +289,8 @@ So it is redundant with API path and explain why it is not in the spec section.
 More visible for CronJob: https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#cronjob-v1beta1-batch
 `POST /apis/batch/v1beta1/namespaces/{namespace}/cronjobs`
 
+We will deep dive POST rest API [here](./3-a-towards-a-k8s-like-api-explore-k8s-api.md).
+
 ### Link with Azure, Google
 
 See [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS/5-azure-api-details.md)

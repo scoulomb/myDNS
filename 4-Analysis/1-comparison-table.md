@@ -13,7 +13,7 @@ For the following operations:
 - View creation
 - Zone creation inside a view
 - Record creation inside a zone
-- Map a network inside a view
+- Grant ACLs
 
 Below are the comparison tables:                                                                                                                                                                            
                                                                                                                                                                                          
@@ -67,7 +67,7 @@ For Google do not create zone with same name in different project with private a
 ````
 </details>
 
-| Techno       |  Map a network to a view |
+| Techno       |  Grant ACLs to a view |
 | --------     | ----------- 
 | Bind9        |  `acl "view1" { 172.17.0.0/28; };` |
 | Infoblox 2.x |  [Procedure described here](../3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#how-to-have-a-different-answer-based-on-client-ip-with-the-view-mechanism-as-done-with-bind9)*|
