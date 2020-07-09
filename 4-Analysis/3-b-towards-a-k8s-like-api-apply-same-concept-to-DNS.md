@@ -82,6 +82,10 @@ If I had to design a DNS API design with k8s philosophy in mind.
 |Write | delete  Entry     | DELETE      | `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/host/{relative-DNS-name}`          | host body
 |Write | delete collection | DELETE      | `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/host`                              | host body
 
+<!--
+delete collection optional, not exposed
+-->
+
 | Type | Operation         | HTTP method |  Path                                                                                     | Body
 | ---- | ------------      | ----------- | --------------------------------------------------                                        | ------------------
 |Read  | Read Entry        | GET         | `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}/host/{relative-DNS-name}`          | Empty
@@ -113,7 +117,9 @@ If I had to design a DNS API design with k8s philosophy in mind.
 This enables to list DNS resource without specifying the type.  Could also perform search, without mentioning the type at this endpoint level.
 `/api/v1alpha1/dns/views/{view-name}/zones/{zone-name}?relative-DNS-name=my-vm`
 
-
+<!--
+Optional
+-->
 <!--
 => Option 5: should we have a different or same API path for close but different object
 all presentation of method was not accurate and error in POST which does not have relative DNS name
