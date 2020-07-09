@@ -515,7 +515,9 @@ In old API version we had watch equivalent under `/api/v1/wacth`, it is now a qu
 
 
 
-## Conclusion API server metadata ns and name are redundant with API path
+## Conclusion redundancy
+
+**API server metadata ns and name are redundant with API path**
 
 For
 - `Write/create POD`: `{namespace}` in PATH is redundant with `.body.metadata.namespace`.

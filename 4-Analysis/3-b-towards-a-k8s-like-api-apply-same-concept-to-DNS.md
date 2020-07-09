@@ -104,7 +104,7 @@ If I had to design a DNS API design with k8s philosophy in mind.
 
 
 
-### All records
+#### All records
 
 | Type | Operation         | HTTP method |  Path                                                                                     | Body
 | ---- | ------------      | ----------- | --------------------------------------------------                                        | ------------------
@@ -120,7 +120,9 @@ all presentation of method was not accurate and error in POST which does not hav
 https://github.com/scoulomb/myDNS/blob/47809cfdba46b083ea3dc43101be84dd9031aca2/4-Analysis/3-towards-a-k8s-like-api.md#note-possibility-to-gather-records
 -->
 
-Note on [Conclusion API server metadata ns and name are redundant with API path](./3-a-towards-a-k8s-like-api-explore-k8s-api.md#Conclusion-API-server-metadata-ns-and name-are-redundant-with-API-path)
+#### Comments
+
+Note that [Conclusion API server metadata ns and name are redundant with API path](./3-a-towards-a-k8s-like-api-explore-k8s-api.md#Conclusion-redundancy):
 would apply here.
 - `{view-name}` and `{record-type}` <=> `{namespace}`
 - `{relative-DNS-name}` <=> `{ (pod) name}`
@@ -133,7 +135,7 @@ I excluded network view from path and body: https://github.com/scoulomb/myDNS/bl
 But could include for dynamic IP allocation.
 
 
-#### Note
+#### Side Notes
  
 ##### Labels/annotations are in metadata and not at top level
 
