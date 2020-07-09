@@ -25,7 +25,7 @@ OK all integrated what remain is now the API, what is relevant in aconf in git O
 lien todo.md OK osef (2occ)-> pushed no come back
 16/06 + the impact on check by name: https://github.com/scoulomb/myDNS/blob/master/4-Analysis/2-compare-apis.md#view-management OK
 - LATER WROTE API: (api commit): update 2waysOK (git <-> aconf) -> confirms seems done OK
-from compare [API](4-Analysis/2-compare-apis.md#Notes-on-record-set-creation-API) and [proposal](4-Analysis/3-towards-a-k8s-like-api.md)
+from compare [API](4-Analysis/2-compare-apis.md#Notes-on-record-set-creation-API) and [proposal](4-Analysis/3-b-towards-a-k8s-like-api-apply-same-concept-to-DNS.md)
 + 4
 
 -  2020-06-25 review API avec oeil neuf ms semble ok? update 2ways again ok

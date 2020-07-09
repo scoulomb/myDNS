@@ -515,7 +515,7 @@ In old API version we had watch equivalent under `/api/v1/wacth`, it is now a qu
 
 
 
-## Conclusion: API server metadata ns and name are redundant with API path
+## Conclusion API server metadata ns and name are redundant with API path
 
 For
 - `Write/create POD`: `{namespace}` in PATH is redundant with `.body.metadata.namespace`.
@@ -526,4 +526,4 @@ As seen also [here](#what-happens-if-i-update-a-pod-where-name-in-path-is-differ
 In context of GitOps it is interesting to have this metadata for controller to determine which API path to target.
 Also for listing operation,
  
-ALL ABOVE OK in this file
+`apiVersion` in body also redundant with path. 
