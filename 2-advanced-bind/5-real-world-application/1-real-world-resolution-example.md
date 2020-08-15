@@ -213,6 +213,8 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
         - `nslookup -type=A ns-252-a.gandi.net  217.70.186.184` -> `173.246.100.253`
     
 
+`.site` and `it` are working the same, in particular for step 2.
+
 This example shows:
 
 - [**recursive DNS**](../1-bind-in-docker-and-kubernetes/3-deploy-named-in-a-pod.md). We started from `8.8.8.8`

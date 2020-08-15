@@ -350,3 +350,8 @@ And in this process, glue could be needed. Real config is more similar to this.
 Here we have shown a subpart of the recursion mechanism starting at tld.
 
 See [next section where will apply concept in real workd](../5-real-world-application/real-world-application.md).
+
+
+<!--
+I will not do generic image
+-->
