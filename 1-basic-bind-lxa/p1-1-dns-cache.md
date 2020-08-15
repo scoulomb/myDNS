@@ -63,7 +63,7 @@ Finally, run a DNS query against localhost:
 # nslookup google.com localhost
 ````
 
-Our cached result appears.
+Our cached result appears. (when hit twice from localhost)
 
 ### Personal Notes
 

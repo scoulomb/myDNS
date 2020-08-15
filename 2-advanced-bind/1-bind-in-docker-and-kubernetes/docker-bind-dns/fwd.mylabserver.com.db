@@ -10,6 +10,7 @@ $TTL    86400
 @        IN      NS       nameserver.mylabserver.com.
 ; A Record Definitions
 nameserver       IN      A       172.31.18.93
+; <=> nameserver.mylabserver.com.       IN      A       127.0.0.1
 mailprod         IN      A       172.31.18.30
 mailbackup       IN      A       172.31.18.72
 scoulomb         IN      A       42.42.42.42

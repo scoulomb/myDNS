@@ -7,7 +7,7 @@ Run script in [summary](p2-1-summary-configure-forward-zone.md)
 
 ### Basic records
 
-In prevous file we had A, AAAA, CNAME, MX records 
+In previous file we had A, AAAA, CNAME, MX records 
 
 ````shell script
 [root@server1 cloud_user]# nslookup scoulomb.mylabserver.com localhost
@@ -69,7 +69,7 @@ dns.mylabserver.com     canonical name = nameserver.mylabserver.com.
 ````
 When we specify CNAME type, address is not returned unlike A.
 
-### Special A record
+### Special A record with same name as the zone
 
 We have to define it
 
@@ -135,7 +135,12 @@ mylabserver.com nameserver = nameserver.mylabserver.com.
 
 ````
 
+From: https://web.mit.edu/rhel-doc/5/RHEL-5-manual/Deployment_Guide-en-US/s1-bind-zone.html
 
+We can see `NS` record points to [Special `A` record with same name as the zone](#Special-A-record-with-same-name-as-the-zone)
+It is used to know IP of the authoritative DNS.
+
+We will study this case in details in [Advanced bind section](../2-advanced-bind/4-bind-delegation/dns-delegation.md).
  
 ### Recursive DNS and authoritative DNS 
 
@@ -164,11 +169,7 @@ These answers contain important information for each domain, like IP addresses.
 **Source**: https://umbrella.cisco.com/blog/difference-authoritative-recursive-dns-nameservers
 
 
-
-
-#### Both 
-
-Same DNS server can be a recursive and authoritative.
+Note same DNS server can be a recursive and authoritative.
 For instance our local DNS is recursive as shown in [part 1](p1-1-dns-cache.md)
 But it is authoritative for the domain we defined in the forward zone file cf. [summary](p2-1-summary-configure-forward-zone.md).
 
@@ -214,12 +215,22 @@ Address: 2607:f8b0:4004:c0b::5e
 Same when we override the com zone in [questions](p2-1-xx-questions.md#Can-I-override-a-public-entry-in-my-local-DNS)
 It became authoritative for com zone
 
-For a DNS to not be authoritative, we dot define zone.
+For a DNS to not be authoritative, we do not define zone.
 There is also no recursion option to disable the recursion.
 
+
+#### Forwarding 
+
+We can forward a zone or all zone to another DNS (being authoritative or then do recursion).
+This is done [here](../2-advanced-bind/3-bind-forwarders/dns-forwarding.md).
+
+#### Delegation
+
+To delegate the resolution to another DNS (using NS record).
+
+This 4 type will be studied in [Advanced bind section](../2-advanced-bind/README.md).
+
 ### We can find which DNS is authoritative with SOA record  
-
-
 
 We can find it like this   (cf. https://stackoverflow.com/questions/38021/how-do-i-find-the-authoritative-name-server-for-a-domain-name)
 
@@ -280,25 +291,5 @@ Authoritative answers can be found from:
 
 It shows that similarly (as my localhost DNS), a public DNS can be a recursive DNS (as when using localhost) and has authority role  (SOA) for a given domain,
 For instance for google domain (same as mylabserver.com)
-
-### Make my localhost authoritative DNS entry visible through recursion for other DNS
-
-For this I would use the `soa` record we just show [above](#There-are-2-special-records-ns-and-soa).
-And this `soa` record would be register in top level domain (`mylabserver.com`).
-Where `mylaberver.com` would have another soa registered in `com` domain.
- 
-See that: https://en.wikipedia.org/wiki/Domain_name_registrar
-
-See all this applied to [Azure DNS](../3-DNS-solution-providers/2-Azure-DNS/1-Azure-authoritative-vs-recursive-dns.md).
-
-
-
-See later it is similar explanation given here OK:
-- https://jvns.ca/blog/how-updating-dns-works/
-(We can see NS record can be a A record and it is called record in link below)
-> in practice, 99.99% of the time it’ll already have the address of the .com nameservers cached, but we’re pretending we’re really starting from scratch
-
-It is the recursive. I assume authoritative caches nothings.
-- https://howdns.works/ep7/
 
 

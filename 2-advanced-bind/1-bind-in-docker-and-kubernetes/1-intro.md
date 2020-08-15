@@ -8,7 +8,8 @@ From [networking_2ndEd](https://docstore.mik.ua/orelly/networking_2ndEd/dns/ch10
 
 It means that DNS response will depends on source IP (the subnet it belongs) of the requestor.
 
-To simulate hosts with different subnets, my idea is to use Kubernetes.
+To simulate hosts with different subnets, my idea is to use Kubernetes to show the view concept.
+We will also leverage it to explain forwarding and delegation concept since it is more convenient than to deploy several VMs!
 
 
 See [next section](2-understand-source-ip-in-k8s.md).

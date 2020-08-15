@@ -58,7 +58,7 @@ Be careful with the tag to load last image.
 Then we can target it from pod itself
 
 ````
-kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup google.fr localhost' # retry if issue
+kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup google.fr localhost' # retry later if issue
 kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup scoulomb.mylabserver.com localhost' 
 ````
 
@@ -89,8 +89,11 @@ Address: 42.42.42.42
 ````
 
 Note it is another source IP!
+First query to google is a recursion.
+Second query is an authoritative answer.
 
 We will also expose this DNS pod with a service:
+
 
 ```shell script
 kubectl expose pod ubuntu-dns --port 53 --protocol=UDP
@@ -99,6 +102,48 @@ kubectl expose pod ubuntu-dns --port 53 --protocol=UDP
 Operation made above are similar to [2-understand-source-ip-in-k8s/deploy section](2-understand-source-ip-in-k8s.md#Deploy-special-nginx-showing-source-ip).
 And operations below are similar to the remaining of this same [document](2-understand-source-ip-in-k8s.md#Get-nginx-service-and-pod-ip).
 
+### Note on NS records
+
+If we remove this line in forwarding zone:
+
+````shell script
+@        IN      NS       nameserver.mylabserver.com.
+````
+
+`named-checkzone` will raise this error:
+
+````shell script
+zone fwd.mylabserver.com/IN: has no NS records
+````
+
+However removing this line
+
+````shell script
+nameserver       IN      A       172.31.18.93
+````
+
+Which is equivalent to `nameserver.mylabserver.com.` will not raise a validation error but a lookup will not work:
+
+````shell script
+# kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup scoulomb.mylabserver.com localhost'
+;; Got SERVFAIL reply from 127.0.0.1, trying next server
+Server:         localhost
+Address:        127.0.0.1#53
+
+** server can't find scoulomb.mylabserver.com: SERVFAIL
+
+````
+
+The `NS` record defines the DNS which authoritative for this domain.
+
+From: https://www.cloudflare.com/learning/dns/dns-records/dns-ns-record/
+
+> NS stands for 'name server' and this record indicates which DNS server is authoritative for that domain (which server contains the actual DNS records).
+
+We need to define corresponding glue record, but it is not used when querying `scoulomb.mylabserver.com` as this record is available is not under `nameserver` domain.
+
+We will study delegation in  [section 4](../4-bind-delegation/dns-delegation.md)
+In particular see delegation [zone file example](../4-bind-delegation/docker-bind-dns-it-cc-tld/fwd.it.db).
 
 ###  Get DNS service and pod ip
 

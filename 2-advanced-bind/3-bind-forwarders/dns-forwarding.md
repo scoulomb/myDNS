@@ -234,3 +234,5 @@ nslookup corporate-git-website localhost # -> working
 This not tested ok
 dig for trace osef
 -->
+
+See [next section where will do DNS delegation](../4-bind-delegation/dns-delegation.md).

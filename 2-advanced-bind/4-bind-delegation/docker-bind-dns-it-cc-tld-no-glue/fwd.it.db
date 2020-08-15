@@ -1,0 +1,16 @@
+$TTL    86400
+@       IN      SOA     ns1.tld.it. root.tld.it. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                      86400         ; Minimum TTL
+)
+; Name Server
+
+
+@                 IN      NS       ns1.tld.it.
+coulombel         IN      NS       myns.gandi.net.
+; A Record Definitions
+ns1.tld.it.       IN      A        127.0.0.1
+; I REMOVED THE GLUE FOR GANDI, myns.gandi.net. defined in fw.gandi.net.db
