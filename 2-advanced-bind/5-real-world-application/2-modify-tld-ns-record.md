@@ -282,9 +282,25 @@ With Gandi it is possbile to create a glue record here:
 
 It is documented in [Gandi doc](https://docs.gandi.net/en/domain_names/advanced_users/glue_records.html).
 
+## About web forwarding
+
+This was decribed here: https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#mutildomain
+
+To make those redirection work:
+
+![Gandi webredir](./medias/capture-gandi-webfw.PNG)
+
+We need to define those records in route 53
+
+![Gandi webredir](./medias/capture-route-53-webfw.PNG)
+
+The 2 worked (tested) with route 53 and as with Gandi they redirect to `sylvain.coulombel.site` (in forwarder we can use `scoulomb.github.io` or `sylvain.coulombel.site`).
+
 ### Links 
 
 - https://jvns.ca/blog/how-updating-dns-works/
 - https://howdns.works/ep7/
 
 <!-- all clear even link with docker bind. yes -->
+<!-- I switched to Gandi but no need to compare result as site is equivalent,
+and sufficient for our comparison -->
