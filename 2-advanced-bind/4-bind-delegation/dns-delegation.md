@@ -345,8 +345,7 @@ This it is working well.
 
 Here I defined to simplify `gandi.net` directly in named conf file.
 But in reality it will resolve `net` root server, which would resolve `gandi.net` and then `ns-something-x.gandi.net`.
-Still glue is not needed here.
-Real config is nore similar to this and it explain why there is no glue record in some lookup.
+And in this process, glue could be needed. Real config is more similar to this.
 
 Here we have shown a subpart of the recursion mechanism starting at tld.
 

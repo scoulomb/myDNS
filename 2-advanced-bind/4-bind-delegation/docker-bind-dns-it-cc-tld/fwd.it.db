@@ -32,3 +32,5 @@ test              IN      A       43.43.43.43
 ; If I remove from delegated DNS it is even not returned at all
 ; This completes comment in 3-deploy-named-in-a-pod.md (Note on NS records)
 override.coulombel IN A 89.89.89.89
+; Same if just do the below A, it will still return delegated
+; coulombel          IN      A       100.100.100.100

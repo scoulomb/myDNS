@@ -45,13 +45,15 @@ We will conclude with a wrap-up and show the link with public DNS in [real world
 
 ## Notes
 
--On [Digital Ocean](https://www.digitalocean.com/community/tutorials/a-comparison-of-dns-server-types-how-to-choose-the-right-dns-configuration), we can find same listing:
+On [Digital Ocean](https://www.digitalocean.com/community/tutorials/a-comparison-of-dns-server-types-how-to-choose-the-right-dns-configuration), we can find same listing:
     - Recursive
     - Authoritative
     - Forwarding
     - Delegation
     
 - DNS resolves the location and returns IP to the caller (GTM) and does not proxy to the service (LTM) unlike F5 LTM.
+
+- If you face some issue with docker, you can check [debug section](./debug/fix-docker-build-issue.md)
 
 <!--
 HLD OK
