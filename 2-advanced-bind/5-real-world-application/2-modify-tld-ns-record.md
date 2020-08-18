@@ -92,6 +92,11 @@ My record is resolved but it is actually like it is on my local machine.
 
 If we do it using any recursive server which start recursion from root, it will target Gandi Live DNS which does not have the record.
 
+
+<!--
+Amazon UI is confusing in top left colum we should have a point at end of name (FQDN)
+-->
+
 ### Step 2: change DNS glue record
 
 For this I will change the `NS` record in `it` country code top level domain (tld) DNS server for `coulombel.it`.
