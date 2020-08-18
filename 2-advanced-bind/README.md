@@ -3,6 +3,10 @@
 In this subproject we will use k8s, bind and docker to show different kind of DNS mode.
 Then we will leverage this knowledge for real world application.
 
+<!--
+We could have used VM instead but os dup etc
+-->
+
 This completes this [document in basic part](../1-basic-bind-lxa/p2-1-zz-note-on-recursive-and-authoritative-dns.md).
 
 ## Section 1: Simple Recursive and Authoritative DNS in Kubernetes

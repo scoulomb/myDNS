@@ -60,7 +60,7 @@ yop.coulombel.it	A	Simple	-	42.43.44.45
 
 Here is a screenshot of AWS console:
 
-![aws route 53](./medias/capture-aws-route-53-hosted-zone.PNG)
+![aws route 53](medias/modify-tld-ns-records/capture-aws-route-53-hosted-zone.PNG)
 
 Once it is created we can see that this record is present in this 4 DNS nameserver:
 
@@ -106,11 +106,11 @@ Modification takes some hours.
 
 As a result we have:
 
-![Gandi dns](./medias/capture-gandi-external-dns.png)
+![Gandi dns](medias/modify-tld-ns-records/capture-gandi-external-dns.png)
 
 And as result we can not define a record in Gandi (as it will be done in route 53):
 
-![Gandi dns](./medias/capture-gandi-external-dns-2.PNG)
+![Gandi dns](medias/modify-tld-ns-records/capture-gandi-external-dns-2.PNG)
 
 ### Step 3: show a lookup
 
@@ -283,7 +283,7 @@ With a glue record step 3b is straightforward (nameserver record is returned dir
 
 With Gandi it is possbile to create a glue record here:
 
-![aws route 53](./medias/capture-gandi-glue.PNG)
+![aws route 53](medias/modify-tld-ns-records/capture-gandi-glue.PNG)
 
 It is documented in [Gandi doc](https://docs.gandi.net/en/domain_names/advanced_users/glue_records.html).
 
@@ -298,7 +298,7 @@ To make those redirection work:
 
 Here in Gandi
 
-![Gandi webredir](./medias/capture-gandi-webfw.PNG)
+![Gandi webredir](medias/modify-tld-ns-records/capture-gandi-webfw.PNG)
 
 We need to define those records in route 53
 
@@ -321,7 +321,7 @@ Authoritative answers can be found from:
 
 Here in route 53
 
-![Gandi webredir](./medias/capture-route-53-webfw.PNG)
+![Gandi webredir](medias/modify-tld-ns-records/capture-route-53-webfw.PNG)
 
 The 2 worked (tested) with route 53 and as with Gandi they redirect to `sylvain.coulombel.site` (in forwarder we can use `scoulomb.github.io` or `sylvain.coulombel.site`).
 
