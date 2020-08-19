@@ -397,7 +397,7 @@ Address:        127.0.0.1#53
 mylabserver.com nameserver = nameserver.mylabserver.com.
 ````
 
-Example of google glue:
+## Example of google glue
 
 ````shell script
 root@archlinux docker-bind-dns]# dig +trace google.com @8.8.8.8 +additional
@@ -541,7 +541,9 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
            
 To be compared with [real own DNS resolution example](../5-real-own-dns-application/1-real-own-dns-resolution-example.md).
 
-So my definition of glue it that it provides IP of the nameserver has the same domain as the domain being queries to avoid deadlock,
+## My glue definition
+
+So my definition of glue it that it provides IP of the nameserver if it has the same domain as the domain being queries to avoid deadlock,
 This can alsp speed-up queries.
 
 See [next section where will apply concept in real workd](../5-real-own-dns-application/real-world-application.md).

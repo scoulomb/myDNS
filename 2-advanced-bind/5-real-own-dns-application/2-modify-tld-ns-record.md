@@ -26,7 +26,9 @@ This operation is offered by the registrar.
 
 Actually Gandi is providing 2 services.
 - Registration to the nameserver in the top level domain: this is done with a NS record pointing to the DNS nameserver
-- Possibility to create a glue record in top level domain
+We say it is a registar. From https://www.nic.it/en/registrars (it cc tld)
+> The Registrar is an Internet service provider that has a contract with the Registry to manage the  .it and edu.it domains.
+- Possibility to create a glue record in top level domain (registrar)
 - And they offer a Default DNS nameserver (Gandi live DNS)
 
 By default NS record in TLD points to Gandi Live DNS and no glue record (there is a glue record in `net` tld for gandi.net)
@@ -40,8 +42,17 @@ Like the one running in:
 - Cloud VM or Kubernetes (OpenShift online, EKS....).
 - Or using DNS managed service like Amazon route 53.
 
-This answers this question:
+Combined with:
+- [DNS delegation and glue for google example](../4-bind-delegation/dns-delegation.md#Example-of-google-glue) 
+- [real own DNS resolution example](1-real-own-dns-resolution-example.md) 
+- [Glue definition](../4-bind-delegation/dns-delegation.md#My-glue-definition) 
+<!-- Right. And those glue records are also provided by and via the registrar. => in the scope of question and describe in this file but can define glue everywhere -->
+
+This answers this question perfectly:
 https://serverfault.com/questions/1026417/how-top-level-domain-dns-server-is-aware-of-the-ip-address-of-the-domain-s-names/1026426#1026426
+
+<!-- for the mistake I had copied that anyway
+for comment addresses (hostnames) -> would say DNS name, or FQDN -->
 
 As an exercise, as owner of `coulomnel.it` domain I will change the `NS` record of `coulombel.it` to point to Amazon route 53 nameserver rsather than Gandi Live DNS.
 
