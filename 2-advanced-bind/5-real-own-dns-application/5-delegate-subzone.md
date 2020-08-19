@@ -152,6 +152,10 @@ This page is doing something similar:
 
 https://help.sendinblue.com/hc/fr/articles/208835929-Exemple-%C3%A9tape-1-pour-Gandi-D%C3%A9l%C3%A9gation-de-votre-sous-domaine
 
+If we compare wih [section 2](./2-modify-tld-ns-record.md), we were going to route 53 directly whereas here we go through Gandi and then route 53.
+So we are following this path [real-world-resolution-example](1-real-own-dns-resolution-example.md)), and at the end the path followed here [modify-tld-dns-record](./2-modify-tld-ns-record.md).
+<!-- no need to detail more ok -->
+
 <!-- 
 NS delegation concluded
 TOPIC Before ok 

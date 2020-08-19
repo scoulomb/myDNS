@@ -71,6 +71,58 @@ hvkkgjn7bg5es5p9eh3t7vav6ug8dkf4.site. 3600 IN RRSIG NSEC3 8 2 3600 202009151022
 
 test.coulombel.site.    300     IN      A       123.123.123.123
 ;; Received 64 bytes from 173.246.100.253#53(ns-252-a.gandi.net) in 40 ms
+
+# With additional
+
+[root@archlinux myDNS]# dig test.coulombel.site @8.8.8.8 +trace +additional
+
+; <<>> DiG 9.16.0 <<>> test.coulombel.site @8.8.8.8 +trace +additional
+;; global options: +cmd
+.                       54865   IN      NS      a.root-servers.net.
+.                       54865   IN      NS      b.root-servers.net.
+.                       54865   IN      NS      c.root-servers.net.
+.                       54865   IN      NS      d.root-servers.net.
+.                       54865   IN      NS      e.root-servers.net.
+.                       54865   IN      NS      f.root-servers.net.
+.                       54865   IN      NS      g.root-servers.net.
+.                       54865   IN      NS      h.root-servers.net.
+.                       54865   IN      NS      i.root-servers.net.
+.                       54865   IN      NS      j.root-servers.net.
+.                       54865   IN      NS      k.root-servers.net.
+.                       54865   IN      NS      l.root-servers.net.
+.                       54865   IN      NS      m.root-servers.net.
+.                       54865   IN      RRSIG   NS 8 0 518400 20200901050000 20200819040000 46594 . yUP/6mD0IiLV9KAEm5c6eH2wnx6p0hjgiacLi9NbtAtWdVP4lj395iOh XlxT+hRAqd52NY1cpxwHHwpGtdbYdjoIQ7Qu98QZYAiErgb+RGO5Wjkj t5BjnjnJ1dV+Rrr2QTZIuoIbqUUc9JpPoxvHcyjyXURIp2LpoYauSuzR 2HjmXSRA22SxMIfP6Tm1AWKdevuAA1v70QM2ckuJNHSbAgR1DTRiARje YZNtdARvY55Jtw9tngrWA3jN7PSSfgad0NK9hQjy/ZtOwjbd3uqsZfIs oPXj9A0+hWkhmtXeXDvgbSyHPM9cAgTyMRVfKFUN5ZA+kb6eYE48LOsD 5mdojw==
+;; Received 525 bytes from 8.8.8.8#53(8.8.8.8) in 40 ms
+
+site.                   172800  IN      NS      c.nic.site.
+site.                   172800  IN      NS      d.nic.site.
+site.                   172800  IN      NS      a.nic.site.
+site.                   172800  IN      NS      b.nic.site.
+site.                   86400   IN      DS      51676 8 2 883175F6F5C68EA81563B62D1B2B79B6A997D60DC6E20CC70AFD0CD6 B7E82F62
+site.                   86400   IN      DS      51676 8 1 90DDBEEEB973B0F8719ED763FB6EEDE97C73ABF5
+site.                   86400   IN      RRSIG   DS 8 1 86400 20200901200000 20200819190000 46594 . Okf4bRzjk2DGw56Hho1Dw4V1dO0oFZvsa1kH3lMcNiTNyMQ2CfbUcfKu +w+N4AXzcVh4YL0SOV3B/LDY+X0Hs0kfWMhB+Su7lNyYUbAyGRtNKxA0 a2x9pwg4w/6gr9Kw6P/RdMdhbE+AiKz08f/ns8ZskFd/n18xv/9zYaiY q1neKTwH0IVQLyotHg5IohTiwwnuqLh4wdvZubzNQDxBkIDiI+bkKfuC XquxiLXZ8+t0s4lLtCB9IoLrsipG1hCHtz9mIUiZF1woOkkbClL5LVaJ vRWjeju7hQfCU0YUBQuLKC+AKclWf3Jc1Vg87weUq1yf+K+IPghQT6Cp hG+3jg==
+c.nic.site.             172800  IN      A       185.38.99.5
+c.nic.site.             172800  IN      AAAA    2a02:e180:3::5
+d.nic.site.             172800  IN      A       108.59.161.5
+d.nic.site.             172800  IN      AAAA    2a02:e180:4::5
+a.nic.site.             172800  IN      A       194.169.218.61
+a.nic.site.             172800  IN      AAAA    2001:67c:13cc::1:61
+b.nic.site.             172800  IN      A       185.24.64.61
+b.nic.site.             172800  IN      AAAA    2a04:2b00:13cc::1:61
+;; Received 663 bytes from 198.41.0.4#53(a.root-servers.net) in 53 ms
+
+coulombel.SITE.         3600    IN      NS      ns-252-a.gandi.net.
+coulombel.SITE.         3600    IN      NS      ns-72-b.gandi.net.
+coulombel.SITE.         3600    IN      NS      ns-219-c.gandi.net.
+dc7qjc1dvd5sfqovl8iihrqd1scolsuv.SITE. 3600 IN NSEC3 1 1 1 - DCCIGQH6728HURPRR9VVJI9I046L4U33 NS SOA RRSIG DNSKEY NSEC3PARAM
+dc7qjc1dvd5sfqovl8iihrqd1scolsuv.SITE. 3600 IN RRSIG NSEC3 8 2 3600 20200830223902 20200731230926 5010 site. MjquaMm6MErKeFiA1RQnowkDIkG1rW0hgvMXoimg/Tctevc6BgRQAXxr HofNErhLRv+U+z2zpGsooTztETWDr1krcYPitWspqEByg3VEnvykhTa8 DycQfG9Ik7kNITUhh4cyaf/8jnUUJTsRLGyslCaoHdPzCAV/KrTlOn7R Np4=
+hvkkgjn7bg5es5p9eh3t7vav6ug8dkf4.SITE. 3600 IN NSEC3 1 1 1 - I0B80IKSFLVGUCDIPPNSJBO83HKFP50T NS DS RRSIG
+hvkkgjn7bg5es5p9eh3t7vav6ug8dkf4.SITE. 3600 IN RRSIG NSEC3 8 2 3600 20200915102248 20200816170725 13365 site. Ek9LbNjIwA9IyOynRxOcR8F/ZlltupZeG+t8Q6n6XUyiGJfFGqEMx+go K3cmZT9R5C38cwXrtlWuMx1CpH94mJ/LOD4LwNiYG3Xkw8j/mZkJpJBQ v0Gq5aSxU56EFD5VTYQIhTOSnaHb+MnLz44fhhLE5oTWq5zN5KD7O4WP N7U=
+;; Received 626 bytes from 185.38.99.5#53(c.nic.site) in 130 ms
+
+test.coulombel.site.    300     IN      A       123.123.123.123
+;; Received 64 bytes from 217.70.187.220#53(ns-219-c.gandi.net) in 43 ms
+
 ````
 
 The resolution process will be:
@@ -85,7 +137,8 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
     -  `b.nic.site.` ->  `185.24.64.61`    
         - The name server `b.nic.site.` is hosted at the same domain as the domain name itself (`test.coulombel.site`).
         - The query would loop again `nslookup -type=ns site 192.5.5.241`, but actually there is a glue record.
-        - It is visible in additional section `dig site @192.5.5.241 +norecurse` (but not returned by a nslookup at root).
+        - It is visible in additional section `dig site @192.5.5.241 +norecurse` (but not returned by a nslookup by a root server).
+          It is clearer in second dig query with `+additional`.
 
 3. The resolver then makes a request to the `.site` TLD.
     - `nslookup -type=ns coulombel.site 185.24.64.61` -> `ns-252-a.gandi.net.`.
@@ -93,7 +146,7 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
         - b. At that time `nslookup -type=A ns-252-a.gandi.net 8.8.8.8` -> `173.246.100.253` is resolved.
 
 4. The recursive resolver sends a query to the domain’s nameserver.
-    -`nslookup -type=ns test.coulombel.site 173.246.100.253` -> Nothing, no delegation
+    - `nslookup -type=ns test.coulombel.site 173.246.100.253` -> Nothing, no delegation
     - `nslookup -type=A test.coulombel.site 173.246.100.253` -> `123.123.123.123`
     - The IP address for `sylvain.coulombel.site` (or `coulombel.site`) is then returned to the resolver from the nameserver.
 
@@ -212,6 +265,7 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
         - `nslookup -type=ns  ns-252-a.gandi.net  217.70.186.184` -> Nothing, no delegation
         - `nslookup -type=A ns-252-a.gandi.net  217.70.186.184` -> `173.246.100.253`
     
+To be compared with [example given in DNS delegation](../4-bind-delegation/dns-delegation.md#do-we-always-need-a-glue-record)
 
 `.site` and `it` are working the same, in particular for step 2.
 
@@ -222,4 +276,3 @@ This example shows:
 - [**Forwarding DNS**](../3-bind-forwarders/dns-forwarding.md) : It could have been used, we could have a local DNS forwarding to `8.8.8.8`.
 - [**Record delegation**](../4-bind-delegation/dns-delegation.md): Delegation has been used to from root server to site to gandi. 
 Glue records are needed when the name server is hosted at the same domain as the domain name itself.
-

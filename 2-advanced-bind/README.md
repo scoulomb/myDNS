@@ -43,7 +43,7 @@ Section is divided into:
 
 ## Section 5: real world applications
 
-We will conclude with a wrap-up and show the link with public DNS in [real world application](./5-real-world-application/README.md).
+We will conclude with a wrap-up and show the link with public DNS in [real world application](5-real-own-dns-application/README.md).
 - Gandi
 - Amazon route 53
 

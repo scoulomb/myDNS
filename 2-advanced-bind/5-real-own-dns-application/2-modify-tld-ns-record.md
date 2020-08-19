@@ -31,7 +31,7 @@ Actually Gandi is providing 2 services.
 
 By default NS record in TLD points to Gandi Live DNS and no glue record (there is a glue record in `net` tld for gandi.net)
 
-This is what was demoed in [real world resolution example](./1-real-world-resolution-example.md).
+This is what was demoed in [real world resolution example](1-real-own-dns-resolution-example.md).
 
 Thus it is possible to change this default DNS nameserver to the one of our choice!
 Like the one running in:
@@ -162,7 +162,7 @@ coulombel.it    nameserver = ns-837.awsdns-40.net.
 Authoritative answers can be found from:
 ````
 Note:
-- This query resolution for `NS` type follows same path as in [real-world-resolution-example](./1-real-world-resolution-example.md))
+- This query resolution for `NS` type follows same path as in [real-world-resolution-example](1-real-own-dns-resolution-example.md))
 - Changing DNS to route53 only change end of resolution (from step 3) which is similar 
 - `nslookup -type=ns . 8.8.8.8` -> `f.root-servers.net.` / `nslookup -type=ns info 192.5.5.241` / `nslookup -type=ns org 192.5.5.241`: info and org are have their nameserver in both domain.
 
@@ -278,7 +278,7 @@ ns-1534.coulombel.it.
 ````
 
 In that case it would have been needed to create a glue record for those 4 DNS record in it cc tld DNS to point to our namserver.
-Otherwise we would turn into circle [real-world-resolution-example](./1-real-world-resolution-example.md)) at step 3b.
+Otherwise we would turn into circle [real-world-resolution-example](1-real-own-dns-resolution-example.md)) at step 3b.
 With a glue record step 3b is straightforward (nameserver record is returned directly by it cc tld and there is no details as in step 5)
 
 With Gandi it is possbile to create a glue record here:
