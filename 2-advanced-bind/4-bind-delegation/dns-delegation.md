@@ -509,15 +509,18 @@ google.com.             300     IN      A       216.58.215.46
 2. The recursive DNS queries one of the DNS root nameserver (`.`) 
 The root server then responds to the resolver with the hostname (in the `NS` record) of Top Level Domain (TLD) DNS server (com) 
     - a. `nslookup -type=ns com 202.12.27.33` -> ` a.gtld-servers.net.`
-    - b. `nslookup a.gtld-servers.net. @8.8.8.8` -> `192.5.6.30`
-    (unlike site it is not hosted in same domain, no glue here)
-
+    - b. `nslookup a.gtld-servers.net. @8.8.8.8` -> `192.5.6.30` 
+    (unlike `site`, cf [real own DNS resolution example](../5-real-own-dns-application/1-real-own-dns-resolution-example.md)).
+     It's not hosted in same domain, no glue here. We have an indirection (details in 6).
 3. The resolver then makes a request to the `.com` TLD.
     - `nslookup -type=ns google.com 192.5.6.30` -> `ns3.google.com.`
     - The TLD server then responds with the hostname (NS record) of the domain’s nameserver for `google.com` which is,  `ns3.google.com`.
 
-4, We come back to step 3 `nslookup -type=ns google.com 192.5.6.30`  to resolve `ns3.google.com` but we have the glue to break deadlock
-   `dig +norecurse ns3.google.com @192.5.6.30` -> `216.239.36.10` (`+trace` will start from root, do not use) (detail in 6)
+4, We come back to step 3 `nslookup -type=ns google.com 192.5.6.30`  to resolve `ns3.google.com` 
+      - The name server `ns3.google.com.` is hosted at the same domain as the domain being queried (`google.com`).
+    - The query would loop again `nslookup -type=ns google 192.5.5.241`, but actually there is a glue record. -> break the deadlock
+    - It is visible in additional section `dig ns3.google.com @192.5.6.30 +norecurse` (but not returned by a nslookup at root).
+    - It is clearer in second dig query with `+additional`: `ns3.google.com.         172800  IN      A       216.239.36.10`
 
 5. The recursive resolver sends a query to the domain’s nameserver.
     - `nslookup -type=ns google.com 216.239.36.10` -> Delegate to himself (glue is defined in 2nd nameserver, same as [AFNIC website](https://www.afnic.fr/ext/dns/html/cours245.html))
@@ -529,11 +532,12 @@ The root server then responds to the resolver with the hostname (in the `NS` rec
         - `nslookup -type=ns . 8.8.8.8` -> `m.root-servers.net.`.
         - `nslookup -type=A  m.root-servers.net. 8.8.8.8` -> `202.12.27.33`.
     2. `nslookup -type=ns net 202.12.27.33` ->  `a.gtld-servers.net.` (note it is not a delegation here for `g.gtld-servers`)
-    3. nameserver `a.gtld-servers.net` has the same domain as the domain being queries but we have a glue
+    3. nameserver `a.gtld-servers.net` has the same domain as the domain being queried but we have a glue
        `dig +norecurse a.gtld-servers.net @202.12.27.33` -> `192.5.6.30` (I can not get it with nslookup)
        
-      Here it is particular case where we the glue is on the root server itself (as root server and `a.gtld-servers` are in `.net`).
+      Here it is particular case where we the glue is on the root server itself (as root server and `a.gtld-servers.net` in same domain being queried `.net`) with an indirection (unlike site).
       This why in `dig` everything is returned in one shot.
+      Here unlike site, we would not deadlock at `com` (orginal tld in query) but at `net` level.OK
            
 To be compared with [real own DNS resolution example](../5-real-own-dns-application/1-real-own-dns-resolution-example.md).
 
