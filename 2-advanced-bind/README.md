@@ -61,4 +61,5 @@ On [Digital Ocean](https://www.digitalocean.com/community/tutorials/a-comparison
 
 <!--
 HLD OK
+In next part written before we did not check Gandi or AWS API -> OK
 -->
