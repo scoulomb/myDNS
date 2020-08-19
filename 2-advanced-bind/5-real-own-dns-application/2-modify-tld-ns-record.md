@@ -25,10 +25,11 @@ This is possible by modifying the NS record pointing to the nameserver of the do
 This operation is offered by the registrar.
 
 Actually Gandi is providing 2 services.
-- Registration to the nameserver in the top level domain: this is done with a NS record pointing to the DNS nameserver
-We say it is a registar. From https://www.nic.it/en/registrars (it cc tld)
-> The Registrar is an Internet service provider that has a contract with the Registry to manage the  .it and edu.it domains.
-- Possibility to create a glue record in top level domain (registrar)
+- Registrar
+    - Registration to the nameserver in the top level domain: this is done with a NS record pointing to the DNS nameserver
+    We say it is a registar. From https://www.nic.it/en/registrars (it cc tld)
+    > The Registrar is an Internet service provider that has a contract with the Registry to manage the  .it and edu.it domains.
+    - Possibility to create a glue record in top level domain
 - And they offer a Default DNS nameserver (Gandi live DNS)
 
 By default NS record in TLD points to Gandi Live DNS and no glue record (there is a glue record in `net` tld for gandi.net)
