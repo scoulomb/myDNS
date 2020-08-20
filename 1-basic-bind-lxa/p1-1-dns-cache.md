@@ -83,3 +83,17 @@ Conclusion of this is that rather than using a remote recursive DNS server we ca
 It is  what is in orange here so that we have in our own cache
 https://umbrella.cisco.com/blog/difference-authoritative-recursive-dns-nameservers
 https://serverfault.com/questions/118020/running-a-recursive-dns-server-on-localhost
+
+**Question**
+
+We can set recursive DNS IP (we could plug to autho but not useful) in `/etc/resolv.conf` or configure it in [windows](https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#use-google-dns).
+But it usaully configured dynamically!
+So how does the computer know which server DNS to use when connected to a network?
+
+From https://www.computernetworkingnotes.com/networking-tutorials/how-dhcp-server-works-explained-with-examples.html:
+1. DHCP is looking for an IP provider
+2. It receives an Offer (DHCPOffer)
+3, It request an IP from received offers 
+4, It received an DHCP acknowledgement (DHCPACK)
+
+In DHCPACK/DHCPOFFER, it contains IP and options including DNS (https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol#Offer)
