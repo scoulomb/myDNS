@@ -12,5 +12,5 @@ $TTL    86400
 @                 IN      NS       servers.gandi.net.
 ; A Record Definitions
 servers     IN      A        127.0.0.1
-myns        IN      A        10.104.113.215
+myns        IN      A        10.108.91.242
 

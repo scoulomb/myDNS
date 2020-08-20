@@ -42,7 +42,7 @@ And add layers iteratively, we can see the difference with ArchLinux conf.
 ### Build docker image
 
 ```
-cd misc-notes/understand-dns/2-advanced-bind/1-bind-in-docker-and-kubernetes/docker-bind-dns
+cd 2-advanced-bind/1-bind-in-docker-and-kubernetes/docker-bind-dns
 sudo docker build . -f dns-ubuntu.Dockerfile -t dns-ubuntu
 ```
 
@@ -60,6 +60,7 @@ Then we can target it from pod itself
 ````
 kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup google.fr localhost' # retry later if issue
 kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup scoulomb.mylabserver.com localhost' 
+kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup sub.scoulomb.mylabserver.com localhost' 
 ````
 
 <!--
@@ -86,11 +87,26 @@ Address:        127.0.0.1#53
 
 Name:   scoulomb.mylabserver.com
 Address: 42.42.42.42
+
+[root@archlinux docker-bind-dns]# kubectl exec -it ubuntu-dns --  /bin/sh -c 'nslookup sub.scoulomb.mylabserver.com localhost'
+Server:         localhost
+Address:        127.0.0.1#53
+
+Name:   sub.scoulomb.mylabserver.com
+Address: 50.68.8.8
 ````
+
 
 Note it is another source IP!
 First query to google is a recursion.
 Second query is an authoritative answer.
+
+Last example `sub.scoulomb.mylabserver.com` show we can define subdomain in zone, and it is also not to be confused with [delegation](../../2-advanced-bind/4-bind-delegation/docker-bind-dns-it-cc-tld/fwd.it.db.tpl).
+In that [example](../../2-advanced-bind/4-bind-delegation/dns-delegation.md#Start-it-cc-tld-DNS-server) we saw record define in higher level were overriden (`override.coulombel`).
+
+
+<!-- tested with infoblox and why zone is distinct, do not go further with delegation test but from fw file we can guess delegation will have the priority -->
+
 
 We will also expose this DNS pod with a service:
 

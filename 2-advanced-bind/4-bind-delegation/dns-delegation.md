@@ -25,7 +25,7 @@ Ensure you understand comment in tld [zone file](docker-bind-dns-it-cc-tld/fwd.i
 
 ```shell script
 sudo minikube start --vm-driver=none
-cd dev/myDNS/2-advanced-bind/4-bind-delegation/
+cd ~/dev/myDNS/2-advanced-bind/4-bind-delegation/
 sudo su 
 
 alias k='kubectl'
@@ -146,14 +146,33 @@ Address: 42.42.42.42
 
 command terminated with exit code 1
 [root@archlinux docker-bind-dns-it-cc-tld]# k exec -it dns-tld --  cat /etc/bind/fwd.it.db | grep 42
+myns1.gandi.it.   IN      A        10.108.91.242
 [root@archlinux docker-bind-dns-it-cc-tld]# k exec -it dns-tld --  cat /etc/bind/fwd.it.db | grep myns1
 ; If the domain name for the DNS which is resolving coulombel.it was not in .it domain like myns1.gandi.net. the glue would not be needed.
 coulombel         IN      NS       myns1.gandi.it.
-myns1.gandi.it.   IN      A        10.104.113.215
+myns1.gandi.it.   IN      A        10.108.91.242
 [root@archlinux docker-bind-dns-it-cc-tld]# k exec -it dns-tld -- dig coulombel.it @127.0.0.1
-[...]
+
+; <<>> DiG 9.16.1-Ubuntu <<>> coulombel.it @127.0.0.1
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 35299
+;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+; COOKIE: 6fbdaf8dc34ed6ea010000005f3e707f8d15282715bc4785 (good)
+;; QUESTION SECTION:
 ;coulombel.it.                  IN      A
-[...]
+
+;; ANSWER SECTION:
+coulombel.it.           86369   IN      A       42.42.42.42
+
+;; Query time: 0 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Thu Aug 20 12:45:51 UTC 2020
+;; MSG SIZE  rcvd: 85
+
 [root@archlinux docker-bind-dns-it-cc-tld]# k exec -it dns-tld -- nslookup override.coulombel.it 127.0.0.1
 Server:         127.0.0.1
 Address:        127.0.0.1#53
@@ -164,10 +183,20 @@ Address: 90.90.90.90
 ** server can't find override.coulombel.it: SERVFAIL
 
 command terminated with exit code 1
-
 ````
 
 We have an error SERVFAIL but resolution actually works.
+It returned delegated record and not tld one.
+
+note 
+
+```shell script
+override.coulombel IN A 89.89.89.89
+; Same if just do the below A, it will still return delegated
+; coulombel          IN      A       100.100.100.100
+```
+
+<!--already tested-->
 
 We can make a lookup from the node using the service
 
@@ -182,15 +211,15 @@ Output is
 
 ````shell script
 [root@archlinux docker-bind-dns-it-cc-tld]# nslookup coulombel.it $DNS_TLD_SVC_CLUSTER_IP
-Server:         10.100.25.111
-Address:        10.100.25.111#53
+Server:         10.97.165.85
+Address:        10.97.165.85#53
 
 Non-authoritative answer:
 *** Can't find coulombel.it: No answer
 
 [root@archlinux docker-bind-dns-it-cc-tld]# nslookup test.it $DNS_TLD_SVC_CLUSTER_IP
-Server:         10.100.25.111
-Address:        10.100.25.111#53
+Server:         10.97.165.85
+Address:        10.97.165.85#53
 
 Name:   test.it
 Address: 43.43.43.43
@@ -219,15 +248,15 @@ Output shows it working
 
 ````shell script
 [root@archlinux client]# k exec -it dns-client   -- nslookup test.it $DNS_TLD_SVC_CLUSTER_IP
-Server:         10.100.25.111
-Address:        10.100.25.111#53
+Server:         10.97.165.85
+Address:        10.97.165.85#53
 
 Name:   test.it
 Address: 43.43.43.43
 
 [root@archlinux client]# k exec -it dns-client   -- nslookup coulombel.it $DNS_TLD_SVC_CLUSTER_IP
-Server:         10.100.25.111
-Address:        10.100.25.111#53
+Server:         10.97.165.85
+Address:        10.97.165.85#53
 
 Non-authoritative answer:
 Name:   coulombel.it
@@ -235,7 +264,6 @@ Address: 42.42.42.42
 ** server can't find coulombel.it: SERVFAIL
 
 command terminated with exit code 1
-[root@archlinux client]#
 ````
 
 Note that we could also do:
@@ -265,29 +293,32 @@ Output is
 ````shell script
 [root@archlinux client]# k exec -it dns-client   -- dig coulombel.it @$DNS_TLD_SVC_CLUSTER_IP
 
-; <<>> DiG 9.16.1-Ubuntu <<>> coulombel.it @10.100.25.111
+; <<>> DiG 9.16.1-Ubuntu <<>> coulombel.it @10.97.165.85
 ;; global options: +cmd
 ;; Got answer:
-;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 6765
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 11189
 ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
 
 ;; OPT PSEUDOSECTION:
 ; EDNS: version: 0, flags:; udp: 4096
-; COOKIE: 6c8ac86f80552684010000005f3a69be8147fa4ee05e4acb (good)
+; COOKIE: 58da7627e3e2ca1c010000005f3e71259cc4cabefdb1e0c7 (good)
 ;; QUESTION SECTION:
 ;coulombel.it.                  IN      A
 
 ;; ANSWER SECTION:
-coulombel.it.           85919   IN      A       42.42.42.42
+coulombel.it.           86203   IN      A       42.42.42.42
 
-;; Query time: 3 msec
-;; SERVER: 10.100.25.111#53(10.100.25.111)
-;; WHEN: Mon Aug 17 11:27:58 UTC 2020
+;; Query time: 0 msec
+;; SERVER: 10.97.165.85#53(10.97.165.85)
+;; WHEN: Thu Aug 20 12:48:37 UTC 2020
 ;; MSG SIZE  rcvd: 85
 
+[root@archlinux client]#
 ````
 
 If adding `+norecurse` we will not have the A record.
+
+<!--additional brings nothing here-->
 
 Finally note that when not specifying DNS it will go for normal resolution (root server).
 Same when using trace.
@@ -336,8 +367,6 @@ Non-authoritative answer:
 Name:   coulombel.it
 Address: 42.42.42.42
 ** server can't find coulombel.it: SERVFAIL
-
-command terminated with exit code 1
 ````
 
 Changing `sed "s/xx.xx.xx.xx/$DNS_GANDI_SVC_CLUSTER_IP/g"  fwd.gandi.net.db.tpl > fwd.gandi.net.db` will lead to no resolution.

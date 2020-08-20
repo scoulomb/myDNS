@@ -1,0 +1,17 @@
+$TTL    86400
+@       IN      SOA     ns1.gandi.it. root.gandi.it. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                      86400         ; Minimum TTL
+)
+; Name Server
+
+; [1] NS records for it zone
+@                  IN      NS       ns1.gandi.it.
+; As AFNIC example
+ns1.gandi.it.      IN      A        127.0.0.1
+
+coulombel          IN      A        42.42.42.42
+override.coulombel IN      A        90.90.90.90

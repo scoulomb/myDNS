@@ -23,7 +23,7 @@ coulombel         IN      NS       myns1.gandi.it.
 ; [2] Glue record for it zone. Though not use needed for test.it to work. Cf. 3-deploy-named-in-a-pod.md (Note on NS records)
 ns1.tld.it.       IN      A        127.0.0.1
 ; xx to be replaced by ip address of delegated DNS
-myns1.gandi.it.   IN      A        10.104.113.215
+myns1.gandi.it.   IN      A        10.108.91.242
 
 ; [3] test.it domain which is resolved directly in tld
 test              IN      A       43.43.43.43
@@ -32,5 +32,3 @@ test              IN      A       43.43.43.43
 ; If I remove from delegated DNS it is even not returned at all
 ; This completes comment in 3-deploy-named-in-a-pod.md (Note on NS records)
 override.coulombel IN A 89.89.89.89
-; Same if just do the below A, it will still return delegated
-; coulombel          IN      A       100.100.100.100

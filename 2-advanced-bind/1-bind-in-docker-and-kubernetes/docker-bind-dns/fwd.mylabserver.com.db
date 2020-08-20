@@ -14,6 +14,7 @@ nameserver       IN      A       172.31.18.93
 mailprod         IN      A       172.31.18.30
 mailbackup       IN      A       172.31.18.72
 scoulomb         IN      A       42.42.42.42
+sub.scoulomb     IN      A       50.68.8.8
 ; AAAA records definitions
 scoulombipv6     IN      AAAA    2001:db8:85a3:8d3:1319:8a2e:370:7348
 ; Canonical Name/Alias
