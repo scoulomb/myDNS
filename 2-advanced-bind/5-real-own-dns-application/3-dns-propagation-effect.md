@@ -14,7 +14,7 @@ Then I do
 nslookup test-propagation.coulombel.it 8.8.8.8    
 ````
 
-Ouput is 
+Output is 
 
 ````shell script
 ➤ nslookup test-propagation.coulombel.it 8.8.8.8                            vagrant@archlinuxServer:         8.8.8.8
@@ -130,3 +130,17 @@ Yes => https://tools.ietf.org/html/rfc2308
 >   and the TTL of the SOA itself, and indicates how long a resolver may
 >   cache the negative answer.  The TTL SIG record associated with the
 >   SOA record should also be trimmed in line with the SOA's TTL.
+
+## Other caches
+
+This is recursive DNS caches
+We also have caches at:
+- OS level: it can be emptied for windows do `ipconfig /flushdns` and Ubuntu `sudo service network-manager restart`, if resolve is used we can do `sudo systemd-resolve --flush-caches`.
+- browser level: it can vbe emptied chrome://net-internal/#dns,  and firefox: about:networking#dns
+- And proxy 
+
+Also good explanation here to empty cache:
+https://support.opendns.com/hc/en-us/articles/227988627-How-to-clear-the-DNS-Cache-
+
+It this document  note caches were ignored:
+![recusive dns](../../resources/What-is-the-difference-between-Authoritative-and-Recursive-DNS-Nameservers.jpg)
