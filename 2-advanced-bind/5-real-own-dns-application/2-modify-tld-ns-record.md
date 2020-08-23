@@ -346,3 +346,17 @@ The 2 worked (tested) with route 53 and as with Gandi they redirect to `sylvain.
 <!-- all clear even link with docker bind. yes -->
 <!-- I switched to Gandi but no need to compare result as site is equivalent,
 and sufficient for our comparison -->
+
+
+### Note about reverse zone
+
+We had configured reverse zone in [part 1](../../1-basic-bind-lxa/p2-2-configure-reverse-zone.md).
+How to be authoritative for a reverse zone?:
+
+https://www.apnic.net/manage-ip/manage-resources/reverse-dns/
+
+It is not part of DNS offer but cloud:
+
+https://docs.gandi.net/en/domain_names/faq/record_types/ptr_record.html
+
+And it makes sense, mechanism is the same then as forward
