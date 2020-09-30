@@ -20,7 +20,7 @@ kubectl delete svc --all
 ## Deploy bind server from section 1
 
 ```shell script
-cd misc-notes/understand-dns/2-advanced-bind/1-bind-in-docker-and-kubernetes/docker-bind-dns # /home/vagrant
+cd dev/myDNS/2-advanced-bind/2-bind-views/docker-bind-dns
 sudo docker build . -f dns-ubuntu.Dockerfile -t dns-ubuntu-1
 kubectl run ubuntu-dns-1 --image=dns-ubuntu-1 --restart=Never --image-pull-policy=Never -- /bin/sh -c "systemctl start named;systemctl enable named;sleep 3600"
 ```
@@ -229,10 +229,25 @@ nslookup corporate-git-website localhost # -> does not work
 # Configure forward dns to company dns: https://docstore.mik.ua/orelly/networking_2ndEd/dns/ch10_05.htm
 nslookup corporate-git-website localhost # -> working
 ````
-
 <!--
 This not tested ok
 dig for trace osef
 -->
+
+## Questions
+
+Can we forward only a zone and use forwarder a a cache. 
+Yes for both.
+
+From: https://docstore.mik.ua/orelly/networking_2ndEd/dns/ch10_05.htm
+
+- Forward zone
+
+> BIND 8.2 introduced a new feature, forward zones, that allows you to configure your name server to use forwarders only when looking up certain domain names. (BIND 9's support for forward zones was added in 9.1.0.)
+
+- cache
+> The idea is that the forwarders handle all the off-site queries generated at the site, building up a rich cache of information. For any given query in a remote zone, there is a high probability that the forwarder can answer the query from its cache, docstore.mik.ua/orelly/networking_2ndEd/dns/ch10_05.htm
+
+
 
 See [next section where will do DNS delegation](../4-bind-delegation/dns-delegation.md).

@@ -67,7 +67,7 @@ See source code [here](docker-bind-dns)
 ### Build docker image
 
 ```
-cd misc-notes/understand-dns/2-advanced-bind/2-bind-views/docker-bind-dns
+cd dev/myDNS/2-advanced-bind/2-bind-views/docker-bind-dns
 sudo docker build . -f dns-ubuntu.Dockerfile -t dns-ubuntu-view
 ```
 

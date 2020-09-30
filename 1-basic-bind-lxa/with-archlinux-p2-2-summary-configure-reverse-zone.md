@@ -92,3 +92,31 @@ nslookup $HOST_IP 127.0.0.1
 <!--
 Unlike the lab setup targeted DNS is 127.0.0.1 and not localhost
 -->
+
+Note the querying 
+
+````shell script
+[root@archlinux dev]# nslookup -type=PTR 15.2.0.10.in-addr.arpa 127.0.0.1
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+15.2.0.10.in-addr.arpa  name = nameserver.mylabserver.com.
+
+[root@archlinux dev]# nslookup 15.2.0.10.in-addr.arpa 127.0.0.1
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+*** Can't find 15.2.0.10.in-addr.arpa: No answer
+
+[root@archlinux dev]# nslookup -type=A 10.0.2.15 127.0.0.1
+Server:         127.0.0.1
+Address:        127.0.0.1#53
+
+15.2.0.10.in-addr.arpa  name = nameserver.mylabserver.com.
+
+[root@archlinux dev]# nslookup 10.0.2.15 127.0.0.1
+15.2.0.10.in-addr.arpa  name = nameserver.mylabserver.com.
+````
+which is resolving as A.
+
+Note IPv6: https://www.ionos.fr/digitalguide/hebergement/aspects-techniques/enregistrement-ptr/

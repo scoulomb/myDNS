@@ -344,7 +344,8 @@ From [Gandi](https://docs.gandi.net/en/domain_names/advanced_users/glue_records.
 > Glue records include the IP address of the nameserver along with the name of the nameserver,
 > preventing this problem from happening.
 
-Is the nameserver is not in the same zone we do not need the glue. for instance if nameserver is not in `it` but `net` zone.
+If the nameserver is not in the same zone we do not need the glue. for instance if nameserver is not in `it` but `net` zone (unlike above).
+<!-- OK -->
 
 ````shell script
 cd ../docker-bind-dns-it-cc-tld-no-glue
