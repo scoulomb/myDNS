@@ -176,3 +176,4 @@ This enables me to open a terminal in my laptop from my phone to my laptop not c
 
 
 
++ dyndns
