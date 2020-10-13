@@ -170,6 +170,25 @@ jupyter notebook password
 
 This enables me to open a terminal in my laptop from my phone to my laptop not connected in same !
 
+#### Note Jupyter on Archlinux VM on windows
+
+``````shell script
+sudo pacman -Syu # in particular if 404 error
+sudo pacman -S jupyter-notebook
+jupyter notebook password # or use token
+jupyter notebook --ip 0.0.0.0 --port=8080
+``````
+
+
+Check you forwarded port 8080 to 8980 in VM. Note that ip must be all interface, `127.0.0.1` will work only inside the VM.
+Check https://stackoverflow.com/questions/38545198/access-jupyter-notebook-running-on-vm.
+We can also edit the configuration.
+
+Open your navigator to ~~http://archlinux:8080/~~ http://127.0.0.1:8980.
+
+We can also use private ip in 192 (given by box or ipconfig/ethernet adapter).
+
+<!-- NAT seems not working after -->
 
 ## Apply this to the DNS !
 
