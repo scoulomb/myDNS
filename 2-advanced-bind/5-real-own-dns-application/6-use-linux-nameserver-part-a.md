@@ -1,23 +1,10 @@
-# Side notes
+# Use linux nameserver via NAT - part A
 
-We could have used own DNS nameserver deployed on Ubuntu rather than route53 in section:
-
-- [modify tld nsrecord](./2-modify-tld-ns-record.md)
-- [delegate subzone](./5-delegate-subzone.md)
-
-
-For this we need to configure  a reverse NAT.
-
-We will start by showing how to configure a reverse NAT for a simple server (python server or Jupyter).
-In a second step we will apply same principle to the DNS.
-
-In this example I am using SFR box.
-
-## Configure a reverse NAT example
+## Configure a reverse NAT simple example
 
 We will take as an example how to access on a basic HTTP server outside local network
 
-### Deploy the server 
+### Deploy the server locally
 
 https://docs.python.org/3/library/http.server.html
 
@@ -132,18 +119,12 @@ This can be convenient for this kind of tuto
 
 <!-- use it for aws dojo -->
 
+#### Launch Jupyter
+
 ````
 pip3 install --upgrade pip
 pip3 install jupyter
 jupyter notebook 
-````
-
-And configuring nat as before `80 -> 8888` in SFR box.
-
-Add add firewall rule
-
-````
-sudo ufw allow 8888
 ````
 
 But if doing only this notebook is not accessible via private IP and thus public IP.
@@ -151,15 +132,11 @@ We will have to give it as parameter the private IP
 
 ````
 jupyter notebook --ip 192.168.1.92 --port 8888
+# or actually as discovered in Windows version
+jupyter notebook --ip 0.0.0.0 --port 8888
 ````
 
-
 **source**: https://stackoverflow.com/questions/39155953/exposing-python-jupyter-on-lan
-
-We can nw access via private IP in local network (192.168.1.92:8888).
-We can also use a device not in local network (phone using 3g) and use public IP like
-
-`109.29.148.109:80`
 
 
 To make it convenient I recommend to setup a password rather than using a token
@@ -167,6 +144,28 @@ To make it convenient I recommend to setup a password rather than using a token
 ````
 jupyter notebook password
 ````
+
+#### Configure NAT 
+
+We configure the NAT
+
+```shell script
+id	hp-jupyter	TCP	Port	80	192.168.1.32	8888
+```
+
+#### Add add firewall rule
+
+````
+sudo ufw allow 8888
+````
+
+#### Test it
+
+We can nw access via private IP in local network (`192.168.1.32:8888`).
+We can also use a device not in local network (phone using 3g) and use public IP like
+
+`109.29.148.109:80`
+
 
 This enables me to open a terminal in my laptop from my phone to my laptop not connected in same !
 
@@ -188,11 +187,78 @@ Open your navigator to ~~http://archlinux:8080/~~ http://127.0.0.1:8980.
 
 We can also use private ip in 192 (given by box or ipconfig/ethernet adapter).
 
-<!-- NAT seems not working after -->
-
-## Apply this to the DNS !
+External access seems blocked (windows firewall?, I did not push windows + vm investigations)
 
 
+## Configure a Dynamic DNS
+
+In previous [example](#Test-it), we were using box public IP: `109.29.148.109:80`.
+This IP is dynamic and can change.
+
+Thus we can not provide it to a customer.
+
+To solve this issue we will configure a DynDNS.
+
+Among provider, I decided to use noip: https://my.noip.com/#!/dynamic-dns
+It will provide a FQDN (here `scoulomb.ddns.net`) and update the IP dynamically
+with the one of the box (when box ip/router change, it trigger a DNS entry update).
+
+<!-- account is s****@gmail.com -->
+
+For this dynamic update configure your router/box to link it to no-ip service (look for dynamic dns in the router configuration).
+In my case I use a [NB6 SFR box (doc in French)](https://assistance.sfr.fr/internet-tel-fixe/box-nb6/activer-fonction-dyndns-box-nb6.html).
+
+We go there : http://192.168.1.1/network/ddns ( Home > Réseau v4 > DynDNS)
+
+In my case config is
+
+```shell script
+Service: no-ip.com
+Nom utilisateur: s****@gmail.com
+mdp: #
+nom de domaine: scoulomb.ddns.net
+```
+
+For other router it is also possible: Cf. Netgear [doc](https://kb.netgear.com/23860/How-do-I-set-up-a-NETGEAR-Dynamic-DNS-account-on-my-NETGEAR-Nighthawk-router)
+
+**Note**: noip proposes to downlaod a soft on your PC, but it would be useful for the private IP.
+For box public IP update, it is managed by the router.
+
+Now if we do:
+
+````
+sylvain@sylvain-hp:~/myDNS$ nslookup scoulomb.ddns.net 8.8.8.8
+Server:		8.8.8.8
+Address:	8.8.8.8#53
+
+Non-authoritative answer:
+Name:	scoulomb.ddns.net
+Address: 109.29.148.109
+
+``````
+
+We find the box IP.
+
+In box: http://192.168.1.1/state/wan ( Home > Etat > Internet)
+
+It matches: `Adresse IP	109.29.148.109`.
 
 
-+ dyndns
+And I can access Jupyter by doing:
+
+[http://scoulomb.ddns.net](http://scoulomb.ddns.net)
+
+To hide the dynamic DNS, 
+Then we could define a CNAME (in your nameserver) for instance
+
+````
+home 300 IN CNAME scoulomb.ddns.net.
+````
+
+So that we can access Jupyter (tested with phone not in private network, wifi off):
+[http://home.coulombel.site](http://home.coulombel.site).
+
+
+<!-- fixed issue 1, https osef, gist + comment ok -->
+
+Applt this to DNS in [part B](6-use-linux-nameserver-part-b.md).
