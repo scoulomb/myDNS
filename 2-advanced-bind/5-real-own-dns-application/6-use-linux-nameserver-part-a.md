@@ -145,6 +145,16 @@ To make it convenient I recommend to setup a password rather than using a token
 jupyter notebook password
 ````
 
+To use bash kernel you have to setup it: https://github.com/takluyver/bash_kernel
+
+````shell script
+sudo systemd-resolve --flush-caches  
+sudo pip install bash_kernel   
+python -m bash_kernel.install
+````
+
+For asciidoc generation, pandoc is needed unlike markdown.
+
 #### Configure NAT 
 
 We configure the NAT
