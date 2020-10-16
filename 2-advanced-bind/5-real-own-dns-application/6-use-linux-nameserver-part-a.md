@@ -154,6 +154,12 @@ python -m bash_kernel.install
 ````
 
 For asciidoc generation, pandoc is needed unlike markdown.
+We can generate via UI or do 
+
+````shell script
+jupyter nbconvert demo.ipynb --to markdown --output=demo-md
+# if use jq do jq -m to remove color at export time
+````
 
 #### Configure NAT 
 
