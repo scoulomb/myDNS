@@ -169,16 +169,11 @@ We configure the NAT
 id	hp-jupyter	TCP	Port	80	192.168.1.32	8888
 ```
 
-#### Add add firewall rule
-
-````
-sudo ufw allow 8888
-````
-
 #### Test it
 
-We can nw access via private IP in local network (`192.168.1.32:8888`).
-We can also use a device not in local network (phone using 3g) and use public IP like
+We can nw access via private IP in local network (`192.168.1.32:8888`) using other laptop or phone in same LAN.
+<!-- work with phone and windows machine -->
+We can also use a device in local network or not (phone using 3g) and use public IP like
 
 `109.29.148.109:80`
 
@@ -277,4 +272,29 @@ So that we can access Jupyter (tested with phone not in private network, wifi of
 
 <!-- fixed issue 1, https osef, gist + comment ok -->
 
-Applt this to DNS in [part B](6-use-linux-nameserver-part-b.md).
+## We can add a firewall
+
+Reference:
+
+- https://www.digitalocean.com/community/questions/how-to-reset-the-firewall-on-ubuntu
+- https://help.ubuntu.com/community/UFW#Allow_Access
+````
+sudo ufw --force reset
+sudo ufw enable
+sudo ufw default deny incoming
+````
+
+After machine and jupyter restart (for firewall to work) access is not working anymore via public IP (`scoulomb.ddns.net`).
+Access via `192.168.1.32:8888` is working from machine when jupyter started but not from another machine.
+
+
+We need to add a rule
+
+```
+sudo ufw allow from any to any port 8888
+```
+
+By doing this I could access via `192.168.1.32:8888` from another machine.
+`http://scoulomb.ddns.net/tree?` is also back.
+
+Apply this to DNS in [part B](6-use-linux-nameserver-part-b.md).
