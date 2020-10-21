@@ -9,7 +9,7 @@ Our own DNS will be deployed as a container and orchestrated by [Kubernetes in V
 
 As a results we will have seen 3 ways to deploy a DNS:
 - DNS on Docker in bare metal/VM (which can be in the cloud) (example here)
-- Infoblox on premise
+- Infoblox on premise or deployed in the cloud
 - Managed DNS (AWS, GCP, Azure, Gandi) (what we did in 2. and 5. with AWS)
 - DNS on bare metal/VM (which can be in the cloud)
 
