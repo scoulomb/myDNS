@@ -1,8 +1,11 @@
 # IP checks
 
 > Warning: This file is generated from the jupyter notebook. Do not edit by hand. Generate it instead.
-> `jupyter nbconvert 3-suite-dns-ip-search-api.ipynb --to markdown --output=3-suite-dns-ip-search-api.md`
 
+
+```bash
+jupyter nbconvert 3-suite-dns-ip-search-api.ipynb --to markdown --output=3-suite-dns-ip-search-api.md
+```
 
 ## All records reminder
 
@@ -16,10 +19,13 @@ sudo systemd-resolve --flush-caches
 
 export API_ENDPOINT=""
 
-
 echo "Create view"
-export VIEW_REF=$(curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view"}') | tr -d '"'
-echo $VIEW_REF
+
+export VIEW_REF="None"
+export CREATE_OUTPUT=$(curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view"}')
+export VIEW_REF=$(echo $CREATE_OUTPUT | tr -d '"')
+echo "Create output is $CREATE_OUTPUT"
+echo "Ref is $VIEW_REF" # be careful in case of conflict it fails and VIEW_REF var keeps old value (this is why we set it to None to not keep an old id, cf. clean-up section)
 
 echo "Create zone"
 curl -k -u admin:infoblox -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/zone_auth?_return_fields%2B=fqdn,network_view&_return_as_object=1" -d \
@@ -51,22 +57,23 @@ curl -k -u admin:infoblox \
     Create view
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
-    100    70    0    45  100    25     39     22  0:00:01  0:00:01 --:--:--    61
-    view/ZG5zLnZpZXckLjEwOA:scoulomb-view/false
+    100    70    0    45  100    25     41     23  0:00:01  0:00:01 --:--:--    64
+    Create output is "view/ZG5zLnZpZXckLjExNg:scoulomb-view/false"
+    Ref is view/ZG5zLnZpZXckLjExNg:scoulomb-view/false
     Create zone
     {
         "result": {
-            "_ref": "zone_auth/ZG5zLnpvbmUkLjEwOS5sb2MudGVzdA:test.loc/scoulomb-view", 
+            "_ref": "zone_auth/ZG5zLnpvbmUkLjExNi5sb2MudGVzdA:test.loc/scoulomb-view", 
             "fqdn": "test.loc", 
             "network_view": "default", 
             "view": "scoulomb-view"
         }
     }Create host
-    "record:host/ZG5zLmhvc3QkLjEwOS5sb2MudGVzdC50b3Rv:toto.test.loc/scoulomb-view"Create A
-    "record:a/ZG5zLmJpbmRfYSQuMTA5LmxvYy50ZXN0LHRvdG8sNS41LjUuNQ:toto.test.loc/scoulomb-view"Retrieve by name
+    "record:host/ZG5zLmhvc3QkLjExNi5sb2MudGVzdC50b3Rv:toto.test.loc/scoulomb-view"Create A
+    "record:a/ZG5zLmJpbmRfYSQuMTE2LmxvYy50ZXN0LHRvdG8sNS41LjUuNQ:toto.test.loc/scoulomb-view"Retrieve by name
     [
         {
-            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5ob3N0JC4xMDkubG9jLnRlc3QudG90bw:toto", 
+            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5ob3N0JC4xMTYubG9jLnRlc3QudG90bw:toto", 
             "comment": "", 
             "name": "toto", 
             "type": "record:host_ipv4addr", 
@@ -74,7 +81,7 @@ curl -k -u admin:infoblox \
             "zone": "test.loc"
         }, 
         {
-            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5ob3N0JC4xMDkubG9jLnRlc3QudG90bw:toto", 
+            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5ob3N0JC4xMTYubG9jLnRlc3QudG90bw:toto", 
             "comment": "", 
             "name": "toto", 
             "type": "record:host_ipv4addr", 
@@ -82,7 +89,7 @@ curl -k -u admin:infoblox \
             "zone": "test.loc"
         }, 
         {
-            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5iaW5kX2EkLjEwOS5sb2MudGVzdCx0b3RvLDUuNS41LjU:toto", 
+            "_ref": "allrecords/ZG5zLnpvbmVfc2VhcmNoX2luZGV4JGRucy5iaW5kX2EkLjExNi5sb2MudGVzdCx0b3RvLDUuNS41LjU:toto", 
             "comment": "", 
             "name": "toto", 
             "type": "record:a", 
@@ -142,16 +149,16 @@ curl -k -u admin:infoblox "https://$API_ENDPOINT/wapi/v2.6/search?address=5.5.5.
                 "view": "Internet"
             }, 
             {
-                "_ref": "record:host/ZG5zLmhvc3QkLjEwMy5sb2MudGVzdC50b3Rv:toto.test.loc/scoulomb-view", 
+                "_ref": "record:host/ZG5zLmhvc3QkLjExNi5sb2MudGVzdC50b3Rv:toto.test.loc/scoulomb-view", 
                 "ipv4addrs": [
                     {
-                        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTAzLmxvYy50ZXN0LnRvdG8uNC40LjQuMS4:4.4.4.1/toto.test.loc/scoulomb-view", 
+                        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTE2LmxvYy50ZXN0LnRvdG8uNC40LjQuMS4:4.4.4.1/toto.test.loc/scoulomb-view", 
                         "configure_for_dhcp": false, 
                         "host": "toto.test.loc", 
                         "ipv4addr": "4.4.4.1"
                     }, 
                     {
-                        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTAzLmxvYy50ZXN0LnRvdG8uNS41LjUuNS4:5.5.5.5/toto.test.loc/scoulomb-view", 
+                        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuMTE2LmxvYy50ZXN0LnRvdG8uNS41LjUuNS4:5.5.5.5/toto.test.loc/scoulomb-view", 
                         "configure_for_dhcp": false, 
                         "host": "toto.test.loc", 
                         "ipv4addr": "5.5.5.5"
@@ -161,7 +168,7 @@ curl -k -u admin:infoblox "https://$API_ENDPOINT/wapi/v2.6/search?address=5.5.5.
                 "view": "scoulomb-view"
             }, 
             {
-                "_ref": "record:a/ZG5zLmJpbmRfYSQuMTAzLmxvYy50ZXN0LHRvdG8sNS41LjUuNQ:toto.test.loc/scoulomb-view", 
+                "_ref": "record:a/ZG5zLmJpbmRfYSQuMTE2LmxvYy50ZXN0LHRvdG8sNS41LjUuNQ:toto.test.loc/scoulomb-view", 
                 "ipv4addr": "5.5.5.5", 
                 "name": "toto.test.loc", 
                 "view": "scoulomb-view"
@@ -179,14 +186,20 @@ curl -k -u admin:infoblox "https://$API_ENDPOINT/wapi/v2.6/search?address=5.5.5.
 
 
 ```bash
-export VIEW_REF=$(curl -k -u admin:infoblox "https://$API_ENDPOINT/wapi/v2.6/view?name=scoulomb-view" | jq '.[0]._ref' | tr -d '"')
+export VIEW_REF_FIND=$(curl -k -u admin:infoblox "https://$API_ENDPOINT/wapi/v2.6/view?name=scoulomb-view" | jq '.[0]._ref' | tr -d '"')
 echo $VIEW_REF
-# or we could get ref from create but lost in Jupyter
-curl -k -u admin:infoblox -H 'content-type: application/json' -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$VIEW_REF"
+echo $VIEW_REF_FIND
+# here we can use VIEW_REF (from create) or  VIEW_REF_FIND (from find). Find output is less likely to fail.
+curl -k -u admin:infoblox -H 'content-type: application/json' -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$VIEW_REF_FIND"
 ```
 
       % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                      Dload  Upload   Total   Spent    Left  Speed
-    100   141    0   141    0     0    291      0 --:--:-- --:--:-- --:--:--   291
-    view/ZG5zLnZpZXckLjEwOA:scoulomb-view/false
-    "view/ZG5zLnZpZXckLjEwOA:scoulomb-view/false"
+    100   141    0   141    0     0    427      0 --:--:-- --:--:-- --:--:--   425
+    view/ZG5zLnZpZXckLjExNg:scoulomb-view/false
+    view/ZG5zLnZpZXckLjExNg:scoulomb-view/false
+    "view/ZG5zLnZpZXckLjExNg:scoulomb-view/false"
+
+This ensures a bijection IP <-> FQDN
+<!-- And name check != -->
+All this checks are policy checks.
