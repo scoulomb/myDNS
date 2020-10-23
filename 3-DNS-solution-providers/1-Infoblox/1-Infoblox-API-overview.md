@@ -170,7 +170,7 @@ export network_view_id=$(curl -k -u $USERNAME:$PASSWORD \
 echo $network_view_id
 ````
 
-This will implicitly create a custom view for that network (**default (generated) view for that custom network**)  
+This will implicitly create a custom view for that network (**default.$networkName (generated) view is attached to a custom network $networkName**)  
 
 ````shell script
 [vagrant@archlinux ~]$ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view | grep -C 2 "scoulomb-nw"
@@ -216,7 +216,9 @@ Note:
 
 #### Can I decide to make custom direct view creation
 
-and assign it to a network view?
+and assign it to a network view? what happens at network view deletion
+
+##### Custom direct view creation
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view-2", "network_view": "scoulomb-nw"}'
@@ -285,6 +287,7 @@ Output is
 ]
 ````
 
+##### Network deletion with custom direct view 
 
 Then if we delete the network
 
@@ -313,7 +316,7 @@ curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "ht
 curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
 ````
 
-And then can check default view for that nw view is deleted:
+And then can check default view for that nw view is deleted after network deletion:
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
@@ -321,7 +324,68 @@ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https:
 
 Re-create [network view](#Create-a-network-view-and-implicit-default-view-for-that-network) for next steps.
 
-##### We could create a custom view directly without network
+#### Can we delete default.$networkName (generated) view  attached to a custom network $networkName without network view deletion
+
+
+````shell script
+export default_view_scoulomb_nw_id=$(curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=default.scoulomb-nw" |  jq .[0]._ref |  tr -d '"')
+echo $default_view_scoulomb_nw_id
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$default_view_scoulomb_nw_id"
+````
+
+Output is 
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$default_view_scoulomb_nw_id"
+
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:Cannot delete the DNS view 'default.scoulomb-nw'. It is the last DNS view associated with the network view 'scoulomb-nw'.)",
+  "code": "Client.Ibap.Data.Conflict",
+  "text": "Cannot delete the DNS view 'default.scoulomb-nw'. It is the last DNS view associated with the network view 'scoulomb-nw'."
+}
+````
+Adding a view
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view-2", "network_view": "scoulomb-nw"}'
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$default_view_scoulomb_nw_id"
+````
+
+Still does not allow !
+
+````shell script
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:Cannot delete the DNS view 'default.scoulomb-nw'. It is used for dynamic updates to the network view 'scoulomb-nw'.)",
+
+  "code": "Client.Ibap.Data.Conflict",
+  "text": "Cannot delete the DNS view 'default.scoulomb-nw'. It is used for dynamic updates to the network view 'scoulomb-nw'."
+}
+````
+
+Clean-up
+
+we need to clean the view as show in section [Network deletion with custom direct view](#Network-deletion-with-custom-direct-view).
+Error if try to remove network view directly. 
+
+````shell script
+export direct_view_assigned_to_scoulomb_nw_id=$(curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view-2" |  jq .[0]._ref |  tr -d '"')
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$direct_view_assigned_to_scoulomb_nw_id"
+
+export network_view_id=$(curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/networkview?name=scoulomb-nw" |  jq .[0]._ref |  tr -d '"')
+echo $network_view_id
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
+````
+
+Re-create [network view](#Create-a-network-view-and-implicit-default-view-for-that-network) for next steps.
+
+#### We could create a custom view directly without network
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view"}'
@@ -610,7 +674,7 @@ Thus we have a
 Appliance behavior:
 
 1. **Default view is attached to default network view**.Cf [here](#We-could-create-a-custom-view-directly-without-network) and [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
-2. **default (generated) view is attached to a custom network**: default.$networkName view is attached to $networkName network view (at network view creation). Defaut v. Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
+2. **default.$networkName (generated) view is attached to a custom network $networkName**: default.$networkName view is attached to $networkName network view (at network view creation). Defaut v. Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
 3. Any custom view created explicitly can be attached to a network view explicitly. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation).
 4. When creating a view explicitly it is attached by default to the default network view. Cf [here](#We-could-create-a-custom-view-directly-without-network).
 
