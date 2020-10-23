@@ -132,7 +132,6 @@ Output is
 
 Which confirms **default view is attached to default network view.**
 
-
 ## Infoblox Network view and View and Zone creation
 
 
@@ -193,20 +192,134 @@ or
  curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
 ````
 
-If deleted :
+If nw view deleted :
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
 ````
 
-View is also deleted.
+default (generated) view for that custom network view is also deleted.
 
 ````shell script
 $ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
 []
 ````
 
-Re-create it for next steps.
+Re-create [network view](#Create-a-network-view-and-implicit-default-view-for-that-network) for next steps.
+
+
+
+Note:
+- a view can be attached to a single nw view, a nw view can have several view attached to it.
+- what happens to attached view which is not the default (generated) view for that custom network, when removing network view
+
+
+#### Can I decide to make custom direct view creation
+
+and assign it to a network view?
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view-2", "network_view": "scoulomb-nw"}'
+
+export direct_view_assigned_to_scoulomb_nw_id=$(curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view-2" |  jq .[0]._ref |  tr -d '"')
+echo $direct_view_assigned_to_scoulomb_nw_id
+
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET "https://$API_ENDPOINT/wapi/v2.5/$direct_view_assigned_to_scoulomb_nw_id?_return_fields%2B=name,network_view&_return_as_object=1" | jq
+````
+
+Output is 
+
+````shell script
+{                                       
+  "result": {                           
+    "_ref": "view/ZG5zLnZpZXckLjEyNQ:sco
+    "is_default": false,                
+    "name": "scoulomb-view-2",          
+    "network_view": "scoulomb-nw"       
+  }                                     
+}                                       
+````
+
+Answer is yes.
+
+In Infoblox UI, not we have the network dropdown at top left where was can see the view attached to that network.
+
+![Network view in Infoblox UI](./medias/net_view.png)
+
+We need several view to make the view list appear.
+<!--
+Add this when did Terraform in my IaC OK
+And test delete from UI
+https://github.com/scoulomb/myIaC/blob/master/terraform/README-terraform-infoblox.md
+If apply all proc here will be same result OK
+
+-->
+
+If we retrieve:
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "scoulomb-view-2"}'
+````
+
+Output is
+
+````shell script
+]$ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
+[
+    {
+        "_ref": "view/ZG5zLnZpZXckLjEyNA:default.scoulomb-nw/false",
+        "is_default": false,
+        "name": "default.scoulomb-nw"
+    }
+][vagrant@archlinux myDNS]$ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "scoulomb-view-2"}'
+[
+    {
+        "_ref": "view/ZG5zLnZpZXckLjEyNQ:scoulomb-view-2/false",
+        "is_default": false,
+        "name": "scoulomb-view-2"
+    }
+]
+````
+
+
+Then if we delete the network
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
+````
+
+We have 
+
+````shell script
+$ curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:Cannot delete network view 'scoulomb-nw'. It is associated with more than one DNS view.)",
+  "code": "Client.Ibap.Data.Conflict",
+  "text": "Cannot delete network view 'scoulomb-nw'. It is associated with more than one DNS view."
+}
+````
+we have to delete the non default view for that network before.
+
+````shell script
+export direct_view_assigned_to_scoulomb_nw_id=$(curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view-2" |  jq .[0]._ref |  tr -d '"')
+# or we could do curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "scoulomb-view-2"}'
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$direct_view_assigned_to_scoulomb_nw_id"
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
+````
+
+And then can check default view for that nw view is deleted:
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
+````
+
+Re-create [network view](#Create-a-network-view-and-implicit-default-view-for-that-network) for next steps.
 
 ##### We could create a custom view directly without network
 
@@ -221,7 +334,7 @@ echo $direct_view_id
 ````
 
 This one will appear in UI in dns/zones unkike indirect one.
-We will see [later](#Then-create-a-host-record-within-a zone in the 2 different views) that this view is attached to the default network.
+We will confirm [later](#Then-create-a-host-record-within-a zone in the 2 different views) that this view is attached to the default network.
 
 #### And create an authoritative zone within a view
 
@@ -247,7 +360,7 @@ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "http
 
 ````
 
-He we use previous created view via direct view creation (which will see uses default network)
+Here we use previous created view via direct view creation (which will see uses default network)
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/zone_auth?_return_fields%2B=fqdn,network_view&_return_as_object=1" -d \
@@ -344,50 +457,6 @@ As in p56 of Infoblox PDF we can see custom direct view creation use default net
 And default.scoulomb-nw view uses scoulomb-nw network view.
 Same record is created in zone with same name but 2 different view.
 
-#### Can I decide to make custom direct view creation
-
-and assign it to a network view?
-
-````shell script
-curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view-2", "network_view": "scoulomb-nw"}'
-
-export direct_view_assigned_to_scoulomb_nw_id=$(curl -k -u $USERNAME:$PASSWORD \
-        -H "Content-Type: application/json" \
-        -X GET \
-        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view-2" |  jq .[0]._ref |  tr -d '"')
-echo $direct_view_assigned_to_scoulomb_nw_id
-
-curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET "https://$API_ENDPOINT/wapi/v2.5/$direct_view_assigned_to_scoulomb_nw_id?_return_fields%2B=name,network_view&_return_as_object=1" | jq
-````
-
-Output is 
-
-````shell script
-{
-  "result": {
-    "_ref": "view/ZG5zLnZpZXckLjI0:scoulomb-view-2/false",
-    "is_default": false,
-    "name": "scoulomb-view-2",
-    "network_view": "scoulomb-nw"
-  }
-}
-````
-
-Answer is yes.
-
-In Infoblox UI, not we have the network dropdown at top left where was can see the view attached to that network.
-
-![Network view in Infoblox UI](./medias/net_view.png)
-
-We need several view to make the view list appear.
-<!--
-Add this when did Terraform in my IaC OK
-And test delete from UI
-https://github.com/scoulomb/myIaC/blob/master/terraform/README-terraform-infoblox.md
-If apply all proc here will be same result OK
-
--->
- 
 #### Add a network within a network view
 
 
@@ -451,7 +520,7 @@ curl -k -u $USERNAME:$PASSWORD \
 
 #### Parenthesis on default view and nslookup 
 
-When using view `default` (real default, not default of the network -> default view attached to default network), we can do a lookup in this setup.
+When using view `default` (real default, not default of a non default network -> default view attached to default network), we can do a lookup in this setup.
 
 ````shell script
 curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/record:host?_return_fields%2B=name,network_view&_return_as_object=1" -d \
@@ -540,9 +609,9 @@ Thus we have a
 
 Appliance behavior:
 
-1. Default view is attached to default network view.Cf [here](#We-could-create-a-custom-view-directly-without-network) and [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
-2. default.$networkName view is attached to $networkName network view (at network view creation). Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
-3. Any custom view created explicitly can be attached to a network view explicitly. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation-and assign-it-to-a-network-view?).
+1. **Default view is attached to default network view**.Cf [here](#We-could-create-a-custom-view-directly-without-network) and [here](#Then-create-a-host-record-within-a-zone-in-the-2-different-views)
+2. **default (generated) view is attached to a custom network**: default.$networkName view is attached to $networkName network view (at network view creation). Defaut v. Cf [here](#Create-a-network-view-and-implicit-default-view-for-that-network).
+3. Any custom view created explicitly can be attached to a network view explicitly. Cf [here](#Can-I-decide-to-make-custom-direct-view-creation).
 4. When creating a view explicitly it is attached by default to the default network view. Cf [here](#We-could-create-a-custom-view-directly-without-network).
 
 It is compliant with this doc:
