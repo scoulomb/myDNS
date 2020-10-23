@@ -89,6 +89,49 @@ curl -k -H "Authorization: Basic $(cat ~/admin-credentials | base64)" \
         "https://$API_ENDPOINT/wapi/v2.5/record:a?view=default"
 ````
 
+### All those records are created in default view, which is attached to default network view.
+
+
+We will prove it
+
+````shell script
+export REF=$(curl -k -u admin:infoblox \
+        -H "Content-Type: application/json" \
+        -X POST \
+        -d '{"name":"test-infoblox-api-host-p.test.loc","view":"default","ipv4addrs":[{"ipv4addr":"4.4.4.2"}]}' \
+        https://$API_ENDPOINT/wapi/v2.5/record:host)
+        
+
+$ echo $REF | tr -d '"'
+record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmxvYy50ZXN0LnRlc3QtaW5mb2Jsb3gtYXBpLWhvc3QtcA:test-infoblox-api-host-p.test.loc/default
+
+````
+
+<!-- can use tr -d "'" and -u, see jupyter -->
+
+We can see at enf of ref we use the default view.
+
+````shell script
+curl -k -u admin:infoblox -H 'content-type: application/json' -X GET "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "default"}'
+curl -k -u admin:infoblox -H 'content-type: application/json' -X GET "https://$API_ENDPOINT/wapi/v2.5/view?_return_fields%2B=network_view" -d '{"name": "default"}'
+````
+
+Output is
+
+````shell script
+]$ curl -k -u admin:infoblox -H 'content-type: application/json' -X GET "https://$API_ENDPOINT/wapi/v2.5/view?_return_fields%2B=network_view" -d '{"name": "default"}'
+[
+    {
+        "_ref": "view/ZG5zLnZpZXckLl9kZWZhdWx0:default/true",
+        "is_default": true,
+        "name": "default",
+        "network_view": "default"
+    }
+]
+````
+
+Which confirms **default view is attached to default network view.**
+
 
 ## Infoblox Network view and View and Zone creation
 
@@ -128,7 +171,7 @@ export network_view_id=$(curl -k -u $USERNAME:$PASSWORD \
 echo $network_view_id
 ````
 
-This will implicitly create a custom view for that network (default for that network)  
+This will implicitly create a custom view for that network (**default (generated) view for that custom network**)  
 
 ````shell script
 [vagrant@archlinux ~]$ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view | grep -C 2 "scoulomb-nw"
@@ -144,13 +187,25 @@ This will implicitly create a custom view for that network (default for that net
     {
 ````
 
+or 
+
+````shell script
+ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
+````
+
 If deleted :
 
 ````shell script
-curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json"-X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
+curl -k -u $USERNAME:$PASSWORD -H "Content-Type: application/json" -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$network_view_id"
 ````
 
 View is also deleted.
+
+````shell script
+$ curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X GET https://$API_ENDPOINT/wapi/v2.5/view -d '{"name": "default.scoulomb-nw"}'
+[]
+````
+
 Re-create it for next steps.
 
 ##### We could create a custom view directly without network
