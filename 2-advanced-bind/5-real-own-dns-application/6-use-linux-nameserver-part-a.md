@@ -1,5 +1,16 @@
 # Use linux nameserver via NAT - part A
 
+https://doc.ubuntu-fr.org/ssh
+https://askubuntu.com/questions/1161579/ssh-server-cannot-be-found-even-though-installed
+
+sudo apt-get remove --purge openssh-server
+sudo apt-get update
+sudo apt-get install openssh-server
+sudo systemctl start ssh
+
+
+ssh sylvain@192.168.1.32
+
 ## Configure a reverse NAT simple example
 
 We will take as an example how to access on a basic HTTP server outside local network
@@ -149,8 +160,8 @@ To use bash kernel you have to setup it: https://github.com/takluyver/bash_kerne
 
 ````shell script
 sudo systemd-resolve --flush-caches  
-sudo pip install bash_kernel   
-python -m bash_kernel.install
+sudo pip install bash_kernel   # or pip3
+python -m bash_kernel.install # or python3
 ````
 
 For asciidoc generation, pandoc is needed unlike markdown.

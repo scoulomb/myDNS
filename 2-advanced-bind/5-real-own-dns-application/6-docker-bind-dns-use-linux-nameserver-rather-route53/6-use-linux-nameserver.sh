@@ -11,7 +11,7 @@ echo "== Build DNS docker image"
 script_path=$(dirname "$0")
 echo $script_path
 set -o xtrace
-sudo docker build -f dns-ubuntu.Dockerfile -t dns-ubuntu $script_path
+sudo docker build -f $script_path/dns-ubuntu.Dockerfile -t dns-ubuntu $script_path
 # use --no-cache if apt-get issue
 
 echo "== Clean-up"
