@@ -1,5 +1,5 @@
 $TTL    300
-@       IN      SOA     nameserver.coulombel.it. root.coulombel.it. (
+@       IN      SOA     scoulomb.ddns.net. root.coulombel.it. (
                       10030         ; Serial
                        3600         ; Refresh
                        1800         ; Retry
@@ -7,9 +7,10 @@ $TTL    300
                         300         ; Minimum TTL
 )
 ; Name Server
-@        IN      NS       nameserver.coulombel.it.
+@        IN      NS       scoulomb.ddns.net.
+@        IN      NS       scoulomb2.ddns.net.
 ; A Record Definitions
-nameserver       IN      A       127.0.0.1
+; scoulomb.ddns.net.       IN      A       127.0.0.1
 ; not used because in good zone but this would be the glue
 ; Cf. https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/4-bind-delegation/docker-bind-dns-it-cc-tld/fwd.it.db#L26
 scoulomb         IN      A       41.41.41.41
@@ -21,3 +22,8 @@ scoulomb         IN      A       41.41.41.41
 @	             IN      A		 185.199.111.153
 
 ; We have zone TTL on top, and in SOA ttl for non match
+
+@                IN      MX   10  scoulomb.ddns.net.
+
+; here we use scoulomb.ddns.net. for application deployed behind the box and not for the DNS itself
+home             IN      CNAME     scoulomb.ddns.net.
