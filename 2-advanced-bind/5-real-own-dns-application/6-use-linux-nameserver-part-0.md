@@ -29,3 +29,5 @@ However if needed to do a demo with remote access to my laptop it remains possib
 - use Jupyter bash
 - use SSH (also avoids to switch laptop. Pull that repo for script via SSH)
 This we will be configured in this tutorial.
+
+<!-- if not blocked, corpo worked and stop working osef -->
