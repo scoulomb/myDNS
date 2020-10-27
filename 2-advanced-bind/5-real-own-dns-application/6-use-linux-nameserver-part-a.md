@@ -190,7 +190,7 @@ Our objective is to access those application from public internet (client not in
 ### Configure router
 
 For this we need to provide following NAT configuration in the router (SFR box):
-It is in In http://192.168.1.1/network/nat
+It is in http://192.168.1.1/network/nat
 
 ````shell script
 hp-ssh      TCP	Port	22      192.168.1.32    22
@@ -430,8 +430,8 @@ Name:	scoulomb.ddns.net
 Address: 109.29.148.109
 ```
 
-1. Laptop get IP and default DNS by DHCP server contained in router : `127.0.0.53`
-Note that it is abstract by Ubuntu systemd-resolve.
+1. Laptop get IP and default DNS by DHCP server contained in router : `127.0.0.53` 
+Note that it is abstracted by Ubuntu systemd-resolve.
 We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Server: 192.168.1.1`. (cf. [So question](https://stackoverflow.com/questions/50299241/ubuntu-18-04-server-how-to-check-dns-ip-server-setting-being-used)).
 2. The DNS acquired is also embedded in the router
 3. DNS resolution (gtm):
@@ -442,11 +442,15 @@ We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Se
             3. Recursive server asks machine with  IP `173.246.100.253` nameserver to resolve home.coulombel.it/site
             4. From record `home IN CNAME scoulomb.ddns.net.`
             5. It returns `scoulomb.ddns.net` which is resolved to Box public IP `109.29.148.109` [3]
-            8. Thus the answer with Box public IP `109.29.148.109`
+            6. Thus the answer with Box public IP `109.29.148.109`
 4. Box public IP `109.29.148.109`:<NAT application-port> -> NAT -> machine private IP `192.168.1.32`:`<application-port>
 
 
-Step 3.2.3 is, where we not it is an authoritative answer.
+##### Note on resolution in details
+
+In step 1 we can find this IP in `/etc/resolve.conf`, and can override it.
+
+Step 3.2.3 details.
 
 ````shell script
 $ nslookup -type=A home.coulombel.site 173.246.100.253
@@ -459,8 +463,19 @@ home.coulombel.site	canonical name = scoulomb.ddns.net.`
 `scoulomb.ddns.net` is resolved to box public IP `109.29.148.109` by following normal A resolution mechanism.
 And Non static box ip is updated by no-ip (using box or the DUC).
 
+If tethering the connexion with phone using LAN Wifi and perform `systemd-resolve --status`, we have a DNS server at `192.168.43.1`.
+Which is Android built-in server. 
+If tethering the connexion with phone 4G and perform `systemd-resolve --status`, we will see same, we have a DNS server at `192.168.43.1`.
+Then Android redirect to the box DNS (which redirect to provider DNS) when in Wifi and provider DNS in 4G
+It is adding a layer of indirection.
 
-#### Use DNS name to switch between public IP when outisde the LAN and private IP when inside the LAN using router internal DNS
+By doing a long press on the connexion and we can configure the Android client to request DHCP server a specific IP address (not a static IP at DHCP server level) and an request a DNS.
+To not be confused with what we did at DHCP server level [above](#alternative-to-dynamic-dns-only-for-private-ip).
+In prefilled info it seems we can change phone nameserver to `8.8.8.8` when using wifi. 
+
+Forward to DNS recursive SFR is not configurable.
+
+#### Use DNS name to switch between public IP when outside the LAN and private IP when inside the LAN using router internal DNS
 
 Previously there is no difference if client is in the same LAN as the application server or not.
 
@@ -510,7 +525,7 @@ PING home.coulombel.site (192.168.1.32) 56(84) bytes of data.
 2 packets transmitted, 2 received, 0% packet loss, time 1001ms
 rtt min/avg/max/mdev = 3.071/5.340/7.609/2.269 ms
 ```
-- connected to phone tethering with 3G connection  
+- connected to phone tethering with 3G connection (WARN: if phone is in Wifi it will return private address) 
 Note the authoritative answer.
 
 ````shell script
@@ -538,6 +553,14 @@ rtt min/avg/max/mdev = 64.931/71.333/80.126/6.436 ms
 sylvain@sylvain-Latitude-D430:~$ date
 lundi 26 octobre 2020, 23:06:20 (UTC+0100)
 ````
+
+- connected to phone tethering with Wifi connection 
+
+It returns `192.168.1.32` as expected.
+I tried to change DNS server on the phone as suggested here:
+[Note on resolution in details](#note-on-resolution-in-details). It does not have effect and use DNS in the gateway.
+<!-- same with terminal emulator ping -->
+
 <!-- there was some issue with this test on hp machine but on dell switch from one to another worked like a charm => OK 
 Doing systemctl status systemd-resolved.service
 Using degraded feature set (UDP) for DNS server 192.168.1.1.
@@ -561,15 +584,13 @@ Address: 109.29.148.109
 
 From https://ubuntuforums.org/showthread.php?t=2371249
 It is due to old config, I wont go beyond and consider it is working
-
+And also the fact we query from the machine own DNS.
 -->
 
 I also tested with Android app Terminal Emulator (https://github.com/jackpal/Android-Terminal-Emulator) with ping using wifi/4G and switch was done which confirms the approach.
 
 This is exactly what we want.
 DNS can perform the switch with public and private IP.
-This would also work with Gandi (no need to test).
-
 
 <!-- glue not need as ddns.net used and not coulombel.it in it tld OK-->
 
