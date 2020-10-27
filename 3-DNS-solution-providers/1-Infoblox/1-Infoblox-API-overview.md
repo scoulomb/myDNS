@@ -398,7 +398,47 @@ echo $direct_view_id
 ````
 
 This one will appear in UI in dns/zones unkike indirect one.
-We will confirm [later](#Then-create-a-host-record-within-a zone in the 2 different views) that this view is attached to the default network.
+We will confirm [later](#Then-create-a-host-record-within-a zone-in-the-2-different-views) that this view is attached to the default network.
+
+Or performing a retrieve with: 
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view&_return_fields%2B=name,network_view"
+````
+
+````shell script
+$ curl -k -u $USERNAME:$PASSWORD \
+>         -H "Content-Type: application/json" \
+>         -X GET \
+>         "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view&_return_fields%2B=name,network_view"
+[
+    {
+        "_ref": "view/ZG5zLnZpZXckLjEzOQ:scoulomb-view/false",
+        "is_default": false,
+        "name": "scoulomb-view",
+        "network_view": "default"
+    }
+]
+````
+
+it would be equivalent to
+
+````shell script
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X DELETE "https://$API_ENDPOINT/wapi/v2.5/$direct_view_id"
+
+curl -k -u $USERNAME:$PASSWORD -H 'content-type: application/json' -X POST "https://$API_ENDPOINT/wapi/v2.5/view" -d '{"name": "scoulomb-view", "network_view": "default"}'
+curl -k -u $USERNAME:$PASSWORD \
+        -H "Content-Type: application/json" \
+        -X GET \
+        "https://$API_ENDPOINT/wapi/v2.5/view?name=scoulomb-view&_return_fields%2B=name,network_view"
+````
+
+But command without network is working.
+
+<!-- see PR#57, 45, postman or not most likely -->
 
 #### And create an authoritative zone within a view
 
