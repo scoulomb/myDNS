@@ -505,7 +505,4 @@ Address: 192.168.1.32
 
 
 We show an example where we apply concept of part A and B with VLC here:
-https://github.com/scoulomb/music-streamer#cname-to-ddns-advanced
-
-Advantage of this technique over view is that even for DNS resolution itself abd not only traffic we remain in LAN (gtm)!
-And need Internet.
+https://github.com/scoulomb/music-streamer

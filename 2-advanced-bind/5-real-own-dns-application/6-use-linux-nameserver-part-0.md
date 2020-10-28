@@ -14,14 +14,18 @@ For this we need to configure a reverse NAT.
 and show how this DNS can be used to reference application deployed in our network itself
 
 We show an example where we apply concept of part A and B with VLC here:
-https://github.com/scoulomb/music-streamer#cname-to-ddns-advanced (concluded, can check new browse feature optionally)
+https://github.com/scoulomb/music-streamer
 
 Note python http server can also play music file.
 
+<!--
+(concluded 27/10/2020, can check new browse feature optionally)
+comment in part 0, A, B judged -> ok
+-->
+
 [HERE]
-3. We used router DNS (Internet Box) override for traffic swicth between public and private IP.
-This approach is working for Gandi and own DNS, we wills show how to use DNS view when we have our own nameserver.
- 
+3. [see next steps](next.md)
+
 In this example I am using SFR box.
 
 
