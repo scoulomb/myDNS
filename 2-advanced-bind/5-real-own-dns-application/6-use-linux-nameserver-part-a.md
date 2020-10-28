@@ -452,7 +452,20 @@ We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Se
 For example to target Google recursive DNS `8.8.8.8`.
 
 To avoid override by network manager do:
-https://askubuntu.com/questions/623940/network-manager-how-to-stop-nm-updating-etc-resolv-conf
+**source**: ttps://askubuntu.com/questions/623940/network-manager-how-to-stop-nm-updating-etc-resolv-conf
+
+One way to stop Network Manager from adding dns-servers to `/etc/resolv.conf` file is to do this: 
+
+First open the nm conf file `/etc/NetworkManager/NetworkManager.conf`:
+
+    sudo vim /etc/NetworkManager/NetworkManager.conf
+And add this to the `[main]` section:
+
+    dns=none
+Save and exit.
+
+Apply the conf `sudo service network-manager restart`, after manaual edit and laptop restart unchanged!
+If remove `dns=none`, and restart service it is overriden (not olv version of Ubuntu does not use nm)
 
 <!-- we can configure static ip on laptop to request dhcp server same IP which is different to the use-case where DHCP server binds a mac to an ip 
 https://www.techrepublic.com/article/how-to-prevent-ubuntu-from-overwriting-etcresolv-conf/,
