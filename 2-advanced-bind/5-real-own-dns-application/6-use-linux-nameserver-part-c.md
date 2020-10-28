@@ -34,7 +34,7 @@ It has to perform resolution outside
 
 - Adding the record back output private IP
 
-When we will use the view, if traffic is kept inside, resolution via TLD needs Internet access.
+When we will use the [view](link to add), if traffic is kept inside, resolution via TLD needs Internet access.
 
 Note if we unplug and restart the box:
 http://192.168.1.1/maintenance/system

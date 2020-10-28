@@ -23,6 +23,9 @@ use dns  + dhcp v6
 It avoids going outside for traffic + DNS resolution
 This approach is working for Gandi and own DNS, we  show how to use DNS view when we have our own nameserver to perform the switch using bind views.
 
+
+Update ref here part c## DNS resolution is also made internally when on same LAN and using router DNS
+
 - Could prepare a DNS presentation with this 
 
 For demo could make more sense to perform domain delegation, but fine if updated before.
