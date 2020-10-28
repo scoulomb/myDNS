@@ -435,7 +435,7 @@ Note that it is abstracted by Ubuntu systemd-resolve.
 We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Server: 192.168.1.1`. (cf. [So question](https://stackoverflow.com/questions/50299241/ubuntu-18-04-server-how-to-check-dns-ip-server-setting-being-used)).
 2. The DNS acquired is also embedded in the router
 3. DNS resolution (gtm):
-    1. DNS from router `127.0.0.53:53` -> Forward to DNS recursive SFR (Router DNS could also do the recursion) 
+    1. DNS from router `127.0.0.53:53` -> Forward to DNS recursive SFR (Router DNS could also do the recursion). Those DNS are visible here: http://192.168.1.1/state/wan (`109.0.66.20`, `109.0.66.10`) and we can not change them. (**)	
     2. Recursion: home.coulombel.it/site [1] -> Gandi Live DNS [2] -> Box public IP `109.29.148.109` [3]
             1. recursive server ask `it/site` tld to find nameserver for coulombel.it/site via 173.246.100.253`NS` record 
             2. Answer is `ns-219-[a,b,c].gandi.net` [2] which is resolved to an IP `173.246.100.253`
@@ -448,9 +448,24 @@ We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Se
 
 ##### Note on resolution in details
 
-In step 1 we can find this IP in `/etc/resolve.conf`, and can override it.
+- In step 1 we can find this IP in `/etc/resolve.conf`, and can edit it.
+For example to target Google recursive DNS `8.8.8.8`.
 
-Step 3.2.3 details.
+To avoid override by network manager do:
+https://askubuntu.com/questions/623940/network-manager-how-to-stop-nm-updating-etc-resolv-conf
+
+<!-- we can configure static ip on laptop to request dhcp server same IP which is different to the use-case where DHCP server binds a mac to an ip 
+https://www.techrepublic.com/article/how-to-prevent-ubuntu-from-overwriting-etcresolv-conf/,
+imo not needed to use static here
+-->
+
+To have this config performed automatically on device (and have it filled by network manager),
+and not use DNS of router which forwards to SFR recursive server.
+We could configure our own DHCP server, to provide a DNS of our choice. We will explore [this](6-use-linux-nameserver-part-c.md#configure-dhcp-server).
+
+Ideally the box could allow to change the DNS it forward the traffic to but it is not allowed.
+
+- Step 3.2.3 details.
 
 ````shell script
 $ nslookup -type=A home.coulombel.site 173.246.100.253
@@ -463,17 +478,17 @@ home.coulombel.site	canonical name = scoulomb.ddns.net.`
 `scoulomb.ddns.net` is resolved to box public IP `109.29.148.109` by following normal A resolution mechanism.
 And Non static box ip is updated by no-ip (using box or the DUC).
 
-If tethering the connexion with phone using LAN Wifi and perform `systemd-resolve --status`, we have a DNS server at `192.168.43.1`.
+- If tethering the connexion with phone using LAN Wifi and perform `systemd-resolve --status`, we have a DNS server at `192.168.43.1`.
 Which is Android built-in server. 
 If tethering the connexion with phone 4G and perform `systemd-resolve --status`, we will see same, we have a DNS server at `192.168.43.1`.
 Then Android redirect to the box DNS (which redirect to provider DNS) when in Wifi and provider DNS in 4G
 It is adding a layer of indirection.
 
-By doing a long press on the connexion and we can configure the Android client to request DHCP server a specific IP address (not a static IP at DHCP server level) and an request a DNS.
+<!-- guess could do same as first bulled for phone LAN -->
+
+- By doing a long press on the connexion and we can configure the Android client to request DHCP server a specific IP address (not a static IP at DHCP server level) and an request a DNS.
 To not be confused with what we did at DHCP server level [above](#alternative-to-dynamic-dns-only-for-private-ip).
 In prefilled info it seems we can change phone nameserver to `8.8.8.8` when using wifi. 
-
-Forward to DNS recursive SFR is not configurable.
 
 #### Use DNS name to switch between public IP when outside the LAN and private IP when inside the LAN using router internal DNS
 

@@ -3,18 +3,8 @@ TOOO:
 Part A, B and vlc concluded
 side not on gtm end of part b 
 
-x. comment
 
-Here when in the LAN traffic does not go outside.
-But same for the DNS resoltion (gtm)
-When we will do usage of view (later), the resolution will need Internet.
-
-
-We can test it by starting our server 
-Removing DNS entry in the box
-do a lookup with internet
-unplug wire of the box
-add record on the box
+y. configure own DHC server
 
 
 3. Use IPv6 

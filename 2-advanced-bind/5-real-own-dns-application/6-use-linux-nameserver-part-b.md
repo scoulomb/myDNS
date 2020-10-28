@@ -464,7 +464,8 @@ We define in SFR box internal DNS.
 And verify switch happens with another laptop as before 
 
 <!--
-(given issue with 192.168.1.32).
+Given issue with 192.168.1.32
+Search part A / there was some issue with this test on hp machine 
 -->
 
 - connected to wifi in the BOX LAN
