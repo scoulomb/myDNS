@@ -203,3 +203,8 @@ see win cmd => ipconfig /all, wireless lan.
 vagrant => nmcli not present, systemd-resolve --status => usual ip in 10 which same in cat /etc/resolv.conf
 totally weird
 see in next -->
+
+### Set initial config :)
+
+- stop our DHCP `sudo systemctl stop isc-dhcp-server.service`
+- In `192.168.1.1/network/dhcp` ensure router DHCP server is activated with a range from 20 to 100
