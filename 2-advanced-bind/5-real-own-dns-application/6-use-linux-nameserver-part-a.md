@@ -448,7 +448,9 @@ We can see it is the box by doing: `systemd-resolve --status` >  `Current DNS Se
 
 ##### Note on resolution in details
 
-- In step 1 we can find this IP in `/etc/resolve.conf`, and can edit it.
+###### Note on resolv conf
+
+In step 1 we can find this IP in `/etc/resolve.conf`, and can edit it.
 For example to target Google recursive DNS `8.8.8.8`.
 
 To avoid override by network manager do:
@@ -465,7 +467,7 @@ And add this to the `[main]` section:
 Save and exit.
 
 Apply the conf `sudo service network-manager restart`, after manaual edit and laptop restart unchanged!
-If remove `dns=none`, and restart service it is overriden (not olv version of Ubuntu does not use nm)
+If remove `dns=none`, and restart service it is overriden.
 
 <!-- we can configure static ip on laptop to request dhcp server same IP which is different to the use-case where DHCP server binds a mac to an ip 
 https://www.techrepublic.com/article/how-to-prevent-ubuntu-from-overwriting-etcresolv-conf/,
@@ -478,7 +480,14 @@ We could configure our own DHCP server, to provide a DNS of our choice. We will 
 
 Ideally the box could allow to change the DNS it forward the traffic to but it is not allowed.
 
-- Step 3.2.3 details.
+Not old version of Ubuntu does not use `systemd-resolve`.
+However an alternative to see DNS status to `systemd-resolve --status` is `nmcli dev show | grep DNS`.
+**Source**:
+- https://unix.stackexchange.com/questions/128220/how-do-i-set-my-dns-when-resolv-conf-is-being-overwritten
+- https://askubuntu.com/questions/637893/how-to-know-what-dns-am-i-using-in-ubuntu-from-14-04-onwards
+
+
+###### Step 3.2.3 details.
 
 ````shell script
 $ nslookup -type=A home.coulombel.site 173.246.100.253
@@ -490,6 +499,8 @@ home.coulombel.site	canonical name = scoulomb.ddns.net.`
 
 `scoulomb.ddns.net` is resolved to box public IP `109.29.148.109` by following normal A resolution mechanism.
 And Non static box ip is updated by no-ip (using box or the DUC).
+
+###### Android network
 
 - If tethering the connexion with phone using LAN Wifi and perform `systemd-resolve --status`, we have a DNS server at `192.168.43.1`.
 Which is Android built-in server. 

@@ -3,10 +3,7 @@ TOOO:
 Part A, B and vlc concluded
 side not on gtm end of part b 
 
-
-y. configure own DHC server
-
-
+[START DIRECTLY HERE, DHCP DONE]
 3. Use IPv6 
 http://192.168.1.1/networkv6/firewall
 https://stackoverflow.com/questions/25817848/python-3-does-http-server-support-ipv6
@@ -26,6 +23,7 @@ This approach is working for Gandi and own DNS, we  show how to use DNS view whe
 
 Update ref here part c## DNS resolution is also made internally when on same LAN and using router DNS
 
+reuse DHCP here
 - Could prepare a DNS presentation with this 
 
 For demo could make more sense to perform domain delegation, but fine if updated before.
