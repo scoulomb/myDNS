@@ -2,10 +2,16 @@
 
 > Warning: This file is generated from the jupyter notebook. Do not edit by hand. Generate it instead.
 
+Objective: prevent records from using same IP in same view.
+
 
 ```bash
-jupyter nbconvert 3-suite-dns-ip-search-api.ipynb --to markdown --output=3-suite-dns-ip-search-api.md
+jupyter nbconvert 3-suite-b-dns-ip-search-api.ipynb --to markdown # --output=3-suite-dns-ip-search-api.md
 ```
+
+    [NbConvertApp] Converting notebook 3-suite-b-dns-ip-search-api.ipynb to markdown
+    [NbConvertApp] Writing 11626 bytes to 3-suite-b-dns-ip-search-api.md
+
 
 ## All records reminder
 
@@ -98,7 +104,7 @@ curl -k -u admin:infoblox \
         }
     ]
 
-## But filtering on address is not possble with all records api endpoint 
+## But filtering on address is not possible with all records api endpoint 
 
 
 ```bash
@@ -200,6 +206,86 @@ curl -k -u admin:infoblox -H 'content-type: application/json' -X DELETE "https:/
     view/ZG5zLnZpZXckLjExNg:scoulomb-view/false
     "view/ZG5zLnZpZXckLjExNg:scoulomb-view/false"
 
+## Notes
+
 This ensures a bijection IP <-> FQDN
 <!-- And name check != -->
 All this checks are policy checks.
+No check is performed bty Infoblox on IP.
+
+
+## API comments
+
+
+- 1/ Infoblox Search API does not enable to filter on the view unlike `AllRecords`, thus a filtering on view needed
+- 2/ Unlike check_duplicate_name, the check on duplicate IP is not dependent on record type. We consider all type of records.
+- 3/ based comment here:
+https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md#we-can-also-create-several-a-with-the-same-name-and-different-ip
+> We say record type is part of the key because we can see that we have IP 4.4.4.1 defined twice as a A and Host.
+https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md#we-can-not-create-several-host-record-with-same-name-with-different-ip
+
+````
+If we do a find there: 
+
+curl -k -u admin:infoblox \
+        -H "Content-Type: application/json" \
+        -X GET \
+        https://$API_ENDPOINT/wapi/v2.6/search?address=4.4.4.1 | jq -M
+
+
+[vagrant@archlinux dns-automation]$ curl -k -u admin:infoblox \
+>         -H "Content-Type: application/json" \
+>         -X GET \
+>         https://$API_ENDPOINT/wapi/v2.6/search?address=4.4.4.1 | jq -M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  5308    0  5308    0     0  11640      0 --:--:-- --:--:-- --:--:-- 11640
+[
+  {
+    "_ref": "record:host/ZG5zLmhvc3QkLl9kZWZhdWx0LmxvYy50ZXN0Lm15dHN0cmVjb3Jk:mytstrecord.test.loc/default",
+    "ipv4addrs": [
+      {
+        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuX2RlZmF1bHQubG9jLnRlc3QubXl0c3RyZWNvcmQuNC40LjQuMS4:4.4.4.1/mytstrecord.test.loc/default",
+        "configure_for_dhcp": false,
+        "host": "mytstrecord.test.loc",
+        "ipv4addr": "4.4.4.1"
+      },
+      {
+        "_ref": "record:host_ipv4addr/ZG5zLmhvc3RfYWRkcmVzcyQuX2RlZmF1bHQubG9jLnRlc3QubXl0c3RyZWNvcmQuNC40LjQuMi4:4.4.4.2/mytstrecord.test.loc/default",
+        "configure_for_dhcp": false,
+        "host": "mytstrecord.test.loc",
+        "ipv4addr": "4.4.4.2"
+      }
+    ],
+    "name": "mytstrecord.test.loc",
+    "view": "default"
+  },
+  {
+    "_ref": "record:a/ZG5zLmJpbmRfYSQuX2RlZmF1bHQubG9jLnRlc3QsbXl0c3RyZWNvcmQsNC40LjQuMQ:mytstrecord.test.loc/default",
+    "ipv4addr": "4.4.4.1",
+    "name": "mytstrecord.test.loc",
+    "view": "default"
+  },
+````
+
+We have to return the type and the name, as same IP can be defined twice for a given name as host and A, but not twice as A or HostRecord with same IP for a given name
+Otherwise we would return twice the same name for no obvious reason for automation client.
+
+
+- 4/ Search API can not return the record type unlike AllRecords something like `&_return_fields=name` `&_return_as_object=1` does not work here.
+We have to extract if from _ref
+
+- 5/ Name field contain the zone unlike AllRecords in (check_duplicate_name)
+<!--
+(as comment here, https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md
+> Note Infoblox API is not consistent)
+-->
+
+Note https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-Infoblox-namespace.md#infoblox-find-api---check-duplicate-v2-can-we-do-better-and-do-a-single-call-for-txt-and-a
+AllRecord has a special type in _ref unlike here!!
+And end of ref does not contain the zone unlike here (at least consistent with name field)
+
+<!--
+DNS PR#61
+all comment judged clear including ut
+-->
