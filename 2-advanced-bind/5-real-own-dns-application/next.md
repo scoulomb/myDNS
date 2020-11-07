@@ -4,6 +4,7 @@ Part A, B and vlc concluded
 side not on gtm end of part b 
 
 [START DIRECTLY HERE, DHCP DONE]
+see server in docker
 3. Use IPv6 
 http://192.168.1.1/networkv6/firewall
 https://stackoverflow.com/questions/25817848/python-3-does-http-server-support-ipv6
@@ -30,7 +31,7 @@ For demo could make more sense to perform domain delegation, but fine if updated
 It would be the same principle!
 DNS demo with AWS already in [AWS demo and here show docker
 
-5. See [next priv](./next_private.md)
+5. See [next priv](next_private.md)
 
 - Misc
     - check 2 cname with same name
@@ -39,3 +40,4 @@ DNS demo with AWS already in [AWS demo and here show docker
     - android tools ok
     
 [NEXT IS COMPLETE 28 oct 21h40] OKOK
+

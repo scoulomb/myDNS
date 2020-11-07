@@ -3,8 +3,8 @@
 ## DNS resolution is also made internally when on same LAN and using router DNS
 
 In
-- [part A](6-use-linux-nameserver-part-b.md#use-dns-name-to-switch-between-public-ip-when-outside-the-lan-and-private-ip-when-inside-the-lan) 
-- [part B](6-use-linux-nameserver-part-b.md#use-dns-name-to-switch-between-public-ip-when-outside-the-lan-and-private-ip-when-inside-the-lan)
+- [part A](6-use-linux-nameserver-part-a.md#use-dns-name-to-switch) 
+- [part B](6-use-linux-nameserver-part-b.md#use-dns-name-to-switch)
 
 We have used DNS name to switch between public IP when outside the LAN and private IP when inside the LAN.
 It avoids traffic to go outisde when in same LAN,

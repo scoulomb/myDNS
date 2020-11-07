@@ -514,7 +514,8 @@ It is adding a layer of indirection.
 To not be confused with what we did at DHCP server level [above](#alternative-to-dynamic-dns-only-for-private-ip).
 In prefilled info it seems we can change phone nameserver to `8.8.8.8` when using wifi. 
 
-#### Use DNS name to switch between public IP when outside the LAN and private IP when inside the LAN using router internal DNS
+#### Use DNS name to switch
+between public IP when outside the LAN and private IP when inside the LAN using router internal DNS
 
 Previously there is no difference if client is in the same LAN as the application server or not.
 
@@ -634,7 +635,7 @@ DNS can perform the switch with public and private IP.
 <!-- glue not need as ddns.net used and not coulombel.it in it tld OK-->
 
 
-We will be back on this concept in next [section b](6-use-linux-nameserver-part-b.md#add-record-for-application-deployed-behind-the-box).
+We will be back on this concept in next [section b](6-use-linux-nameserver-part-b.md#use-dns-name-to-switch).
 
 
 <!--

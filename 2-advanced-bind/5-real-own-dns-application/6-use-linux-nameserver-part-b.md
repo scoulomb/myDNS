@@ -456,7 +456,8 @@ And have control on the NAT.
 
 <!-- keep this intermediary step for explanations and 4g resolution explained in A -->
 
-### Use DNS name to switch between public IP when outside the LAN and private IP when inside the LAN
+### Use DNS name to switch
+between public IP when outside the LAN and private IP when inside the LAN
 
 We define in SFR box internal DNS.
 `192.168.1.32	home.coulombel.it`
