@@ -18,4 +18,7 @@ RUN chgrp bind /etc/bind/fwd.coulombel.it.db
 
 EXPOSE 53
 
-ENTRYPOINT ["systemctl",  "start",  "named", ";", "systemctl", "enable",  "named", ";", "sleep", "3600"]
+COPY start.sh start.sh
+RUN chmod u+x start.sh
+
+ENTRYPOINT ["./start.sh"]
