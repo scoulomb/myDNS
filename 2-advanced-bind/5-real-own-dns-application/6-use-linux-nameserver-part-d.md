@@ -348,7 +348,38 @@ $ sudo docker run  --entrypoint "echo" --name dnsv3-override-dash dnsv3 -- "123"
 -- 123
 ````
 
-Also when we override it is like we use the exec form, here is the proof:
+## Also when we override it is like we use the exec form
+
+here is the proof:
+
+### IP as container env var and shell usage OK
+
+```shell script
+$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip0 --env IP=42.42.42.42 dnsv3  /bin/sh -c 'echo $IP'
+42.42.42.42
+```
+
+### IP as container env var and NO shell usage KO
+
+````shell script
+sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip-bis --env IP=42.42.42.42 dnsv3  echo $IP
+
+sylvain@sylvain-hp:
+````
+
+### IP ENV var defined outside and no shell usage WARNING
+````
+We had seen this problem here: https://github.com/scoulomb/myk8s/blob/6e6de11afe4fd78b761d785ecab80de021b7814e/Master-Kubectl/4-Run-instructions-into-a-container.md
+and pay attention the fact that for the case where we do use shell it is because the IP is defined in the shell calling the docker like:
+
+````shell script
+IP=44.5.5.6
+sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip-bis2 --env IP=42.42.42.42 dnsv3  echo $IP
+44.5.5.6
+````
+
+
+### Note: system environment var are inherited 
 
 ````shell script
 sylvain@sylvain-hp:~$ sudo docker run --entrypoint=""  --name dnsv3-override-show-shell-from dnsv3 echo $PWD
@@ -357,23 +388,6 @@ sylvain@sylvain-hp:~$ sudo docker run --entrypoint=""  --name dnsv3-override-sho
 /home/sylvain
 sylvain@sylvain-hp:~$ /bin/sh -c '/bin/sh -c "echo $PWD"'
 /home/sylvain
-````
-
-But 
-
-```shell script
-$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip0 --env IP=42.42.42.42 dnsv3  /bin/sh -c 'echo $IP'
-42.42.42.42
-sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip-bis --env IP=42.42.42.42 dnsv3  echo $IP
-
-sylvain@sylvain-hp:
-````
-We had seen this problem here: https://github.com/scoulomb/myk8s/blob/6e6de11afe4fd78b761d785ecab80de021b7814e/Master-Kubectl/4-Run-instructions-into-a-container.md
-and pay attention the fact that for the case where we do use shell it is because the IP is defined in the shell calling the docker like:
-
-````shell script
-sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show-ip-bis2 --env IP=42.42.42.42 dnsv3  echo $IP
-44.5.5.6
 ````
 
 ## Kubernetes link
