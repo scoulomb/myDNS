@@ -1,6 +1,6 @@
 # Notes on Docker: application to other use-cases
 
-This is another example where we apply lesson learnt in part D.
+This is another example where we apply lesson learnt in [part D](6-use-linux-nameserver-part-d.md).
 
 ## objective
 
@@ -8,7 +8,7 @@ Assume we want to launch a non regression job only after a deployment of an API 
 
 ## Solution 0: make jenkins sleep 
 
-## Solution 1: make sleep in job
+## Solution 1: make sleep in job, not working :(
 
 Override job docker entrypoint/k8s command as done here to sleep while the code is loaded and provide version defined in Jenkins file
 <!-- what we did initially lb-->
@@ -17,91 +17,32 @@ Override job docker entrypoint/k8s command as done here to sleep while the code 
 def version="1.2
 sh "./path/to/oc create job api-after-load-non-regression-${version} --from=cronjob/api-non-regression -- /bin/sh -c 'sleep 60 && launch.sh $version publish des'"
 ````
+version here is Jenkins var and `cronjob/api-non-regression` is Cronjob metadata.name. 
 
+Here we think we  override the job entrypoint as per [part d](6-use-linux-nameserver-part-d.md#kubernetes-link).
+It would be the case if it was a normal job but here we use `--from` and it results to a noops.
+This was explained here [part d: actually when we create a Job from a CronJob the command is ignored](6-use-linux-nameserver-part-d.md#but-actually-when-we-create-a-job-from-a-cronjob-the-command-is-ignored).
 
-Here we override the job entrypoint.
-This is what we explained in [part d](6-use-linux-nameserver-part-d.md#kubernetes-link).
-
-Also here `/bin/sh -c`  is useless as we do not do env var substitution of variable defined in the Dockerfile but the one in Jenkins file (shell calling the Docker).
-In [solution 2](#solution-2-use-deployment-rollout), note that it was removed as a proof.
-
-This is similar to the case in [part d](6-use-linux-nameserver-part-d.md#ip-env-var-defined-outside-and-no-shell-usage-warning)
-
-## Assume we have in Openshift template/Helm:
+We can also do as a proof
 
 ````shell script
-    - name: my-non-reg
-      command: ["/bin/sh", "-c", "/bin/sh launch.sh ${DOCKER_IMAGE_VERSION} publish $NAMESPACE"]
-      env:
+oc create job api-after-load-non-regression-manual --from=cronjob/dns-automation-api-non-regression --dry-run -o yaml -- /bin/sh -c 'sleep 60 && launch.sh $version publish des' | grep command
+➤ oc create job api-after-load-non-regression-manual --from=cronjob/dns-automation-api-non-regression --dry-run -o yaml -- /bin/sh -c 'sleep 60 && launch.sh $version publish des' | grep -A 5 command
+      - command:
+        - /bin/sh
+        - -c
+        - /bin/sh launch.sh 1.0.113 publish $NAMESPACE # Nothing change
+        env:
         - name: NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
 ````
 
-Note here:
-- `${DOCKER_IMAGE_VERSION}` is an Openshift template var
-- In command we need for  `/bin/sh", "-c"` for environment var `$NAMESPACE`
-Similar to that case in [part D](6-use-linux-nameserver-part-d.md#ip-as-container-env-var-and-shell-usage-ok).
-Note kube synthax is exec form but consistent with fact overrides use exec form.
-And we had seen that  `/bin/sh -c '/bin/sh -c "echo $PWD"'` is [working](6-use-linux-nameserver-part-d.md#note-that-system-environment-var-are-inherited).
-
-- However the second `/bin/sh` is useless and will prove it
-
-````shell script
-ssh sylvain@109.29.148.109
-
-mkdir /tmp/docker
-
-echo '#!/bin/bash 
- for i; do 
-    echo $i 
- done
-' > /tmp/docker/launch.sh
-
-
-echo 'FROM ubuntu
-COPY launch.sh /launch.sh
-RUN chmod u+x /launch.sh
-' > /tmp/docker/test.Dockerfile
-
-sudo docker build /tmp/docker -f /tmp/docker/test.Dockerfile -t test
-
-sudo docker run --name=optionalname --env NAMESPACE="scoulomb-ns" test  /bin/sh -c 'echo $NAMESPACE'
-sudo docker run --env NAMESPACE="scoulomb-ns" test  cat launch.sh
-
-
-sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh /launch.sh 1 publish $NAMESPACE'
-sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/launch.sh 1 publish $NAMESPACE'
-
-````
-
-Output is 
-
-````shell script
-sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh /launch.sh 1 publish $NAMESPACE'
-1
-publish
-scoulomb-ns
-sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/launch.sh 1 publish $NAMESPACE'
-1
-publish
-scoulomb-ns
-sylvain@sylvain-hp:~$
-````
-
-To be rigorous, as explained in  [part d - Kubectl create job](6-use-linux-nameserver-part-d.md#kubectl-create-job).
-When creating a job when we use  kubectl, it creates k8s command and same in our manifest. k8s command is Docker ENTRYPOINT. 
-Thus we should use docker ENTRYPOINT so to be equivalent and not docker CMD as done above.
-In Docker CLI it is `--entrypoint`, however when doing this we have some quote issue with docker run and shell. So we will not do it.
-
-<!-- pr 71 -->
+So we are actually running non reg while we deploy, which is not the prupose as we would target old version.
 
 ## Solution 2: use deployment rollout
 
-This is the solution which we advise.
+This is the solution which we advise in comparsion with 0 and 1.
 
-We will use alpine, to show an example
+### We will use alpine, to show an example
 
 => unlike job we can not override docker entrypoint / k8s command with kubectl as we had done [in paert d - job entrypoint override](6-use-linux-nameserver-part-d.md#kubernetes-link):
 As explained here, we have to define a manifest:
@@ -162,15 +103,14 @@ In Openshift similar command exist for `dc`
 oc rollout status dc automation-server ; echo $?
 ````
 
-Thus
+### Thus we can apply to our jenkins and any API server
 
 ````shell script
 def version = "42.1"
 // Trigger non regression job after load
 sh "./path/to/oc rollout status dc automation-server; echo \$?"
-sh "./path/to/oc create job non-regression-afer-load-${version} --from=cronjob/automation-api-non-regression -- 'launch.sh $version publish des'"
+sh "./path/to/oc create job non-regression-afer-load-${version} --from=cronjob/automation-api-non-regression"
 ````
-
 
 
 Which is perfect 
@@ -184,7 +124,7 @@ proj settings: default reviewer and repo settings: merge check
 dns pr#70
 -->
 
-Having following error
+We could have following error (in our case only temporary the first time)
 
 ````shell script
 /oc rollout status dc dns-automation-server
@@ -210,18 +150,133 @@ kubectl rollout status deployment/app --namespace=app --timeout=60s
 
 <!-- relaunching twice and it worked so we can keep it -->
 
-If reproducing we can combine with solution and make Jenkins sleep, we know that a rollout is taking ~3min.
+If  reproducing we can combine with solution and make Jenkins sleep, we know that a rollout is taking ~3min.
 
-Finally we can Simplify removing entrypoint override in CLI as can use manifest override
-<!-- dns pr#72 -->
+<!-- dns pr#72 tp remove entrypoint override which was useless as explained in solution 1
+and  from [part d](6-use-linux-nameserver-part-d.md#kubectl-create-job).-->
 
-sh "./path/to/oc create job non-regression-afer-load-${version} --from=cronjob/automation-api-non-regression"
 
-This will enable to test modification made in [section](#assume-we-have-in-openshift-templatehelm).
-<!-- made in pr#71 -->
-And avoid future error `error: cannot specify --from and command` from [part d](6-use-linux-nameserver-part-d.md#kubectl-create-job).
+
+## Assume we have in Openshift template/Helm:
+
+````shell script
+    - name: my-non-reg
+      command: ["/bin/sh", "-c", "/bin/sh launch.sh ${DOCKER_IMAGE_VERSION} publish $NAMESPACE"]
+      env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+````
+
+Note here:
+- `${DOCKER_IMAGE_VERSION}` is an Openshift template var
+- In command we need for  `/bin/sh", "-c"` for environment var `$NAMESPACE`
+Similar to that case in [part D](6-use-linux-nameserver-part-d.md#ip-as-container-env-var-and-shell-usage-ok).
+Note kube synthax is exec form but consistent with fact overrides use exec form.
+And we had seen that  `/bin/sh -c '/bin/sh -c "echo $PWD"'` is [working](6-use-linux-nameserver-part-d.md#note-that-system-environment-var-are-inherited).
+
+- However the second `/bin/sh` seems useless as
+
+````shell script
+ssh sylvain@109.29.148.109
+
+mkdir /tmp/docker
+
+echo '#!/bin/bash 
+ for i; do 
+    echo $i 
+ done
+' > /tmp/docker/launch.sh
+
+
+echo 'FROM ubuntu
+COPY launch.sh /launch.sh
+RUN chmod u+x /launch.sh
+' > /tmp/docker/test.Dockerfile
+
+sudo docker build /tmp/docker -f /tmp/docker/test.Dockerfile -t test
+
+sudo docker run --name=optionalname --env NAMESPACE="scoulomb-ns" test  /bin/sh -c 'echo $NAMESPACE'
+sudo docker run --env NAMESPACE="scoulomb-ns" test  cat launch.sh
+
+
+sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh /launch.sh 1 publish $NAMESPACE'
+sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/launch.sh 1 publish $NAMESPACE'
+
+````
+
+Output is 
+
+````shell script
+sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh /launch.sh 1 publish $NAMESPACE'
+1
+publish
+scoulomb-ns
+sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/launch.sh 1 publish $NAMESPACE'
+1
+publish
+scoulomb-ns
+sylvain@sylvain-hp:~$
+````
+
+To be rigorous, as explained in  [part d - Kubectl create job](6-use-linux-nameserver-part-d.md#kubectl-create-job).
+When creating a job when we use  kubectl, it creates k8s command and same in our manifest. k8s command is Docker ENTRYPOINT. 
+Thus we should use docker ENTRYPOINT so to be equivalent and not docker CMD as done above.
+In Docker CLI it is `--entrypoint`, however when doing this we have some quote issue with docker run and shell. So we will not do it.
+
+But in spite of this removing it, prevents from finding the file! why?
+
+So we need it and here is the explanation:
+*If we use workdir we need /bin/sh to be located there*: 
+Proof when using `WORKDIR`:
+
+````shell script
+mkdir /tmp/docker
+
+echo '#!/bin/bash 
+ for i; do 
+    echo $i 
+ done
+' > /tmp/docker/launch.sh
+
+
+echo 'FROM ubuntu
+WORKDIR /dir
+COPY launch.sh launch.sh
+
+RUN chmod u+x launch.sh
+' > /tmp/docker/test.Dockerfile
+
+sudo docker build /tmp/docker -f /tmp/docker/test.Dockerfile -t test
+
+
+sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh launch.sh 1 publish $NAMESPACE'
+sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c 'launch.sh 1 publish $NAMESPACE'
+````
+Output is
+
+````shell script
+sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c 'launch.sh 1 publish $NAMESPACE'
+/bin/sh: 1: launch.sh: not found
+sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c '/bin/sh launch.sh 1 publish $NAMESPACE'
+1
+publish
+scoulomb-ns
+sylvain@sylvain-hp:~$ sudo docker run --env NAMESPACE="scoulomb-ns" test  /bin/sh -c 'launch.sh 1 publish $NAMESPACE'
+/bin/sh: 1: launch.sh: not found
+````
+Which reproduces the error.
+
+Thus I will keep it.
+<!-- pr 71 reverted with 73-->
+
 
 <!--
-pr 70-71-72 
-impacts only end of Jenkins file + cj template if needed to reproduce
- d + applications of d are concluded -->
+pr 70-71-72-73 
+impacts only end of Jenkins file finally => lb pr#292
+oc get cj ; oc get jo; oc get po => completed and report is generated. Checked for DNS OK
+-->
+
+<!-- when job failng restart container and then send timeout ok
+ STOP OK, part d completed only next-->

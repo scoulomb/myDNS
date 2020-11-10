@@ -512,7 +512,9 @@ sylvain@sylvain-hp:~$
 Remind [that](https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create) 
 > I can only generate k8s command with kubectl create job, not k8s args.
 
-Cronjob and job have same behvavior for command, so it is working the same when creating a Job from a CronJob. 
+Cronjob and job have same behvavior for command.
+ 
+### But actually when we create a Job from a CronJob the command is ignored
 
 Proof:
 ````shell script
@@ -524,8 +526,9 @@ oc create job api-after-load-non-regression --from=cronjob/{replace-by-cj-name} 
         - /bin/sh
         - -c
         - /bin/sh launch.sh 1.0.109 publish $NAMESPACE
+````
 
-Note that future version (cf our kubectl ) will not allow it
+Note that future version (cf our kubectl ) will have error message
 
 ````shell script
 sudo kubectl create cronjob alpine-cronjob --image alpine  --schedule="* * * * *"    
