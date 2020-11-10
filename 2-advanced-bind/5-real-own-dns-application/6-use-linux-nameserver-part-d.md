@@ -268,7 +268,7 @@ sudo docker run --name dnsv7 dnsv7
 
 ### Conclusion
 
-Recommendation is to use v5. Thus our final image.
+Recommendation is to use v5. Thus our final DNS image.
 In conclusion 
 
 `ENTRYPOINT /script.sh (shell form)` <-> `ENTRYPOINT ["sh", "-c", "/script.sh"] (exec form)`
@@ -368,9 +368,9 @@ sylvain@sylvain-hp:
 ````
 
 ### IP ENV var defined outside and no shell usage WARNING
-````
-We had seen this problem here: https://github.com/scoulomb/myk8s/blob/6e6de11afe4fd78b761d785ecab80de021b7814e/Master-Kubectl/4-Run-instructions-into-a-container.md
-and pay attention the fact that for the case where we do use shell it is because the IP is defined in the shell calling the docker like:
+
+We had seen 2 problems above here: https://github.com/scoulomb/myk8s/blob/6e6de11afe4fd78b761d785ecab80de021b7814e/Master-Kubectl/4-Run-instructions-into-a-container.md
+Pay attention to that different case where we do NOT use shell it is because the IP is defined in the shell calling the Docker like:
 
 ````shell script
 IP=44.5.5.6
@@ -378,8 +378,7 @@ sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show
 44.5.5.6
 ````
 
-
-### Note: system environment var are inherited 
+### Note that system environment var are inherited 
 
 ````shell script
 sylvain@sylvain-hp:~$ sudo docker run --entrypoint=""  --name dnsv3-override-show-shell-from dnsv3 echo $PWD
@@ -398,10 +397,15 @@ https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-ex
 - Docker `ENTRYPOINT` <=> k8s `command`
 - Docker `CMD` <=> k8s `args`
 
-And the discrepancy between run and create:
+And the discrepancy between `kubectl run` and `kubectl create job` and `kubectl create deployment`.
+Read this as a prerequisite:
 https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create
 
+Where both of them have discrepancies with `docker run`!
+
 In spite of the effort to align `kubectl run` and `docker run` (see [v1.18](https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/0-kubectl-run-explained.md#obeservations)), kubectl run and docker run have discrepancies:
+
+### Kubectl run 
 
 ```shell script
 sudo kubectl run dnsv3 --image dnsv3 --dry-run=client -o yaml --command echo -- "123"
@@ -427,16 +431,20 @@ spec:
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
-
 ```
-Here would create only k8s command (docker entrypoint). 
-Removing `--command` would lead to only k8s args (docker cmd)
+
+Here would create only k8s command (Docker ENTRYPOINT). 
+Removing `--command` would lead to only k8s args (Docker CMD)
+
+which is not aligned with Docker cf. [Override entrypoint and command](#override-entrypoint-and-command).
 
 
 Quoting https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create
 > We can not mix command and args with kubectl.
 
 (we can do whatever in a manifest)
+
+### Kubectl create job
 
 We can also see in that page:
 https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create
@@ -465,21 +473,100 @@ spec:
 status: {}
 ```
 
-Would create a k8s command thus overrides the docker entrypoint.
+Would create a k8s Command thus overrides the Docker ENTRYPOINT (not consistent with  kubectl run => [cf](#kubectl-run) Removing `--command` would lead to only k8s args (Docker CMD)) .
 <!-- cf. jenkinsfile with sleep OK CLEAR STOP YES -->
+It is not consistent with `sudo docker run alpine  /bin/sleep 5` which would generate a Docker CMD!
+This `sudo docker run alpine  /bin/sleep 5` is equivalent to have in Dockerfile `CMD ["executable","param1","param2"] (exec form, this is the preferred form)`.
+Given the [doc](https://docs.docker.com/engine/reference/builder/#cmd) and observations made in section ["Also when we override it is like we use the exec form"](#also-when-we-override-it-is-like-we-use-the-exec-form).
 
-<!-- docker image with mistakes kept in delegation, before as cmd and entrypoint is mandatory and was not provided in Docker (see dns-forwarding.md), 
-it was given after k run --, given that we did not use --command we created k8s args thus docker cmd (https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create),
+Proof `sudo docker run alpine  /bin/sleep 5` would generate a Docker CMD:
+
+````shell script
+sylvain@sylvain-hp:~$ sudo docker run alpine echo "hello"
+hello
+sylvain@sylvain-hp:~$ sudo docker run alpine "hello"
+docker: Error response from daemon: OCI runtime create failed: container_linux.go:349: starting container process caused "exec: \"hello\": executable file not found in $PATH": unknown.
+ERRO[0000] error waiting for container: context canceled
+sylvain@sylvain-hp:~$ sudo docker run --entrypoint="echo" alpine "hello"
+hello
+````
+
+It also shows that on top of the confusion we can decide to not have and  entrypoint and use a command as executable (first hello)!
+Qutoing the docker command [doc](https://docs.docker.com/engine/reference/builder/#cmd).
+> The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.
+
+<!-- Docker image with mistakes kept in DNS delegation example,
+And as cmd and entrypoint is mandatory and was not provided in Docker (see dns-forwarding.md), 
+it was given after k run --, given that we did not use --command we created k8s args thus Docker CMD (https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create),
 so from docker spec it is `CMD command param1 param2` 
-(and it is actually the exec form, but  `/bin/sh -c` would not be mandatory there as proof:
+(and it is actually the exec form proved here: ## Also when we override it is like we use the exec form, but  `/bin/sh -c` would not be mandatory there as proof:
 
 sylvain@sylvain-hp:~$ sudo docker run --entrypoint="" --name dnsv3-override-show-systemctl-proof dnsv3 systemctl status named
 named.service - BIND Domain Name Server
     Loaded: loaded (/usr/lib/systemd/system/named.service, enabled)
     Active: inactive (dead)
 sylvain@sylvain-hp:~$ 
-# if we sleep it will be active!
+# if we sleep. named will be active!
 -->
+
+Remind [that](https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#discrepancy-between-k-run-and-k-create) 
+> I can only generate k8s command with kubectl create job, not k8s args.
+
+Cronjob and job have same behvavior for command, so it is working the same when creating a Job from a CronJob. 
+
+Proof:
+````shell script
+oc get cj
+oc create job api-after-load-non-regression --from=cronjob/{replace-by-cj-name} -- sleep 60
+➤ oc get job api-after-load-non-regression -o yaml | grep -A 5 containers                                                                                                     vagrant@archlinux
+      containers:
+      - command:
+        - /bin/sh
+        - -c
+        - /bin/sh launch.sh 1.0.109 publish $NAMESPACE
+
+Note that future version (cf our kubectl ) will not allow it
+
+````shell script
+sudo kubectl create cronjob alpine-cronjob --image alpine  --schedule="* * * * *"    
+sudo kubectl create  job proof --from=cronjob/alpine-cronjob  --dry-run -o yaml -- /bin/sleep 300
+````
+
+Output is 
+
+````shell script
+sylvain@sylvain-hp:~$ sudo kubectl create  job proof --from=cronjob/alpine-cronjob  --dry-run -o yaml -- /bin/sleep 300
+W1110 13:39:13.027471   40327 helpers.go:535] --dry-run is deprecated and can be replaced with --dry-run=client.
+error: cannot specify --from and command
+sylvain@sylvain-hp:~$ sudo kubectl create  job proof --from=cronjob/alpine-cronjob -- /bin/sleep 300
+error: cannot specify --from and command
+````
+=> error: cannot specify --from and command
+
+It makes sens as it was an override of docker image made in manifest which was overidden in the cli!
+
+
+### Kubectl create deployment
+
+We can not give command and args directly with Kubectl:
+https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#create-deployment
+
+
+## Version used for test
+
+Used doc of Docker cli: https://github.com/scoulomb/cli
+Which was forked https://github.com/scoulomb/cli/blob/master/docs/reference/builder.md#cmd (with latest commit on this file is `e08a441`)
+
+With kubectl (ssh)
+
+````shell script
+sylvain@sylvain-hp:~$ sudo kubectl version
+Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.3", GitCommit:"2e7996e3e2712684bc73f0dec0200d64eec7fe40", GitTreeState:"clean", BuildDate:"2020-05-20T12:52:00Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.2", GitCommit:"52c56ce7a8272c798dbc29846288d7cd9fbae032", GitTreeState:"clean", BuildDate:"2020-04-16T11:48:36Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
+````
+<all above concluded>
+
+START ONLY HERE EVENTULALY DIFF AND FORK docker doc REPO 
 
 ## NEXT
 
