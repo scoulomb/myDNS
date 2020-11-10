@@ -4,7 +4,6 @@
 ````shell script
 # sudo docker run dns-ubuntu p 32048:53
 
-# docker doc link kubectl run --
 
 # piege: every after image is ignore, the port forwarding is udp for dns !!
 # https://docs.docker.com/config/containers/container-networking/

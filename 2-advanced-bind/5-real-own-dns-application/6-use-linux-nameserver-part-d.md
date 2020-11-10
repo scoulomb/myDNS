@@ -391,7 +391,7 @@ sylvain@sylvain-hp:~$ /bin/sh -c '/bin/sh -c "echo $PWD"'
 
 ## Kubernetes link
 
-We have made the link with Kubernetes for `ENTRYPOINT` and `COMMAND`:
+We have made the link with Kubernetes for `ENTRYPOINT` and `COMMAND` override:
 https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-create-explained-ressource-derived-from-pod.md#note-on-args-and-command
 
 - Docker `ENTRYPOINT` <=> k8s `command`
@@ -433,8 +433,8 @@ spec:
 status: {}
 ```
 
-Here would create only k8s command (Docker ENTRYPOINT). 
-Removing `--command` would lead to only k8s args (Docker CMD)
+Here it would create only k8s command (Docker ENTRYPOINT). 
+Removing `--command` would lead to only k8s args (Docker CMD) (part of docker CMD can be executable)
 
 which is not aligned with Docker cf. [Override entrypoint and command](#override-entrypoint-and-command).
 
@@ -443,6 +443,23 @@ Quoting https://github.com/scoulomb/myk8s/blob/master/Master-Kubectl/1-kubectl-c
 > We can not mix command and args with kubectl.
 
 (we can do whatever in a manifest)
+
+Note that the doc is consistent with our finding but ambiguous (actually the challenge is to have several container enginer):
+
+```shell script
+➤ kubectl run --help                                                                                                                                                          vagrant@archlinuxCreate and run a particular image in a pod.
+
+Examples:
+[...]
+  # Start the nginx pod using the default command, but use custom arguments (arg1 .. argN) for that command. 
+## MY comment: command is k8s one. Here args are parameter of docker CMD. But docker CMD can have one executable
+  kubectl run nginx --image=nginx -- <arg1> <arg2> ... <argN>
+  # Start the nginx pod using a different command and custom arguments. 
+## MY comment: here args  is docker ENTRYPOINT executable and docker ENTRYPOINT param 
+  kubectl run nginx --image=nginx --command -- <cmd> <arg1> ... <argN>
+```
+
+<!-- ok checked -->
 
 ### Kubectl create job
 

@@ -223,7 +223,7 @@ sylvain@sylvain-hp:~$
 To be rigorous, as explained in  [part d - Kubectl create job](6-use-linux-nameserver-part-d.md#kubectl-create-job).
 When creating a job when we use  kubectl, it creates k8s command and same in our manifest. k8s command is Docker ENTRYPOINT. 
 Thus we should use docker ENTRYPOINT so to be equivalent and not docker CMD as done above.
-In Docker CLI it is `--entrypoint`, however when doing this we have some quote issue with docker run and shell. So we will not do it.
+In Docker CLI it is `--entrypoint`, however when doing this we have some issue with docker CLI which does not take params in `--entrypoint` (or not easily). It interprets all as a single executable. So we will not do it.
 
 But in spite of this removing it, prevents from finding the file! why?
 
@@ -280,3 +280,12 @@ oc get cj ; oc get jo; oc get po => completed and report is generated. Checked f
 
 <!-- when job failng restart container and then send timeout ok
  STOP OK, part d completed only next-->
+ 
+## Application in docker doctor
+ 
+This knowledge is leverage in docker doctor.
+See https://github.com/scoulomb/docker-doctor/blob/main/README.md
+
+And in particular linked to myk8s here:  https://github.com/scoulomb/docker-doctor/blob/main/README.md#Link-other-projects
+
+<!-- `--` in kubectl and docker explained in this doc ok --> 
