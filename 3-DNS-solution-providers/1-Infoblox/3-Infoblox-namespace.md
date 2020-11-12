@@ -1214,8 +1214,8 @@ Thus if we do not filter on the view we are clearly more restrictive and will wa
 
 ## Conclusion and next steps
 
-Previously we proposed a strategy to ensure Name is not in use by another A, CNAME, Host record (host_ipv4add, host_ipv6addr, host ) in same view
-using AllRecords API.
+Previously we proposed a strategy to ensure Name (FQDN) is not in use by another A, CNAME, Host record (host_ipv4add, host_ipv6addr, host ) in same view
+using AllRecords API when creating a host record.
 
 
 <!--
@@ -1227,7 +1227,7 @@ filter(lambda record: record.type in (
 ````
 
 -->
-Now we want to ensure IP is not in use by another record in same view using Search API.
+Now we want to ensure IP is not in use by another record in same view using Search API when creating a host record
 
 See details in that markdown [file](3-suite-b-dns-ip-search-api.md) where we applied a similar recipe.
 
