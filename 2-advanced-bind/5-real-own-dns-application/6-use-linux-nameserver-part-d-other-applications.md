@@ -301,12 +301,12 @@ all was (doubt but well concluded) clear and linked clearly made in [part D -app
 - This part D-application knowledge is reused in Docker doctor
 - Then Docker doctor completed: https://github.com/scoulomb/docker-doctor/blob/main/README.md#link-other-projects
 and linked to other project 
-- the enables to test device access as linked in docker doctor https://raw.githubusercontent.com/scoulomb/docker-doctor/main/README.md (sre pr#27)
+- this enables to test device access as linked in docker doctor https://raw.githubusercontent.com/scoulomb/docker-doctor/main/README.md (sre pr#27)
 - And opens to next section (e)  where run image docker directly. This is what enabled to detect issue in part d,
-(no need to restest the image with change made with part d/ expose udp)
+(no need to retest the image with change made with part d/ expose udp)
 - nameserver sporadic non reg investigation results: "DNS+non+regression+sporadic+failures"
 	- Linked to  traceroute TCP and capa https://github.com/scoulomb/docker-doctor#requirements => myk8s updates tough traceroute did not helps at it seems to stop at vip.
-	- Then wonders if root cause was secret and wanted to improve but left intact, it was perfect as explained here: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md and explain secret flow (search for "flow will be" this is concluded and understood STOP
+	- Then wonders if root cause was secret and wanted to improve but left intact, it was perfect as explained here: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md and explain secret flow pr#68 (search for "flow will be") and Jenkins setup (search for jenkins setup) made in first bullet. This is concluded and understood STOP
 	and made pr to k8s https://github.com/kubernetes/website/pull/25027 (which is optional for conclusion)
 
 Everything which is here is clearly concluded finally :)
