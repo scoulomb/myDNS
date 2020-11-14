@@ -20,7 +20,7 @@ sh "./path/to/oc create job api-after-load-non-regression-${version} --from=cron
 version here is Jenkins var and `cronjob/api-non-regression` is Cronjob metadata.name. 
 
 Here we think we  override the job entrypoint as per [part d](6-use-linux-nameserver-part-d.md#kubernetes-link).
-It would be the case if it was a normal job but here we use `--from` and it results to a noops.
+It would be the case if it was a normal job but here we use `--from` and it results to a no-ops.
 This was explained here [part d: actually when we create a Job from a CronJob the command is ignored](6-use-linux-nameserver-part-d.md#but-actually-when-we-create-a-job-from-a-cronjob-the-command-is-ignored).
 
 We can also do as a proof
@@ -289,3 +289,26 @@ See https://github.com/scoulomb/docker-doctor/blob/main/README.md
 And in particular linked to myk8s here:  https://github.com/scoulomb/docker-doctor/blob/main/README.md#Link-other-projects
 
 <!-- `--` in kubectl and docker explained in this doc ok --> 
+
+
+<!-- All work linked with tasks 
+
+- Non reg secret (ns pr#68) 
+- Completed https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d.md
+and applications: https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d-other-applications.md 
+=> so that we launch of non reg after PR is merged (it is secrets suite)
+all was (doubt but well concluded) clear and linked clearly made in [part D -applications](6-use-linux-nameserver-part-d-other-applications.md).
+- This part D-application knowledge is reused in Docker doctor
+- Then Docker doctor completed: https://github.com/scoulomb/docker-doctor/blob/main/README.md#link-other-projects
+and linked to other project 
+- the enables to test device access as linked in docker doctor https://raw.githubusercontent.com/scoulomb/docker-doctor/main/README.md (sre pr#27)
+- And opens to next section (e)  where run image docker directly. This is what enabled to detect issue in part d,
+(no need to restest the image with change made with part d/ expose udp)
+- nameserver sporadic non reg investigation results: "DNS+non+regression+sporadic+failures"
+	- Linked to  traceroute TCP and capa https://github.com/scoulomb/docker-doctor#requirements => myk8s updates tough traceroute did not helps at it seems to stop at vip.
+	- Then wonders if root cause was secret and wanted to improve but left intact, it was perfect as explained here: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md and explain secret flow (search for "flow will be" this is concluded and understood STOP
+	and made pr to k8s https://github.com/kubernetes/website/pull/25027 (which is optional for conclusion)
+
+Everything which is here is clearly concluded finally :)
+bullet 2 (doubt but well concluded) -> OK STOP
+-->
