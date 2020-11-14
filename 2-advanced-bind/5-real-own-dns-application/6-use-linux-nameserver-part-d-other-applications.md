@@ -311,4 +311,6 @@ and linked to other project
 
 Everything which is here is clearly concluded finally :)
 bullet 2 (doubt but well concluded) -> OK STOP
+
+Also side topic was https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-suite-b-dns-ip-search-api.md#search-endpoint which is ok
 -->
