@@ -36,7 +36,7 @@ oc create job api-after-load-non-regression-manual --from=cronjob/dns-automation
         - name: NAMESPACE
 ````
 
-So we are actually running non reg while we deploy, which is not the prupose as we would target old version.
+So we are actually running non reg while we deploy, which is not the purpose as we would target old version.
 
 ## Solution 2: use deployment rollout
 
@@ -141,11 +141,13 @@ script returned exit code 1
 It seems to be a known issue
 https://github.com/kubernetes/kubernetes/issues/40224
 
-But if the version of the kubectl we use does not have tinmeout option it will not work
+We can increase timeout by doing 
 
 ````shell script
 kubectl rollout status deployment/app --namespace=app --timeout=60s
 ````
+
+But if the version of the kubectl we use is tool old, this option will not be available to you.
 
 
 <!-- relaunching twice and it worked so we can keep it -->
