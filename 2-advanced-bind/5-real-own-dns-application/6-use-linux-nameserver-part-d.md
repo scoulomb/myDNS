@@ -340,6 +340,7 @@ So we lose the args it is consistent with the fact that
 
 and notes here: https://docs.docker.com/engine/reference/run/#entrypoint-default-command-to-execute-at-runtime
 
+> Passing --entrypoint will clear out any default command set on the image (i.e. any CMD instruction in the Dockerfile used to build it).
 
 Note that unlike kubernetes this `--` is not ignored. 
 
