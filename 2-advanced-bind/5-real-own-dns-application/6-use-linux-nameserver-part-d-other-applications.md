@@ -308,10 +308,7 @@ And in particular linked to myk8s here:  https://github.com/scoulomb/docker-doct
 <!-- `--` in kubectl and docker explained in this doc ok --> 
 
 
-<!-- All work linked with tasks -->
-
-
- 
+<!-- All work linked with tasks 
 
 - Non reg secret (ns pr#68) 
 - Completed https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d.md
