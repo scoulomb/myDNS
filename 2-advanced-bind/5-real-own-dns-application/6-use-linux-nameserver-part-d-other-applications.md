@@ -272,15 +272,30 @@ Thus I will keep it.
 <!-- pr 71 reverted with 73-->
 
 
+## Note on echo status
+
+When doing 
+
+````shell script
+sh "./path/to/oc rollout status dc automation-server; echo \$?"
+````
+
+as per usage of `;`, it would not make the task fail.
+Thus it may be better to remove it.
+
+<!-- ok suffit, DNS pr#74 -->
+
+
 <!--
-pr 70-71-72-73 
-impacts only end of Jenkins file finally => lb pr#292
+pr 70-71-72-73-74
+impacts only end of Jenkins file finally => lb pr#293 (with echo)
 oc get cj ; oc get jo; oc get po => completed and report is generated. Checked for DNS OK
 -->
 
 <!-- when job failng restart container and then send timeout ok
  STOP OK, part d completed only next-->
- 
+
+
 ## Application in docker doctor
  
 This knowledge is leverage in docker doctor.
@@ -291,7 +306,10 @@ And in particular linked to myk8s here:  https://github.com/scoulomb/docker-doct
 <!-- `--` in kubectl and docker explained in this doc ok --> 
 
 
-<!-- All work linked with tasks 
+<!-- All work linked with tasks -->
+
+
+ 
 
 - Non reg secret (ns pr#68) 
 - Completed https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d.md
