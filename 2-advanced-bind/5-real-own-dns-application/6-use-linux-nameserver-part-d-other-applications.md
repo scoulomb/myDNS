@@ -331,7 +331,8 @@ bullet 2 (doubt but well concluded) -> OK STOP
 
 Also side topic was https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-suite-b-dns-ip-search-api.md#search-endpoint which is ok
 
-ADD:
+-> ADD 16/11 to links tasks
+
 - points from J.
     -Add  note on echo [status](#note-on-echo-status) 
     -add precision on [timeout](#we-will-use-alpine-to-show-an-example)
@@ -345,23 +346,143 @@ coming from next step for target ns (Todo list for production rollout)
 
 Note other points here referenced in this page OK
 
-- Update PR k8s but normal (see pull 6)
-I had some issue when cloning k8s website thus made pr online
+-->
+
+<!-- Note on Kubernetes pull requests
+
+## Update PR: https://github.com/kubernetes/website/pull/25027 
+ 
+https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md -> PR#25027
+
+### I had some issue when cloning k8s website thus made pr online
 when needed to update wanted to fetch 
 https://stackoverflow.com/questions/9537392/git-fetch-remote-branch
 But same issue in different machine
 But trying with github desktop via link in html gui,
 selecting branch created online, open file in vs code integration, update and then open terminal and use normal command to amend
 
-Note: in initial doc we mention initial phrasing, I remove the Kubelet but fine
-And why original phrasing already mentioned
-next steps independent and opt
+### Change based on Jiehong comments (16/11)
+Note: in https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md we mention initial phrasing,
+I remove the Kubelet but it is still valid.
 
-could make similar for cm?
+### based on kbhawkey (17/11)
+
+https://github.com/kubernetes/website/pull/25027
+quoting  kbhawkey
+
+````
+My understanding of this sentence:
+If an environment variable changes, a container needs to be restarted to read the updated environment variable.
+
+If an environment variable containing a secret is modified, a container must be restarted to use the updated secret.
+````
+
+Thanks for the comment.
+From my understanding in the first case: 
+> If an environment variable changes, a container needs to be restarted to read the updated environment variable.
+
+and unlike the second case. 
+You will be forced to restart the container (delete the pod more exactly). Therefore you have no risk to have your environment var not updated.
+
+
+For instance and as a proof
+
+````
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+    - name: test-container
+      image: registry.hub.docker.com/scoulomb/docker-doctor:dev
+      env:
+      - name: USERNAME
+        value: scoulomb
+
+  restartPolicy: Always' > mypod.yaml
+kubectl delete -f mypod.yaml
+kubectl apply -f mypod.yaml
+````
+
+They if you try to edit via kubectl edit you will have 
+
+````
+spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)
+````
+
+
+Same when using the  declarative API which prevents from modifying env var
+If we redefine test-pod
+````
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  containers:
+    - name: test-container
+      image: registry.hub.docker.com/scoulomb/docker-doctor:dev
+      env:
+      - name: USERNAME
+        value: scoulomb2
+
+  restartPolicy: Always' > mypod.yaml
+
+kubectl apply -f mypod.yaml
+````
+
+Output is 
+
+```` 
+root@sylvain-hp:/home/sylvain# kubectl apply -f mypod.yaml
+The Pod "test-pod" is invalid: spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)
+  core.PodSpec{
+        Volumes:        []core.Volume{{Name: "default-token-69j8q", VolumeSource: core.VolumeSource{Secret: &core.SecretVolumeSource{SecretName: "default-token-69j8q", DefaultMode: &420}}}},         InitContainers: nil,
+        Containers: []core.Container{
+                {
+                        ... // 5 identical fields
+                        Ports:   nil,
+                        EnvFrom: nil,
+                        Env: []core.EnvVar{
+                                {
+                                        Name:      "USERNAME",
+-                                       Value:     "scoulomb2",
++                                       Value:     "scoulomb",
+                                        ValueFrom: nil,
+                                },
+                        },
+                        Resources:    core.ResourceRequirements{},
+                        VolumeMounts: []core.VolumeMount{{Name: "default-token-69j8q", ReadOnly: true, MountPath: "/var/run/secrets/kubernetes.io/serviceaccount"}},
+                        ... // 12 identical fields
+                },
+        },
+        EphemeralContainers: nil,
+        RestartPolicy:       "Always",
+        ... // 24 identical fields
+  }
+````
+
+We will have to do 
+
+````
+kubectl delete -f mypod.yaml
+kubectl apply -f mypod.yaml
+````
+
+to have the change.
+This is described here:
+https://github.com/kubernetes/kubernetes/issues/24913
+
+
+### Could make similar for ConfigMap?
+
 but harder to insert in doc: https://kubernetes.io/docs/concepts/configuration/configmap/ so no
 made assumption same behavior as secret which I will not verify then
 and about consumption mode mentioned in cm doc, consider aligned:
 https://github.com/scoulomb/myk8s/blob/master/Volumes/volume4question.md#4-configmap-consumption
+
+## Do not use docker specific wording (new PR: https://github.com/kubernetes/website/pull/25068)
 
 And the 4 ways to use a cm described here https://kubernetes.io/docs/concepts/configuration/configmap/
 - Command line arguments to the entrypoint of a container
@@ -394,7 +515,7 @@ See here [part d](6-use-linux-nameserver-part-d.md#override-entrypoint-and-comma
 
 Here
 https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes
-array similar to Docker but not the same details, 
+array similar to Docker but not the same details, skipped
 
 https://docs.docker.com/engine/reference/builder/#entrypoint
 -> The shell form prevents any CMD or run command line arguments from being used,
@@ -407,12 +528,639 @@ leads to /bin/sh -c exec_entry p1_entry
 
 (note the special synthax)
 
-I would propose
-"Inside a Pod command"
-https://github.com/kubernetes/website/pull/25068
+Thus I would propose a new PR here to say
+"Inside a Pod command": https://github.com/kubernetes/website/pull/25068
 
-Merge also optional
 
-SO CAN CONCLUDE OK STOP HERE
+## New PR for shell expansion (see Note on exec from and Kubernetes shell expansion)
+-->
+
+## Note on exec from and Kubernetes shell expansion
+
+<details>
+  <summary>Click to expand!</summary>
+
+Here we state what was happening for [override](6-use-linux-nameserver-part-d.md#kubernetes-link) in Kubernetes,
+And as it is an override we use exec form as stated [here](6-use-linux-nameserver-part-d.md#also-when-we-override-it-is-like-we-use-the-exec-form).
+
+But Kubernetes has a special feature for environment var expansion!
+In kubernetes documentation it is mentioned here:
+- Inject data app: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#define-a-command-and-arguments-when-you-create-a-pod
+- ConfigMap: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+
+### $(ENV) kubernetes expansion
+
+This is what is done in CM example:
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+
+#### Test 0
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: [ "/bin/sh", "-c", "echo $(ENV_VAR_1) $(ENV_VAR_2)" ]    
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titi
+````
+
+### Test 1 
+
+But here we use a shell so variable expansion would be done by shell if need 
+
+<!--
+(k8s does apply before, a=3, proof echo $(a) not working in normal shell).
+-->
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: [ "/bin/sh", "-c", "echo $ENV_VAR_1 $ENV_VAR_2" ]    
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titi
+````
+
+
+### Test 2 
+
+It has a full interest when doing 
+
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: [ "/bin/echo", "$(ENV_VAR_1) $(ENV_VAR_2)" ]    
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+
+Output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titi
+````
+
+[IMP1_PR] So here in the doc: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+: we could remove `/bin/sh` to really show the use of `$(VAR_NAME)`.
+
+<!--
+
+[1] In the given example we want to show `$(VAR_NAME)` usage of Kubernetes substitution syntax.
+
+current doc is as #test 0
+we use a shell (`/bin/sh`),  it would work without the k8s substitution syntax (which is applied before). 
+I propose to replace with a case where variable expansion is needed.
+
+which is #test 2
+
+````
+kubectl create -f https://kubernetes.io/examples/configmap/configmap-multikeys.yaml
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: dapi-test-pod-11
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/echo", "$(SPECIAL_LEVEL_KEY) $(SPECIAL_TYPE_KEY)" ]
+      env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_LEVEL
+        - name: SPECIAL_TYPE_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_TYPE
+  restartPolicy: Never' > test.yaml
+kubectl apply -f test.yaml
+````
+output is
+
+````
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dapi-test-pod-11
+very charm
+````
+
+as #test 1 to show variable expansion would be done by shell.
+
+````
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: dapi-test-pod-123456
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/sh", "-c", "echo $SPECIAL_LEVEL_KEY $SPECIAL_TYPE_KEY" ]
+      env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_LEVEL
+        - name: SPECIAL_TYPE_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_TYPE
+  restartPolicy: Never' > test.yaml
+kubectl apply -f test.yaml
+````
+output is
+
+````
+root@sylvain-hp:/home/sylvain# kubectl logs dapi-test-pod-123456
+very charm
+````
+
+
 
 -->
+
+
+### Test 3
+
+Indeed if not if not doing special expansion 
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: [ "/bin/echo", "$ENV_VAR_1 $ENV_VAR_2" ]    
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+$ENV_VAR_1 $ENV_VAR_2
+````
+
+<!--
+````
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: dapi-test-pod-123456789
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: [ "/bin/echo", "$SPECIAL_LEVEL_KEY $SPECIAL_TYPE_KEY" ]
+      env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_LEVEL
+        - name: SPECIAL_TYPE_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_TYPE
+  restartPolicy: Never' > test.yaml
+kubectl apply -f test.yaml
+````
+output is
+
+````
+#  kubectl logs dapi-test-pod-123456789
+$SPECIAL_LEVEL_KEY $SPECIAL_TYPE_KEY
+````
+-->
+
+### Kubernetes has something similar to Docker shell form and exec form but it is always exec from 
+
+And it does care if we use what would look like a shell form or exec form in Docker as here this would be equivalent 
+to [test 3](#test-3) with shell form .
+
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: 
+    - "/bin/echo"
+    -  "$ENV_VAR_1 $ENV_VAR_2"
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+$ENV_VAR_1 $ENV_VAR_2
+````
+
+And it does not output the var as in [test 1](#test-1) or [test 0](#test-0).
+Which we would expect in Docker in Shell form see why [here](6-use-linux-nameserver-part-d.md#conclusion).
+
+So to make it work as in test 2 we should use the special syntax
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: 
+    - "/bin/echo"
+    -  "$(ENV_VAR_1) $(ENV_VAR_2)"
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titi
+````
+
+### It is actually also working in Kubernetes args
+
+#### k8s command + args 
+https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#use-environment-variables-to-define-arguments
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command: 
+    - "/bin/echo"
+    args:
+    -  "$(ENV_VAR_1) $(ENV_VAR_2)"
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titi
+````
+
+
+or 
+
+#### void k8s commands and args
+
+````shell script
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: dnsv3
+  name: dnsv3
+spec:
+  containers:
+  - image: dnsv3
+    name: dnsv3
+    imagePullPolicy: Never
+    command:
+    - "" # need to define void otherwise keeps original entrypoint
+    args:
+    - "/bin/echo"
+    -  "$(ENV_VAR_1) $(ENV_VAR_2)"
+    env:
+    - name: ENV_VAR_1
+      value: "toto"
+    - name: ENV_VAR_2
+      value: "titi"
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}' > test.yaml
+
+kubectl delete -f test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dnsv3
+````
+
+output is 
+
+````
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dnsv3
+toto titishell script
+````
+
+So here in the doc they mentioned both 
+
+https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#define-a-command-and-arguments-when-you-create-a-pod
+
+but not here 
+
+https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+
+[IMP_2_PR] They could say command and args sections.
+We can use configmap defined environment var (and k8s substitution) not only in pod commands , but also args of container section.
+
+<!--
+kubectl create -f https://kubernetes.io/examples/configmap/configmap-multikeys.yaml
+echo 'apiVersion: v1
+kind: Pod
+metadata:
+  name: dapi-test-pod-22
+spec:
+  containers:
+    - name: test-container
+      image: k8s.gcr.io/busybox
+      command: []
+      args: [ "/bin/echo", "$(SPECIAL_LEVEL_KEY) $(SPECIAL_TYPE_KEY)" ]
+      env:
+        - name: SPECIAL_LEVEL_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_LEVEL
+        - name: SPECIAL_TYPE_KEY
+          valueFrom:
+            configMapKeyRef:
+              name: special-config
+              key: SPECIAL_TYPE
+  restartPolicy: Never' > test.yaml
+kubectl apply -f test.yaml
+kubectl logs pod/dapi-test-pod-22
+````
+output is
+
+````
+root@sylvain-hp:/home/sylvain# kubectl logs pod/dapi-test-pod-22
+very charm
+````
+-->
+
+### Finally to prove it is a k8s feature
+ 
+This is the equivalent to [void k8s commands and args](#void-k8s-commands-and-args).
+ 
+(entrypoint via cli does not manage to make exec + args)
+
+````shell script
+# override (so exec) but with a shell, env var expansion 
+sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/sh -c 'echo $ENV_VAR_1'
+# Override but no shell =>  no expansion
+sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/echo $ENV_VAR_1
+# Override but no shell but using expansion feature =>  no expansion as it is Kubernetes specific
+sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/echo $(ENV_VAR_1)
+
+````
+
+output is
+
+
+````shell script
+root@sylvain-hp:/home/sylvain# sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/sh -c 'echo $ENV_VAR_1'
+toto
+root@sylvain-hp:/home/sylvain# sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/echo $ENV_VAR_1
+
+root@sylvain-hp:/home/sylvain# sudo docker run --rm --name test-expansion --entrypoint="" --env ENV_VAR_1="toto" dnsv3 /bin/echo $(ENV_VAR_1)
+ENV_VAR_1: command not found
+
+root@sylvain-hp:/home/sylvain#
+````
+
+And as explained needs a shell (exec form) in other cases;
+
+### No env var 
+
+Sometimes env var expansion is not sufficient and we need a shell as stated here
+https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#run-a-command-in-a-shell
+
+## As a consequence 
+
+[IMP1_PR] + [IMP2_PR] + PR#25068 comment => could lead to a new pull request 
+
+- Inject data app: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#define-a-command-and-arguments-when-you-create-a-pod
+=> Here arguments is command and args keep it
+- ConfigMap: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+=> Here I will do a PR
+
+Which enables to update  PR#25068 in a consistent way
+
+<!-- did not try init container 
+kubectl explain deployment.spec.template.spec.containers
+kubectl explain rc.spec.template.spec.containers
+kubectl explain job.spec.template.spec.containers
+kubectl explain cj.spec.jobTemplate.spec.template.spec.containers
+kubectl explain pod.spec.containers
+
+
+Here they mix
+
+root@sylvain-hp:/home/sylvain# kubectl explain job.spec.template.spec.containers.command
+KIND:     Job
+VERSION:  batch/v1
+
+FIELD:    command <[]string>
+
+DESCRIPTION:
+     Entrypoint array. Not executed within a shell. The docker image's
+     ENTRYPOINT is used if this is not provided. Variable references $(VAR_NAME)
+     are expanded using the container's environment. If a variable cannot be
+     resolved, the reference in the input string will be unchanged. The
+     $(VAR_NAME) syntax can be escaped with a double $$, ie: $$(VAR_NAME).
+     Escaped references will never be expanded, regardless of whether the
+     variable exists or not. Cannot be updated. More info:
+     https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+root@sylvain-hp:/home/sylvain# kubectl explain job.spec.template.spec.containers.args
+KIND:     Job
+VERSION:  batch/v1
+
+FIELD:    args <[]string>
+
+DESCRIPTION:
+     Arguments to the entrypoint. The docker image's CMD is used if this is not
+     provided. Variable references $(VAR_NAME) are expanded using the
+     container's environment. If a variable cannot be resolved, the reference in
+     the input string will be unchanged. The $(VAR_NAME) syntax can be escaped
+     with a double $$, ie: $$(VAR_NAME). Escaped references will never be
+     expanded, regardless of whether the variable exists or not. Cannot be
+     updated. More info:
+     https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#running-a-command-in-a-shell
+and aligned with our understanding, link inaccurate but not last version of kubectl
+And it is visible they to link to docker and mention it except here: Entrypoint array
+-->
+
+### Link with CM and secret
+
+Here we had seen ConfigMap and secret
+https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#note-on-configmap
+
+And the 4 ways to use a cm described here
+
+- https://kubernetes.io/docs/concepts/configuration/configmap which are
+    - Command line arguments to the entrypoint of a container (PR#25068: https://github.com/kubernetes/website/pull/25068 => Inside a container command and args) -> this one is a particular case of env var where we can use substitution synthax or shell 
+    - Environment variables for a container
+    - Add a file in read-only volume, for the application to read
+    - Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
+- aligned with https://github.com/scoulomb/myk8s/blob/master/Volumes/volume4question.md#4-configmap-consumption
+On of them is consumption as container in pod command https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
+
+</details>
