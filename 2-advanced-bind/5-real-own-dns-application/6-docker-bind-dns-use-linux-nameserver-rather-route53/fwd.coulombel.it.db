@@ -27,3 +27,8 @@ scoulomb         IN      A       41.41.41.41
 
 ; here we use scoulomb.ddns.net. for application deployed behind the box and not for the DNS itself
 home             IN      CNAME     scoulomb.ddns.net.
+
+; Ingress demo - part f
+*.mypaas         IN      CNAME     scoulomb.ddns.net. ; here we could point to A directly
+appa.prd     IN      CNAME     fake-a.mypaas.coulombel.it. ; here we could point directly to scoulomb.ddns.net. or to A directly
+appb.prd     IN      CNAME     fake-b.mypaas.coulombel.it. ; here we could point directly to scoulomb.ddns.net. or to A directly

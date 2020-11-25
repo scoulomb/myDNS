@@ -12,18 +12,14 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
-  - host: a-server
+  - host: appa.prd.coulombel.it
     http:
       paths:
       - path: /
         backend:
           serviceName: a-server
           servicePort: 80
-      - path: /tutu # we could route base on host + path
-        backend:
-          serviceName: b-server
-          servicePort: 80
-  - host: b-server
+  - host: appb.prd.coulombel.it
     http:
       paths:
       - path: /
