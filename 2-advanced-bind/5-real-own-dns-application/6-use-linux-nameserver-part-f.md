@@ -438,6 +438,7 @@ Hello app B
 We would also need to certify we are owner of the DNS.
 it is similar to what we had to do for
 - Github page: https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
+<!-- in gcr and openshift can define several mapping unlike github page -->
 - Google cloud run: https://github.com/scoulomb/attestation-covid19-saison2-auto#mapping-custom-domain-in-cloud-run
 <!-- And for https://github.com/scoulomb/aws-sa-exo, where it is at elb level according to itw, will stop there digging -->
 
@@ -452,6 +453,143 @@ It is working in http and https: but https warning (self-signed certificate)
 <!-- See PR where equivalences are clear:
 DNS PR#77
 -->
+
+## What happens if you define 2 ingress with same host 
+
+<!-- as mistake because did not replace between 2 project the host, tested with proj and here generic -->
+
+Let's take openshift route as an example.
+
+We start creating a service and related route in project/ns A. 
+
+````shell script
+oc project $project-a
+oc create svc clusterip my-cs-1 --tcp 8080:8080
+oc create route edge a-route --hostname test.net --path="" --service=my-cs-1 --port=8080 
+oc get routes | grep -B 2 a-route
+````
+
+
+output is 
+
+````shell script
+➤ oc get routes | grep -B 2 a-route
+NAME                                 HOST/PORT                                                        PATH      SERVICES                PORT      TERMINATION     WILDCARD
+a-route                              test.net                                                                   my-cs-1                 8080      edge            None
+````
+
+We move to project B. Ans create same service and route. Note we could even keep the same resource name as in $project-a as those resource are namespace scoped.
+
+ 
+````shell script
+oc project $project-b
+oc create svc clusterip my-cs-1 --tcp 8080:8080
+oc create route edge a-route --hostname test.net --path="" --service=my-cs-1 --port=8080 --dry-run -o yaml
+````
+
+Dry-run seems ok.
+
+````
+➤ oc create route edge a-route --hostname test.net --path="" --service=my-cs-1 --port=8080 --dry-run -o yaml
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-cs-1
+  name: a-route
+spec:
+  host: test.net
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+  to:
+    kind: ""
+    name: my-cs-1
+    weight: null
+status:
+  ingress: null
+````
+
+So we go for creation
+
+````shell script
+oc create route edge a-route --hostname test.net --path="" --service=my-cs-1 --port=8080
+oc get routes | grep -B 2 a-route
+````
+
+output is 
+
+````shell script
+➤ oc get routes | grep -B 2 a-route
+NAME                              HOST/PORT                                                                            PATH      SERVICES                          PORT      TERMINATION     WILDCARD
+a-route                           HostAlreadyClaimed                                                                             my-cs-1                           8080      edge            None
+````
+
+But here we can see mutiproject conflict is managed we have the error **`HostAlreadyClaimed`**.
+
+As seen in [ingress](6-part-e-contenarized-http-server/ingress.yaml). We can filter on `host` and `path`.
+What happens if we add it.
+
+````shell script
+oc create route edge a-route-2 --hostname test.net --path="/titi" --service=my-cs-1 --port=8080
+oc get routes | grep -B 2 a-route
+````
+
+Output is 
+
+````shell script
+➤ oc create route edge a-route-2 --hostname test.net --path="/titi" --service=my-cs-1 --port=8080
+route.route.openshift.io/a-route-2 created
+➤ oc get routes | grep -B 2 a-route
+NAME                              HOST/PORT                                                                            PATH      SERVICES                          PORT      TERMINATION     WILDCARD
+a-route                           HostAlreadyClaimed                                                                             my-cs-1                           8080      edge            None
+a-route-2                         HostAlreadyClaimed                                                                   /titi     my-cs-1                           8080      edge            None
+````
+
+We still have  **`HostAlreadyClaimed`**.
+
+Note if in given project we create 2 routes with same name we have an error
+
+````shell script
+➤ oc create route edge a-route-2 --hostname test.net --path="/titi" --service=my-cs-1 --port=8080
+Error from server (AlreadyExists): routes.route.openshift.io "a-route-2" already exists
+````
+
+This demo is finished, we will cleam-up
+
+````
+oc delete route a-route --namespace $project-b
+oc delete route a-route-2 --namespace $project-b
+oc delete route a-route --namespace $project-a
+````
+
+Output is
+
+````
+➤ oc delete route a-route-2 --namespace $project-b
+route.route.openshift.io "a-route-2" deleted
+➤ oc delete route a-route --namespace $project-a
+route.route.openshift.io "a-route" deleted
+````
+ 
+<!--
+Proof on the scope
+
+````shell script
+➤ oc delete route a-route
+Error from server (NotFound): routes.route.openshift.io "a-route" not found
+➤ oc delete route a-route --namespace $project-a
+route.route.openshift.io "a-route" deleted
+````
+
+Note route created via manifest, here cli and code via template,
+could do via helm, pulumi => https://kccncna20.sched.com/event/ek9o/five-hundred-twenty-five-thousand-six-hundred-k8s-clis-phillip-wittrock-gabbi-fisher-apple
+from https://kccncna20.sched.com/type/101+Track
+-->
+
+Ingress have similar behavior: https://github.com/nginxinc/kubernetes-ingress/issues/244
 
 ## Go further 
 
