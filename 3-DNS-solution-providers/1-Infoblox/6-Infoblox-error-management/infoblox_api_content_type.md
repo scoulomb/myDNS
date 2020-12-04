@@ -28,7 +28,7 @@ vagrant rsync # and not auto, otherwise it would overrwrite the file
 # Afer running script to get the report as rsync is a one way sync from windows to VM
 python -m http.server 8080` to get the report
 ````
-See here issue: [TODO ADD LINK]
+See here issue: https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/sync-issue.md
 
 ## Experiments
 
