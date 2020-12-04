@@ -1,0 +1,252 @@
+== Send requests
+=== PREPARE: Create a generic proto test view
+view/ZG5zLnZpZXckLjE2MDM:scoulomb-proto-view-cont-type/false
+"view/ZG5zLnZpZXckLjE2MDM:scoulomb-proto-view-cont-type/false""view/ZG5zLnZpZXckLjE2MDQ:scoulomb-proto-view-cont-type/false"view/ZG5zLnZpZXckLjE2MDQ:scoulomb-proto-view-cont-type/false
+{
+    "result": {
+        "_ref": "zone_auth/ZG5zLnpvbmUkLjE2MDQubmV0LnNjb3Vsb21iLm1l:me.scoulomb.net/scoulomb-proto-view-cont-type", 
+        "fqdn": "me.scoulomb.net", 
+        "network_view": "default", 
+        "view": "scoulomb-proto-view-cont-type"
+    }
+}
+=== TEST1: Create entry nominal: A '201 application/json' IS RETURNED BUT actual type is 'text'
+{
+  "name": "demo-test-34bcc898-174e-4018-b451-cd54af1152b0.me.scoulomb.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 201 Created
+Date: Fri, 04 Dec 2020 11:52:41 GMT
+[...]
+Content-Type: application/json
+[...]
+Transfer-Encoding: chunked
+
+"record:a/ZG5zLmJpbmRfYSQuMTYwNC5uZXQuc2NvdWxvbWIubWUsZGVtby10ZXN0LTM0YmNjODk4LTE3NGUtNDAxOC1iNDUxLWNkNTRhZjExNTJiMCwxNS4yNC41My41:demo-test-34bcc898-174e-4018-b451-cd54af1152b0.me.scoulomb.net/scoulomb-proto-view-cont-type"
+=== TEST1 BIS: Create entry nominal with user 2: A '201 application/json' IS RETURNED BUT actual type is 'text'
+{
+  "name": "demo-test-56246fed-680e-4ce3-861d-3cd1d849a807.me.scoulomb.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 201 Created
+Date: Fri, 04 Dec 2020 11:52:43 GMT
+[...]
+Content-Type: application/json
+[...]
+Transfer-Encoding: chunked
+
+"record:a/ZG5zLmJpbmRfYSQuMTYwNC5uZXQuc2NvdWxvbWIubWUsZGVtby10ZXN0LTU2MjQ2ZmVkLTY4MGUtNGNlMy04NjFkLTNjZDFkODQ5YTgwNywxNS4yNC41My41:demo-test-56246fed-680e-4ce3-861d-3cd1d849a807.me.scoulomb.net/scoulomb-proto-view-cont-type"
+=== TEST1 BIS 2: Create entry nominal with user 2 with a more recent API version (2.11): A '201 application/json' IS RETURNED BUT actual type is 'text'
+{
+  "name": "demo-test-b9290d9d-aa9a-4028-b6e6-6e913699cec2.me.scoulomb.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 201 Created
+Date: Fri, 04 Dec 2020 11:52:44 GMT
+[...]
+Content-Type: application/json
+[...]
+Transfer-Encoding: chunked
+
+"record:a/ZG5zLmJpbmRfYSQuMTYwNC5uZXQuc2NvdWxvbWIubWUsZGVtby10ZXN0LWI5MjkwZDlkLWFhOWEtNDAyOC1iNmU2LTZlOTEzNjk5Y2VjMiwxNS4yNC41My41:demo-test-b9290d9d-aa9a-4028-b6e6-6e913699cec2.me.scoulomb.net/scoulomb-proto-view-cont-type"
+=== TEST2: Create record in zone which does not exist: A '400 application/json' IS RETURNED and actual type is 'application/json'
+{
+  "name": "demo-test-10fd7984-bfcb-4d38-a5cf-e6c197224308.me.unknown.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 400 Bad Request
+Date: Fri, 04 Dec 2020 11:52:46 GMT
+[...]
+Content-Type: application/json
+[...]
+Transfer-Encoding: chunked
+
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:The action is not allowed. A parent was not found.)", 
+  "code": "Client.Ibap.Data.Conflict", 
+  "text": "The action is not allowed. A parent was not found."
+}
+=== TEST3: Create entry username exists / invalid credentials: A '401 text/html' IS RETURNED and actual type is 'text/html'
+{
+  "name": "demo-test-246d4afe-f2ac-4a9c-9d5a-f9424f394d2b.me.scoulomb.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 401 Authorization Required
+Date: Fri, 04 Dec 2020 11:52:47 GMT
+[...]
+Content-Length: 401
+Content-Type: text/html; charset=iso-8859-1
+[...]
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Authorization Required</title>
+</head><body>
+<h1>Authorization Required</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+</body></html>
+
+=== TEST4: Create entry username exists / invalid credentials RETRY: A '401 text/html' IS RETURNED and actual type is 'text/html'
+HTTP/1.1 401 Authorization Required
+Date: Fri, 04 Dec 2020 11:52:49 GMT
+[...]
+Content-Length: 401
+Content-Type: text/html; charset=iso-8859-1
+[...]
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Authorization Required</title>
+</head><body>
+<h1>Authorization Required</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+</body></html>
+
+=== TEST5: Create entry username DOES NOT exist : A '401 text/html' IS RETURNED and actual type is 'text/html'
+HTTP/1.1 401 Authorization Required
+Date: Fri, 04 Dec 2020 11:52:50 GMT
+[...]
+Content-Length: 401
+Content-Type: text/html; charset=iso-8859-1
+[...]
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Authorization Required</title>
+</head><body>
+<h1>Authorization Required</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+</body></html>
+
+=== TEST6: Find entry username DOES NOT exist : A '401 text/html' IS RETURNED and actual type is 'text/html'
+HTTP/1.1 401 Authorization Required
+Date: Fri, 04 Dec 2020 11:52:52 GMT
+[...]
+Content-Length: 401
+Content-Type: text/html; charset=iso-8859-1
+[...]
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Authorization Required</title>
+</head><body>
+<h1>Authorization Required</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+</body></html>
+
+=== TEST7: Find entry username DOES NOT exist RETRY : A '403 text/html' IS RETURNED and actual type is 'text/html'
+HTTP/1.1 401 Authorization Required
+Date: Fri, 04 Dec 2020 11:52:53 GMT
+[...]
+Content-Length: 401
+Content-Type: text/html; charset=iso-8859-1
+[...]
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>401 Authorization Required</title>
+</head><body>
+<h1>Authorization Required</h1>
+<p>This server could not verify that you
+are authorized to access the document
+requested.  Either you supplied the wrong
+credentials (e.g., bad password), or your
+browser doesn't understand how to supply
+the credentials required.</p>
+</body></html>
+HTTP/1.1 403 Forbidden
+Date: Fri, 04 Dec 2020 11:52:55 GMT
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Content-Length: 222
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /wapi/v2.5/allrecords
+on this server.</p>
+</body></html>
+HTTP/1.1 403 Forbidden
+Date: Fri, 04 Dec 2020 11:52:56 GMT
+[...]
+Content-Length: 222
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+[...]
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /wapi/v2.5/allrecords
+on this server.</p>
+</body></html>
+
+=== TEST8: Create entry nominal after username failure: device is blocked temporarily for this user
+{
+  "name": "demo-test-7cd85bd6-b6d4-4f7c-a35f-2eab71055ac8.me.scoulomb.net",
+  "view": "scoulomb-proto-view-cont-type",
+  "ipv4addr": "15.24.53.5"
+}
+HTTP/1.1 403 Forbidden
+Date: Fri, 04 Dec 2020 11:52:58 GMT
+[...]
+Content-Length: 220
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /wapi/v2.5/record:a
+on this server.</p>
+</body></html>
+
+=== TEST9: Create entry nominal after username failure: device is blocked temporarily for all users
+HTTP/1.1 403 Forbidden
+Date: Fri, 04 Dec 2020 11:52:59 GMT
+[...]
+Content-Length: 220
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>403 Forbidden</title>
+</head><body>
+<h1>Forbidden</h1>
+<p>You don't have permission to access /wapi/v2.5/record:a
+on this server.</p>
+</body></html>
+=== Clean-up
+view/ZG5zLnZpZXckLjE2MDQ:scoulomb-proto-view-cont-type/false
+"view/ZG5zLnZpZXckLjE2MDQ:scoulomb-proto-view-cont-type/false"

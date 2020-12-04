@@ -1188,6 +1188,8 @@ See DNS PR#52 + 53
 demo s6 when we create A record
 -->
 
+### Side notes
+
 We keep the forwarding because it allows us, to catch other error like non existent zone.
 And for concurrent update to avoid to have a 500. (but still concrent possible for our own check, limited)
 Also for invalid credential but needs to check the content-type in response.
