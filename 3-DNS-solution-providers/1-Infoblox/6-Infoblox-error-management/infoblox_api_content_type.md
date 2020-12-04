@@ -1,4 +1,4 @@
-# Infoblox error management 
+# Infoblox error management and content type
 
 We study how Infoblox manages error 400, 401, 403.
 For credentials management and error forwarding.
@@ -96,7 +96,15 @@ This smells the bug report if we build a tool on top of it.
 To cope with that rather than having a tool which forward each own user credentials to the device. 
 We could create a credentials indirection (Kubernetes secrets, Ansible Tower, LDAP, Credentials vault (Thycotic, CyberArk, Centrtify)).
 
-<!-- this will make shift for non reg -->
+<!-- NR comment: this will make shit for non reg, can test as described in section beginning:
+201, 400 (error fwd case), 401 (from device), 403
+and 401 when no credentials provided (connexion) 
+
+and 5XX can not NR
+
+
+Note 403 hard to test as a second failure will block the device.
+2 "401" failure from device very close can then make nr fail, so issue if 2 nr runned closely -->
 
 ## Algo proposal
 
@@ -136,3 +144,10 @@ From that document we can open issue to Infoblox in particular to fix:
 Adding this header changes nothing to the result. 
 
 Note this behavior is not specified: https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf 
+
+<!-- 
+This page clear OK and link Infoblox ns OK
+From this DNS PR#84 OK
+And https://github.com/scoulomb/private_script/tree/main/dns-auto (script runned ok, concluded)
+where issue to run the code mentionned https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/known-issues.md (concluded, and link other proj ok)--> 
+-->
