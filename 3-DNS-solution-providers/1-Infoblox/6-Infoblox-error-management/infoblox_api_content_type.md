@@ -96,6 +96,7 @@ This smells the bug report if we build a tool on top of it.
 To cope with that rather than having a tool which forward each own user credentials to the device. 
 We could create a credentials indirection (Kubernetes secrets, Ansible Tower, LDAP, Credentials vault (Thycotic, CyberArk, Centrtify)).
 
+<!-- this will make shift for non reg -->
 
 ## Algo proposal
 
