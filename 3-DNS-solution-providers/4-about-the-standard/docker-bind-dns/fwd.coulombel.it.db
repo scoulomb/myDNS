@@ -1,0 +1,18 @@
+$TTL    300
+@       IN      SOA     scoulomb.ddns.net. root.coulombel.it. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                        300         ; Minimum TTL
+)
+; Name Server
+@        IN      NS       scoulomb.ddns.net.
+@        IN      NS       scoulomb2.ddns.net.
+
+scoulomb         IN      A       42.42.42.42
+1scoulomb        IN      A       42.42.42.42
+;-scoulomb        IN      A       42.42.42.42
+;scoul_omb        IN      A       42.42.42.42
+;_scoulomb        IN      A       42.42.42.42
+;scoul_om@b       IN      A       42.42.42.42
