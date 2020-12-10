@@ -601,3 +601,16 @@ OK
 ````
 
 Note the `OK` with warning !
+
+## Openshift
+
+If Infoblox allows creation of entries with `_`.
+You won't be able to configure ingress on top of it:
+
+````shell script
+[vagrant@archlinux docker-bind-dns]$ oc create route edge a-route --hostname test.net --path="" --service=my-cs-1 --port=8080
+route.route.openshift.io/a-route created
+[vagrant@archlinux docker-bind-dns]$ oc create route edge a_route --hostname test.net --path="" --service=my-cs-1 --port=8080
+The Route "a_route" is invalid: metadata.name: Invalid value: "a_route": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
+````
+See [ingress](../../2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-f.md).
