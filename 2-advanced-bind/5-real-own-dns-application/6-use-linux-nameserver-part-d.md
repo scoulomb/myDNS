@@ -585,4 +585,26 @@ sylvain@sylvain-hp:~$ sudo kubectl version
 Client Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.3", GitCommit:"2e7996e3e2712684bc73f0dec0200d64eec7fe40", GitTreeState:"clean", BuildDate:"2020-05-20T12:52:00Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
 Server Version: version.Info{Major:"1", Minor:"18", GitVersion:"v1.18.2", GitCommit:"52c56ce7a8272c798dbc29846288d7cd9fbae032", GitTreeState:"clean", BuildDate:"2020-04-16T11:48:36Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
 ````
-<all above concluded>
+<!-- all above concluded -->
+
+## Docker compose 
+
+Compose had commands and args:
+- https://docs.docker.com/compose/compose-file/#command
+- https://docs.docker.com/compose/compose-file/#args
+- https://docs.docker.com/compose/compose-file/#entrypoint
+
+So here it is confusing as 
+
+- Docker `ENTRYPOINT` <=> k8s `command`  <=> https://docs.docker.com/compose/compose-file/#entrypoint
+- Docker `CMD` <=> k8s `args` <=>  https://docs.docker.com/compose/compose-file/#command
+
+And args enables to
+> Add build arguments, which are environment variables accessible only during the build process.
+
+## Docker RUN step
+
+`RUN` as `ENTRYPOINT` also has shell and exec form
+See https://docs.docker.com/engine/reference/builder/#run 
+
+<! see RUN pipenv synv, Service 'my-automation-server' failed to build : The command '/bin/sh -c pipenv sync' returned a non-zero code: -->

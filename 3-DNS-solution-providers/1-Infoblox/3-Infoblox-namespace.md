@@ -1190,7 +1190,8 @@ demo s6 when we create A record
 
 ### Side notes
 
-We keep the forwarding because it allows us, to catch other error like non existent zone.
+We keep the forwarding because it allows us, to catch other error like non existent zone/view.
+<!-- if only some zone are supported, there is higher chance it helps to catch view which does not exists -->
 And for concurrent update to avoid to have a 500. (but still concrent possible for our own check, limited)
 Also for invalid credential but needs to check the content-type in response.
 

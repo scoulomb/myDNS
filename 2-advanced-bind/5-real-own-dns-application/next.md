@@ -4,7 +4,7 @@ Part A, B and vlc concluded
 side not on gtm end of part b 
 
 [START DIRECTLY HERE, DHCP DONE]
-see server in docker
+see server in docker  + fix docker a    + ingress
 3. Use IPv6 
 http://192.168.1.1/networkv6/firewall
 https://stackoverflow.com/questions/25817848/python-3-does-http-server-support-ipv6

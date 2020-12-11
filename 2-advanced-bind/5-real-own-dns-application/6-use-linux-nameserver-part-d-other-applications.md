@@ -308,7 +308,7 @@ And in particular linked to myk8s here:  https://github.com/scoulomb/docker-doct
 <!-- `--` in kubectl and docker explained in this doc ok --> 
 
 
-<!-- All work linked with tasks 
+<!-- All work (in part d) linked with proj and other files:
 
 - Non reg secret (ns pr#68) 
 - Completed https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d.md
@@ -317,225 +317,58 @@ and applications: https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/
 all was (doubt but well concluded) clear and linked clearly made in [part D -applications](6-use-linux-nameserver-part-d-other-applications.md).
 - This part D-application knowledge is reused in Docker doctor
 - Then Docker doctor completed: https://github.com/scoulomb/docker-doctor/blob/main/README.md#link-other-projects
-and linked to other project 
+and linked to other project + sre-setup - TestV2.md (prd target + read user comment -> sre-setup pr#29)
 - this enables to test device access as linked in docker doctor https://raw.githubusercontent.com/scoulomb/docker-doctor/main/README.md (sre pr#27)
-- And opens to next section (e)  where run image docker directly. This is what enabled to detect issue in part d,
+- And opens to next section (e)  where we run image docker directly. This is what enabled to detect issue in part d,
 (no need to retest the image with change made with part d/ expose udp)
-- nameserver sporadic non reg investigation results: "DNS+non+regression+sporadic+failures"
-	- Linked to  traceroute TCP and capa https://github.com/scoulomb/docker-doctor#requirements => myk8s updates tough traceroute did not helps at it seems to stop at vip.
-	- Then wonders if root cause was secret and wanted to improve but left intact, it was perfect as explained here: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md and explain secret flow pr#68 (search for "flow will be") and Jenkins setup (search for jenkins setup) made in first bullet. This is concluded and understood STOP
-	and made pr to k8s https://github.com/kubernetes/website/pull/25027 (which is optional for conclusion)
-
-Everything which is here is clearly concluded finally :)
-bullet 2 (doubt but well concluded) -> OK STOP
-
-Also side topic was https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-suite-b-dns-ip-search-api.md#search-endpoint which is ok
-
--> ADD 16/11 to links tasks
-
-- points from J.
-    -Add  note on echo [status](#note-on-echo-status) 
-    -add precision on [timeout](#we-will-use-alpine-to-show-an-example)
-    - other points ok, checked
-    - => All OK
-    - Note this passed in jenkins in ns,lb OK
+- nameserver sporadic non reg investigation results: see Cfe "DNS+non+regression+sporadic+failures" [UPDATED 9/12]
+We have this error: org.apache.http.conn.ConnectTimeoutException: Connect to xx.xx.xx.xx:443 [/xx.xx.xx.xx] failed: Connect timed out (see difference on connection and request timeout:https://github.com/scoulomb/http-over-socket) on some tests in des
+And at same time we had <username> <password > which is matching placeholder in Karateconfig at 1AM
+	- hypotesis 0: we should use cookie auth -> NO
+	- hypothesis 1:We could think the order is not accurate when we create cronjob and then the secret is overriden is ns pr#68, but it is correct as explained here: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#do-we-need-to-forward-declare-the-secret
+	and made pr to k8s https://github.com/kubernetes/website/pull/25027. 
+	We can see header is correct `> 1 > Authorization: Basic YWRtaW46aW5mb2Jsb3g=` and `echo "YWRtaW46aW5mb2Jsb3g=" | base64 --decode`.
+	If credentials were incorrect we would have a 401.
+	- hypothesis 2: lb issue: traceroute TCP and capa https://github.com/scoulomb/docker-doctor#requirements 
+	Actually it seems Infoblox drops some queries. Since too many authentication failure are performed. Infoblox stops processing requests. Which explains why only some features are failing and the sporadic effect.
+	- hypothesis 3: we do too many authentication requests? -> seems adding user <username>/<password> user fix the issues
+	- hypothesis 4:  we do too many FAILED authentication requests in short amount of time?
+	This is because we have non-regression where secrets is not setup in other namespaces (QCP, UAT) running at the same time (same cronjob) with wrong credentials.
+    This blows Infoblox cluster, and it start dropping packets, including the one of DES which has correct credentials and should work. Indeed same Infoblox instance is used for all test phases,
+    Secret in phases different from DES has not been setup, and it is not performed via a Jenkins but via manual script.
+    We update the manual script and same challenge as ns pr#68 for Jenkinsfile (order issue, rollout to run nr after load completed). Only done for DNS.
+    => Secrets in SRE scripts: PR#76 (we have to repush the secret otherwise overridden with secret along the cj, when automated it is not an issue to re-enter pwd).
+    This faces same challenge as ns pr#68 and as described here with the rollout and https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#do-we-need-to-forward-declare-the-secret
+    PR#76 not ported to other components.
+    [TODO: communicate] When testing this script deleted secrets which invalidates token: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#pr-25027
+     It is better, and reduces drastically sporadic errors but still issue. 
+    - hypothesis 5: we just do too many requests in a short amount of time and authentication failure was making it reach the throughput limit faster
+    See: https://community.infoblox.com/t5/API-Integration/Recommended-API-call-rate-limit/td-p/17939 (related question how to prevent from ddos attack)
+    Here is an analysis on credentials + error management on Infoblox: https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/6-Infoblox-error-management/infoblox_api_content_type.md 
+    For invalid credentials retry it returns a 403. So it does not drop packet for invalid credentials, but makes reach the throughput limit reached faster.
+        
+    The actual fix is described here: https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/known-issues.md#issue-b (**before we had to fix several issues**)
+    [TODO: could determine Infoblox throughput via JMeter => scoulombel/repos/stress_test/browse + document]
+    Some very rare cases still have timeout but fine.
+- Thus same analysis on infoblox error for hypo 5 also enables to improve **Infoblox credentials management and error forwarding** (see status end of page: https://raw.githubusercontent.com/scoulomb/myDNS/master/3-DNS-solution-providers/1-Infoblox/6-Infoblox-error-management/infoblox_api_content_type.md)''
+https://github.com/scoulomb/private_script/blob/main/dns-auto/nocommit_test_error_fw_invalid_cred.sh
+[TODO move last version]
+- Misc:
+    => non-reg nightly had some issue because tag was not put on good commit, so it runs version without the fix, and also because of pull rate limit did not deliver last version (base image not mirrored)
+    => Auto load in des ok (had to relaunch via script as got  500, so do before oc delete cj --all, oc delete dc --all then manual_deploy
+    will see later it was issue with find API which is not homogeneous: [TODO fix]
+    https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-suite-b-dns-ip-search-api.md#search-endpoint  and
+     ../../3-DNS-solution-providers/1-Infoblox/3-suite-b-ip-search-non-homogeneous.md. 
     
-- Add point on using template/helm value: https://github.com/scoulomb/myk8s/pull/6
-==> OK CCL
-coming from next step for target ns (Todo list for production rollout)
+    => UAT OOM killed increase mem lim and all worked (pr#91)-> to PRD (load proc: Procedure+for+DEV+to+Load+Network+Automation, 20500184, script follows same version as code, maybe we should ensure to checkout good script version)
+    => feature loaded was v1lalpha1 to v1 (dns pr#90)
+    => We had some point on readiness: https://github.com/scoulomb/myk8s/blob/master/Deployment/resilient-deployment.md (oc describe to see probe + initialdelayseconds with start up probes => OK)
 
-Note other points here referenced in this page OK
-
--->
-
-<!-- Note on Kubernetes pull requests
-
-## Update PR: https://github.com/kubernetes/website/pull/25027 
- 
-https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md -> PR#25027
-
-### I had some issue when cloning k8s website thus made pr online
-when needed to update wanted to fetch 
-https://stackoverflow.com/questions/9537392/git-fetch-remote-branch
-But same issue in different machine
-But trying with github desktop via link in html gui,
-selecting branch created online, open file in vs code integration, update and then open terminal and use normal command to amend
-
-### Change based on Jiehong comments (16/11)
-Note: in https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md we mention initial phrasing,
-I remove the Kubelet but it is still valid.
-
-### based on kbhawkey (17/11)
-
-https://github.com/kubernetes/website/pull/25027
-quoting  kbhawkey
-
-````
-My understanding of this sentence:
-If an environment variable changes, a container needs to be restarted to read the updated environment variable.
-
-If an environment variable containing a secret is modified, a container must be restarted to use the updated secret.
-````
-
-Thanks for the comment.
-From my understanding in the first case: 
-> If an environment variable changes, a container needs to be restarted to read the updated environment variable.
-
-and unlike the second case. 
-You will be forced to restart the container (delete the pod more exactly). Therefore you have no risk to have your environment var not updated.
-
-
-For instance and as a proof
-
-````
-echo 'apiVersion: v1
-kind: Pod
-metadata:
-  name: test-pod
-spec:
-  containers:
-    - name: test-container
-      image: registry.hub.docker.com/scoulomb/docker-doctor:dev
-      env:
-      - name: USERNAME
-        value: scoulomb
-
-  restartPolicy: Always' > mypod.yaml
-kubectl delete -f mypod.yaml
-kubectl apply -f mypod.yaml
-````
-
-They if you try to edit via kubectl edit you will have 
-
-````
-spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)
-````
-
-
-Same when using the  declarative API which prevents from modifying env var
-If we redefine test-pod
-````
-echo 'apiVersion: v1
-kind: Pod
-metadata:
-  name: test-pod
-spec:
-  containers:
-    - name: test-container
-      image: registry.hub.docker.com/scoulomb/docker-doctor:dev
-      env:
-      - name: USERNAME
-        value: scoulomb2
-
-  restartPolicy: Always' > mypod.yaml
-
-kubectl apply -f mypod.yaml
-````
-
-Output is 
-
-```` 
-root@sylvain-hp:/home/sylvain# kubectl apply -f mypod.yaml
-The Pod "test-pod" is invalid: spec: Forbidden: pod updates may not change fields other than `spec.containers[*].image`, `spec.initContainers[*].image`, `spec.activeDeadlineSeconds` or `spec.tolerations` (only additions to existing tolerations)
-  core.PodSpec{
-        Volumes:        []core.Volume{{Name: "default-token-69j8q", VolumeSource: core.VolumeSource{Secret: &core.SecretVolumeSource{SecretName: "default-token-69j8q", DefaultMode: &420}}}},         InitContainers: nil,
-        Containers: []core.Container{
-                {
-                        ... // 5 identical fields
-                        Ports:   nil,
-                        EnvFrom: nil,
-                        Env: []core.EnvVar{
-                                {
-                                        Name:      "USERNAME",
--                                       Value:     "scoulomb2",
-+                                       Value:     "scoulomb",
-                                        ValueFrom: nil,
-                                },
-                        },
-                        Resources:    core.ResourceRequirements{},
-                        VolumeMounts: []core.VolumeMount{{Name: "default-token-69j8q", ReadOnly: true, MountPath: "/var/run/secrets/kubernetes.io/serviceaccount"}},
-                        ... // 12 identical fields
-                },
-        },
-        EphemeralContainers: nil,
-        RestartPolicy:       "Always",
-        ... // 24 identical fields
-  }
-````
-
-We will have to do 
-
-````
-kubectl delete -f mypod.yaml
-kubectl apply -f mypod.yaml
-````
-
-to have the change.
-This is described here:
-https://github.com/kubernetes/kubernetes/issues/24913
-
-
-### Could make similar for ConfigMap?
-
-but harder to insert in doc: https://kubernetes.io/docs/concepts/configuration/configmap/ so no
-made assumption same behavior as secret which I will not verify then
-and about consumption mode mentioned in cm doc, consider aligned:
-https://github.com/scoulomb/myk8s/blob/master/Volumes/volume4question.md#4-configmap-consumption
-
-## Do not use docker specific wording (new PR: https://github.com/kubernetes/website/pull/25068)
-
-And the 4 ways to use a cm described here https://kubernetes.io/docs/concepts/configuration/configmap/
-- Command line arguments to the entrypoint of a container
-- Environment variables for a container
-- Add a file in read-only volume, for the application to read
-- Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
-aligned with https://github.com/scoulomb/myk8s/blob/master/Volumes/volume4question.md#4-configmap-consumption
-"Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap" is "Can be used by system components and controller (k8s controller)"
-
-But For "Command line arguments to the entrypoint of a container" it would be more accurate to say pod commands
-Since as seen in [part d](6-use-linux-nameserver-part-d.md): Docker `ENTRYPOINT` <=> k8s `command`
-
-Moreover 
-- From https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#define-a-command-and-arguments-when-you-create-a-pod
-> Note: The command field corresponds to entrypoint in some container runtimes. Refer to the Notes below.
-
-Also Here https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes
-rules are mentionned and same as docker in particular:
-> If you supply a command (<-> docker ENTRYPONT) but no args (<-> docker CMD) for a Container, only the supplied command is used. 
-> The default EntryPoint and the default Cmd defined in the Docker image are ignored.
-(here they mention Docker so fine)
-is equivalent to this note in docker doc
-
-https://docs.docker.com/engine/reference/run/#entrypoint-default-command-to-execute-at-runtime
-
-> Passing --entrypoint will clear out any default command set on the image (i.e. any CMD instruction in the Dockerfile used to build it).
-(note command -. Docker CMD)
-
-See here [part d](6-use-linux-nameserver-part-d.md#override-entrypoint-and-command) and fact we ue exec form.
-
-Here
-https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#notes
-array similar to Docker but not the same details, skipped
-
-https://docs.docker.com/engine/reference/builder/#entrypoint
--> The shell form prevents any CMD or run command line arguments from being used,
-CMD [“p1_cmd”, “p2_cmd”] + ENTRYPOINT exec_entry p1_entry (shell from)
-CMD exec_cmd p1_cmd      + ENTRYPOINT exec_entry p1_entry (shel form)
-leads to /bin/sh -c exec_entry p1_entry
-
--From: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
-> You can use ConfigMap-defined environment variables in the command section of the Pod specification using the $(VAR_NAME) Kubernetes substitution syntax.
-
-(note the special synthax)
-
-Thus I would propose a new PR here to say
-"Inside a Pod command": https://github.com/kubernetes/website/pull/25068
-
-
-## New PR for shell expansion (see Note on exec from and Kubernetes shell expansion)
 -->
 
 ## Note on exec from and Kubernetes shell expansion
+
+See note on k8s PR: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#PR-25027
 
 <details>
   <summary>Click to expand!</summary>
@@ -1100,9 +933,21 @@ https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument
 - Inject data app: https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/#define-a-command-and-arguments-when-you-create-a-pod
 => Here arguments is command and args keep it
 - ConfigMap: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#use-configmap-defined-environment-variables-in-pod-commands
-=> Here I will do a PR
-
+=> Here we can do PR: https://github.com/kubernetes/website/pull/25089
 Which enables to update  PR#25068 in a consistent way
+
+<!--
+Note here I did alignment in overview :
+https://github.com/kubernetes/website/pull/25068 which is just merged 18Nov2020
+and then realigned in another PR: https://github.com/kubernetes/website/pull/25089 in a better way 
+and 25089 much better and merged also
+In explain below 
+we can see cli is using docker terminology but mentions it, except entrypoint so OK
+so it is correct to use kubernetes terminology OK, and this was clear in https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d-other-applications.md
+and link made in my doc each time: https://github.com/scoulomb/myDNS/blob/master/2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-d-other-applications.md and referenced link (may have one way from here but actually ok)
+
+There is a link to podman,rocket and https://medium.com/better-programming/kubernetes-is-deprecating-docker-8a9f7566fbca  as want genericity
+-->
 
 <!-- did not try init container 
 kubectl explain deployment.spec.template.spec.containers
