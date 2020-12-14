@@ -83,7 +83,7 @@ root@sylvain-hp:/home/sylvain/myDNS_hp# curl -H "Host: b-server" 192.168.1.32
 </html>
 ````
 
-The ingress server is exposing port 80, si I will configure NAT.
+The ingress server is exposing port 80, so I will configure NAT.
 
 ````shell script
 ingress	TCP	Port	80	192.168.1.32	80
@@ -601,3 +601,10 @@ A nice presentation (formal) on Ingress was given on Kubecon 2020:
 All work (in part e+f) linked with tasks:
 - create DNS entry
 --> 
+
+
+<!-- 
+ All work (in part e) linked with proj and other files
+ DNS route (done route and DNS for specific and wildcard, and 2 routes matching same host does not work, both explained OK): DNS PR379 + 80 (script)
+ And LB PR#298 and FW PR#114
+ -->
