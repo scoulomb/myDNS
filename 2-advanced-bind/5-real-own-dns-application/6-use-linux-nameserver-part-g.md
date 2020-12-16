@@ -2,12 +2,11 @@
 
 We will revisit:
 
-- [section e, Show we can deploy application behind DNS via Kubernetes](6-use-linux-nameserver-part-e.md#with-kubernetes)
-- [section f](6-use-linux-nameserver-part-f.md)
+- [section e, Show we can deploy application behind DNS via Docker and Kubernetes](6-use-linux-nameserver-part-e.md#show-we-can-deploy-application-behind-via-docker-and-kubernetes)
+- [section f, Ingress](6-use-linux-nameserver-part-f.md)
 
-Where we will expose the python server using HTTPS instead of HTTP.
-
-We will start using a self-signed certificates.
+Where we will expose the python server using HTTPS instead of HTTP. For this we need a certificate.
+In this section we will use self-signed certificates.
 
 ## Step 0: Prerequisite
 
@@ -25,6 +24,7 @@ And start own DNS nameserver from [part b](6-use-linux-nameserver-part-b.md).
 ./2-advanced-bind/5-real-own-dns-application/6-docker-bind-dns-use-linux-nameserver-rather-route53/6-use-linux-nameserver.sh
 ```
 
+you can see [DNS entries](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) we will use in this section.
 
 ## Step 1: How to generate a self-signed certificate
 
@@ -83,11 +83,11 @@ sylvain@sylvain-hp:~$ curl --insecure https://localhost:9443
 </html>
 ````
 
-We can see the certificate is recongnzed but that it is self-signed.
+We can see the certificate is recognized but that it is self-signed.
 There are 3 possibilities:
-- Certificate is self-signed
+- Certificate is self-signed, so we have to add it manually or use `--insecure`
 - Certificate is recognized by CA
-- Certificate does not match ? 
+- Certificate is recognized by CA but does not match the domain
 
 We will configure reverse NAT as follows
 
@@ -96,7 +96,7 @@ Nom  Protocole Type Ports externe IP de destination Ports de destination
 9443 TCP       Port 9443          192.168.1.32      9443
 ````
 
-So that on external machine we access via [https://home.coulombel.it:9443](home.coulombel.it:9443) /  [109.29.148.109:9443](109.29.148.109:9443).
+So that it is visible on internet via [https://home.coulombel.it:9443](home.coulombel.it:9443) /  [109.29.148.109:9443](109.29.148.109:9443).
 
 Open in a browser and check the certificate is correct (in left part of address bar).
 
@@ -180,7 +180,7 @@ sudo rm $temp_file
 ````
 
 Note `metadata.name`, does not support `-` in name. Error is not accurate (port error).
-We do use kubectl imperative expose command to specify the nodeport: `31000`
+We can not use kubectl imperative expose command to specify the nodeport: `31000`
 
 On the router reverse NAT we have following configuration
 
@@ -191,7 +191,7 @@ Matching subpart of valid ports range for k8s NodePort which is: 30000-32767.
 <!-- to find allowed range for k8s Nodeport configure a node port outisde of range. Correct range will appear on error message -->
 
 I kept range [32000, 32767], for case where we need to change port, between outside port and internal port.
-For instance DNS on port 53 pointing to NodePort 32048.
+For instance DNS on port `53` pointing to NodePort `32048`.
 
 We can then access our server in browser at [https://home.coulombel.it:31000](https://home.coulombel.it:31000)
 
@@ -210,27 +210,213 @@ If we accept the risk
 
 ![screenshot self signed](6-part-g-use-certificates/Capture-step4-add-self-signed.PNG).
 
+<!-- we can use cluster ip and co -->
 
-## Deploy using Kubernetes ingress
+## Deploy using Kubernetes ingress with HTTPS
+
+We will use the ingress to perform host based routing with https.
+We will enable ingress and redeploy application B.
 
 ````shell script
 sudo minikube addons enable ingress
-kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv3.yaml
+
+kubectl run b-server --image=b-server --restart=Never --image-pull-policy=Never 
+# We need this to reuse the same port. We can use expose when we wat to specify NodePort
+temp_file=$(sudo mktemp)
+sudo chmod 777 ${temp_file}
+sudo cat << FIN > ${temp_file}
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: b-server
+  name: b-server
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 30389
+  selector:
+    run: b-server
+  type: NodePort
+status:
+  loadBalancer: {}
+FIN
+sudo cat ${temp_file}
+sudo kubectl apply -f ${temp_file}
+sudo rm $temp_file
 ````
 
+And [configure ingress](6-part-g-use-certificates/ingressv3.yaml) so that:
+-  `appa.prd.coulombel.it` routes to `c-server`.
+-  `appb.prd.coulombel.it` routes to `b-server`.
+
+```shell script
+sudo kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv3.yaml
+```
+
+We have to configure NAT.
+As the ingress router supports https and http.
+
+- remove from previous section (otherwise will always target server-c) via the NodePort when using 443 and not got through the ingress: 
+
+````shell script
+443	TCP	Port	443	192.168.1.32	31000	ENABLE
+````
+
+- Add
+
+````
+80	TCP	Port	80	192.168.1.32	80   
+443	TCP	Port	443	192.168.1.32	443
+````
+
+If we run following queries
+
+````shell script
+curl http://appa.prd.coulombel.it:80 # [1]
+curl https://appa.prd.coulombel.it:443 # [2]
+curl -k https://appa.prd.coulombel.it:443 # [3]
+
+curl http://appb.prd.coulombel.it:80 # [4]
+curl https://appb.prd.coulombel.it:443 # [5]
+curl -k https://appb.prd.coulombel.it:443 # [6]
+````
+
+output is 
+
+````shell script
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl http://appa.prd.coulombel.it:80
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl https://appa.prd.coulombel.it:443
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+More details here: https://curl.haxx.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl -k https://appa.prd.coulombel.it:443
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>nginx/1.17.10</center>
+</body>
+</html>
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl http://appb.prd.coulombel.it:80
+Hello app B
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl https://appb.prd.coulombel.it:443
+curl: (60) SSL certificate problem: unable to get local issuer certificate
+More details here: https://curl.haxx.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@sylvain-hp:/home/sylvain/myDNS_hp# curl -k https://appb.prd.coulombel.it:443
+Hello app B
+root@sylvain-hp:/home/sylvain/myDNS_hp#
+````
+
+Analysis:
+- From [6], we can see that kubernetes adds its own self-signed certificate.
+Opening [6] in browser enables to see: `Kubernetes Ingress Controller Fake Certificate`.
+- Same applies for [2] the `Kubernetes Ingress Controller Fake Certificate`.`, except that as there is another certificate behind and it does not work.
 
 
+## Fix case [2]
+
+Rather than having the certificate on the Python server we will have the certificate on the Ingress!
+
+This is documented here:
+- https://kubernetes.io/docs/concepts/services-networking/ingress/#tls
+- https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets
+
+Thus we do
+
+````shell script
+sudo kubectl create secret tls tls-secret\
+ --cert=./2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/appa.prd.coulombel.it.crt\
+ --key=./2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/appa.prd.coulombel.it.key
+sudo kubectl apply -f tls-secret.yaml
+sudo kubectl get secret/tls-secret -o yaml
+````
+
+And modify [our ingress]( [configure ingress](6-part-g-use-certificates/ingressv4.yaml) to use self-signed certificate in secret:
+
+```shell script
+sudo kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv4.yaml
+```
+
+If we browse to `https://appa.prd.coulombel.it/`, we do NOT have `Kubernetes Ingress Controller Fake Certificate` anymore but our own certificate.
+But we still have a 502. We should not have have the SSL at application layer.
+
+So we will modify our ingress v4 to [ingress v5](6-part-g-use-certificates/ingressv5.yaml) and reuse original application A.
+
+```shell script
+cd ./2-advanced-bind/5-real-own-dns-application/6-part-e-contenarized-http-server
+sudo docker build . -f a.Dockerfile -t a-server
+# we rebuild the image as tag could be overriden by a version using https, to check this kubectl exec -it server-a --bash; ps -aux
+kubectl delete po a-server --force --grace-period=0
+kubectl run a-server --image=a-server --restart=Never --image-pull-policy=Never 
+
+# We need this to reuse the same port. We can use expose when we wat to specify NodePort
+temp_file=$(sudo mktemp)
+sudo chmod 777 ${temp_file}
+sudo cat << FIN > ${temp_file}
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: a-server
+  name: a-server
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 30389
+  selector:
+    run: a-server
+  type: NodePort
+status:
+  loadBalancer: {}
+FIN
+sudo cat ${temp_file}
+sudo kubectl apply -f ${temp_file}
+sudo rm $temp_file
 
 
+sudo kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv5.yaml
+```
 
+And we now have a self signed certificate:
 
+````shell script
+root@sylvain-hp:~# curl https://appa.prd.coulombel.it/
+curl: (60) SSL certificate problem: self signed certificate
+More details here: https://curl.haxx.se/docs/sslcerts.html
 
+curl failed to verify the legitimacy of the server and therefore could not
+establish a secure connection to it. To learn more about this situation and
+how to fix it, please visit the web page mentioned above.
+root@sylvain-hp:~# curl -k https://appa.prd.coulombel.it/
+Hello app A
+````
 
-
-
-
-
-
-
+TODO:
+In next section we will see how to have a certificate signed by an authority (not self signed).
++ try case "Certificate is recognized by CA but does not match the domain"
+https://www.ryangeddes.com/how-to-guides/linux/how-to-create-a-self-signed-ssl-certificate-on-linux/
 Note: firefox considers that localhost is always valid.
 
+See tls explained to myself
+Link with sec in kube api
