@@ -89,7 +89,7 @@ Which could be catched at higher level by a tool and lead to a 500.
 - From **TEST3, TEST5**, there is no distinction made in entry creation for valid username with wrong credential or invalid username
 
 - From **TEST4, TEST6, TEST7**, when performing a find with invalid username, the first query returns a 401. But a retry will return a 403.
-
+<!-- consistent with DNS PR#89 -->
 - From **TEST8, TEST9**, making several attempts with invalid username for a user will block the device **for all the users** and return a 403 for a given period of time.
 Even with a valid login/password different from the one on which unsuccessful attempts were made.
 This smells the bug report if we build a tool on top of it.
