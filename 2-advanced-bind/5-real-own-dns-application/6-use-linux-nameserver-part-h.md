@@ -355,7 +355,15 @@ $ curl https://home.coulombel.it:9443 | head -n 5
 which is working !
 Opening it on a browser will enable to see it was certified by let's encrypt.
 It is working because let's encrypt Certificate Authority (CA) is known by the client (browser or curl).
-We can add our own certificate authority: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
+Using browser (in hp latop), we can see it is commodo.
+
+<!-- some corporations do certificate man in the middle, it requires to add a new CA,
+Firefox will tell "Connection verified by a certificate issuer that is not Mozilla" 
+https://support.mozilla.org/en-US/kb/enterprise-roots?as=u&utm_source=inproduct
+Except that than that It changes nothing (here server would be hp and client/browser on corpo
+-->
+
+We can add our own certificate authority at OS level: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
 
 <!-- this was esb does for outbound (client), while for inbound (server) we have a certificate as done in Python script, it can also be in ingress/lb as we will see -->
 
@@ -363,7 +371,6 @@ Note we will have a domain mismatch if we do
 
 <details><summary>expand</summary>
 <p>
-
 
 ````shell script
 curl https://scoulomb.ddns.net:9443 
@@ -396,7 +403,18 @@ Here is a screenshot
 
 We can compare it to "Unknown issuer sreenshot", made here in [part g, step 4](6-use-linux-nameserver-part-g.md#step-4-deploy-in-kubernetes-with-nodeport).
 
-Both requires to "Accept the risk", we allow the untrusted certificate.
+Both requires to "Accept the risk", to allow the untrusted certificate.
+
+This is in a browser known as "server certificate error exceptions" visible in `> about:preferences#privacy > View certificates` in firefox.
+To not confused with Authorities visible in next tab. We can see, it is also possible to add CA here.
+See: https://support.mozilla.org/en-US/questions/1240298
+
+<!-- I consider same exception for self signed or mismatch (not check osef suffit)
+it is mismatch when server != ca name: like "scoulomb.ddns.net:9443 *.coulombel.it" here (which is harder to do with ingress)
+or cf. specific automation DNS, we have specific url != PAAS wildcard, search in this doc for comment "Comment: In real OpenShift"
+
+DNS33 as CA osef-->
+
 
 Note the wildcard for which the certificate was generated `*.coulombel.it`.
 If I had put `coulombel.it` in domain, `home.coulombel.it` would lead to do `certificate subject name matches target host name` error.
@@ -692,11 +710,12 @@ CONNECTED(00000003)
 As name mismatch Kubernetes return the fake certificate.
 
 <!-- 
-In real OpenShift we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
+Comment: In real OpenShift
+we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
 If the route is matching the wildcard ok,
 If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
-We will have to define specific DNS at route level to override it as we did here in this doucment 
-So E. was right we need a certif but ir was not self signed but a domain mismatch (J.)
+We will have to define specific DNS at Openshit route level to override it as we did here in this document 
+So E. was right we need a certif but it was not self signed but a domain mismatch (J.)
 Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
 -->
 
