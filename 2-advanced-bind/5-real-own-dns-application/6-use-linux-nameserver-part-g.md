@@ -19,6 +19,7 @@ sudo su
 ````
 
 And start own DNS nameserver from [part b](6-use-linux-nameserver-part-b.md).
+We use following [script](./6-docker-bind-dns-use-linux-nameserver-rather-route53/6-use-linux-nameserver.sh). 
 
 ```shell script
 ./2-advanced-bind/5-real-own-dns-application/6-docker-bind-dns-use-linux-nameserver-rather-route53/6-use-linux-nameserver.sh
@@ -212,7 +213,7 @@ If we accept the risk
 
 <!-- we can use cluster ip and co -->
 
-## Deploy using Kubernetes ingress with HTTPS
+## Step 5a : Deploy using Kubernetes ingress with HTTPS
 
 We will use the ingress to perform host based routing with https.
 We will enable ingress and redeploy application B.
@@ -330,8 +331,8 @@ Analysis:
 Opening [6] in browser enables to see: `Kubernetes Ingress Controller Fake Certificate`.
 - Same applies for [2] the `Kubernetes Ingress Controller Fake Certificate`.`, except that as there is another certificate behind and it does not work.
 
+## Step 5b : Deploy using Kubernetes ingress with HTTPS and fix case [2]
 
-## Fix case [2]
 
 Rather than having the certificate on the Python server we will have the certificate on the Ingress!
 
@@ -342,10 +343,10 @@ This is documented here:
 Thus we do
 
 ````shell script
+sudo kubectl delete secret tls-secret
 sudo kubectl create secret tls tls-secret\
  --cert=./2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/appa.prd.coulombel.it.crt\
  --key=./2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/appa.prd.coulombel.it.key
-sudo kubectl apply -f tls-secret.yaml
 sudo kubectl get secret/tls-secret -o yaml
 ````
 
@@ -412,11 +413,10 @@ root@sylvain-hp:~# curl -k https://appa.prd.coulombel.it/
 Hello app A
 ````
 
-TODO:
-In next section we will see how to have a certificate signed by an authority (not self signed).
-+ try case "Certificate is recognized by CA but does not match the domain"
-https://www.ryangeddes.com/how-to-guides/linux/how-to-create-a-self-signed-ssl-certificate-on-linux/
+In a browser (or using openssl) the certificate is not `Kubernetes Ingress Controller Fake Certificate`, but our certificate.
+Deleting the secret has for impact to go back to `Kubernetes Ingress Controller Fake Certificate`.
+
+
 Note: firefox considers that localhost is always valid.
 
-See tls explained to myself
-Link with sec in kube api
+In next [section](6-use-linux-nameserver-part-h.md) we will see how to have a certificate signed by an authority (not self signed).
