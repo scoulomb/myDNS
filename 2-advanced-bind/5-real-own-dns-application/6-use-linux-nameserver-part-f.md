@@ -435,18 +435,10 @@ root@sylvain-hp:/home/sylvain/myDNS_hp# curl --max-time 5 -v http://appb.prd.cou
 Hello app B
 * Connection #0 to host appb.prd.coulombel.it left intact
 ````
-We would also need to certify we are owner of the DNS.
-it is similar to what we had to do for
-- Github page: https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
+
+We will study in next [section g](6-use-linux-nameserver-part-g.md), how to configure https/
+
 <!-- in gcr and openshift can define several mapping unlike github page -->
-- Google cloud run: https://github.com/scoulomb/attestation-covid19-saison2-auto#mapping-custom-domain-in-cloud-run
-<!-- And for https://github.com/scoulomb/aws-sa-exo, where it is at elb level according to itw, will stop there digging -->
-
-<!--
-OpenShift route as defined here has https: https://docs.openshift.com/container-platform/3.9/architecture/networking/routes.html#secured-routes
-It is working in http and https: but https warning (self-signed certificate)
--->
-
 
 <!-- ABOVE OK AND CLEAR including after: Other advantages of the wildcard and intro to OpenShift route -->
 

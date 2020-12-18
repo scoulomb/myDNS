@@ -281,7 +281,7 @@ The server can be found in that [location](6-part-h-use-certificates-signed-by-c
 
 ````shell script
 cd ./2-advanced-bind/5-real-own-dns-application/6-part-h-use-certificates-signed-by-ca
-sudp python3 http_server.py
+sudo python3 http_server.py
 ````
 
 It is exposed on port 9443.
@@ -354,8 +354,12 @@ $ curl https://home.coulombel.it:9443 | head -n 5
 
 which is working !
 Opening it on a browser will enable to see it was certified by let's encrypt.
+It is working because let's encrypt Certificate Authority (CA) is known by the client (browser or curl).
+We can add our own certificate authority: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
 
-Note if we do, we will have a domain mismatch too if we do
+<!-- this was esb does for outbound (client), while for inbound (server) we have a certificate as done in Python script, it can also be in ingress/lb as we will see -->
+
+Note we will have a domain mismatch if we do
 
 <details><summary>expand</summary>
 <p>
@@ -385,7 +389,14 @@ establish a secure connection to it. To learn more about this situation and
 how to fix it, please visit the web page mentioned above.
 ````
 
-In browser we can make a unsafe process.
+In browser we can "Accept the Risk and Continue"
+Here is a screenshot
+
+![Name mismatch](6-part-h-use-certificates-signed-by-ca/Capture-name-mismatch.PNG).
+
+We can compare it to "Unknown issuer sreenshot", made here in [part g, step 4](6-use-linux-nameserver-part-g.md#step-4-deploy-in-kubernetes-with-nodeport).
+
+Both requires to "Accept the risk", we allow the untrusted certificate.
 
 Note the wildcard for which the certificate was generated `*.coulombel.it`.
 If I had put `coulombel.it` in domain, `home.coulombel.it` would lead to do `certificate subject name matches target host name` error.
@@ -684,22 +695,26 @@ As name mismatch Kubernetes return the fake certificate.
 In real OpenShift we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
 If the route is matching the wildcard ok,
 If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
-We will have to define specific DNS at route level to override it as we did here in the example
+We will have to define specific DNS at route level to override it as we did here in this doucment 
+So E. was right we need a certif but ir was not self signed but a domain mismatch (J.)
 Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
 -->
 
 ## Parallel 
+
+- OpenShift route is ingress equivalent and has https too: https://docs.openshift.com/container-platform/3.9/architecture/networking/routes.html#secured-routes
 
 - Google could run, custom domain mapping generates certificate for you:
 See real life example https://github.com/scoulomb/attestation-covid19-saison2-auto#mapping-custom-domain-in-cloud-run and the doc:
 https://cloud.google.com/run/docs/mapping-custom-domains?hl=fr.
 
 So the custom domain configures the ingress but also generates a certificate.
-They even plug to DNS provider API like Gand.
+They even plug to DNS provider API like Gandi to verify we are domain owner.
 
 - Here had mention we could attach certif to Ingress: https://github.com/scoulomb/aws-sa-exo/blob/master/sa-question-c.adoc
 
 - In AWS when we manage certificate it is attached to the ELB.
+<!-- question I had -->
 See https://github.com/scoulomb/aws-sa-exo/blob/master/templates/AWS-SA-CloudFormation-v20190724_partb-step5-from-step4-us.yaml#L195
 
 ````shell script
@@ -720,7 +735,12 @@ LoadBalancerListenerHTTPS:
 
 Which is not present in initial file.
 
-- Github page also manages certificates
+- Similarly certificate can be offloaded in F5
+http://blog.uninets.com/how-to-configure-ssl-offloading-in-f5-step-by-step-configuration/
+
+- Github page also manages certificates and ingress:
+https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
+
 
 - In kubernetes 
 We had seen that each service account has a secret: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#side-note-on-service-account
@@ -741,7 +761,30 @@ kind: Secret
 
 We can see we have a certificate.
 
-TODO: 
+- Kubernetes offers operator to renew certificate on expiration
 
-See tls explained to myself:https://github.com/scoulomb/misc-notes/tree/master/tls
 
+## Certifcate renewal 
+https://certbot.eff.org/lets-encrypt/ubuntufocal-other
+
+````shell script
+sudo minikube addons disable ingress
+sudo certbot renew --dry-run
+````
+
+It did not work because we use DNS validation, and it is manual
+
+````shell script
+An authentication script must be provided with --manual-auth-hook when using the manual plugin non-interactively.
+````
+
+Only `home.coulombel.it` working as it was not checked via DNS TXT record.
+
+````shell script
+sudo certbot certonly --standalone --domains home.coulombel.it
+````
+
+## To understand better certificate 
+
+See tls explained to myself: https://github.com/scoulomb/misc-notes/tree/master/tls
+<!-- this is clear enough ! -->
