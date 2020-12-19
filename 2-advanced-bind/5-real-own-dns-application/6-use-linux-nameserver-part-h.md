@@ -847,4 +847,6 @@ sudo certbot certonly --standalone --domains home.coulombel.it
 - See tls explained to myself: https://github.com/scoulomb/misc-notes/tree/master/tls#man-in-the-middle-attach-and-need-of-a-ca
 - And in particular link to http over socket: https://github.com/scoulomb/misc-notes/tree/master/tls#link-with-http-over-socket
 
-<!-- this is clear enough ! STOP OK NO FURTHER - doibt but well studied stop - next step is link with coulombel.it in gh-->
+<!-- this is clear enough ! STOP OK NO FURTHER - doubt but well studied tls explained to myself stop
+amendment and conclusion doubt but clear stop ok - see commit STOP and reread globally ok stop, forbidden
+next step is link with coulombel.it in gh-->
