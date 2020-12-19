@@ -37,7 +37,11 @@ This step is equivalent in [part g with self signed certificate : step 1](./6-us
 
 You need the DNS started as it will be used by let's encrypt. This is what we did in previous step.
 We will follow proecdure described here with `--standalone`:
-https://certbot.eff.org/lets-encrypt/ubuntufocal-other
+From: https://letsencrypt.org/getting-started/
+- without shell access (they support provider, but it is server, unlike gcr it is not insert a record in DNS)
+- with shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other
+
+We use with "with shell access" option. <!-- subpart ok -->
 
 ````shell script
 sudo snap install core; sudo snap refresh core
@@ -741,9 +745,12 @@ Comment: In real OpenShift
 we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
 If the route is matching the wildcard ok,
 If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
-We will have to define specific DNS at Openshit route level to override it as we did here in this document 
+We will have to define specific DNS at Openshift route level to override it as we did here in this document 
 So E. was right we need a certif but it was not self signed but a domain mismatch (J.)
 Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
+
+Case for nw, but lnk etc not secure, osef
+
 -->
 
 ## Parallel 
@@ -809,8 +816,13 @@ We can see we have a certificate.
 
 - Kubernetes offers operator to renew certificate on expiration
 
+- In java for equivalent `curl -k` option is not trivial. We had explained it here:
+https://stackoverflow.com/questions/7881122/cxf-restful-client-how-to-do-trust-all-certs/55575644#55575644
+
+It is a certificate exception.
 
 ## Certifcate renewal 
+
 https://certbot.eff.org/lets-encrypt/ubuntufocal-other
 
 ````shell script
@@ -836,4 +848,3 @@ sudo certbot certonly --standalone --domains home.coulombel.it
 - And in particular link to http over socket: https://github.com/scoulomb/misc-notes/tree/master/tls#link-with-http-over-socket
 
 <!-- this is clear enough ! STOP OK NO FURTHER - doibt but well studied stop - next step is link with coulombel.it in gh-->
-
