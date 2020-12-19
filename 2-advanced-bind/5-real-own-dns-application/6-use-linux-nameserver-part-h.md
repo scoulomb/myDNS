@@ -357,15 +357,16 @@ Opening it on a browser will enable to see it was certified by let's encrypt.
 It is working because let's encrypt Certificate Authority (CA) is known by the client (browser or curl).
 Using browser (in hp latop), we can see it is commodo.
 
-<!-- some corporations do certificate man in the middle, it requires to add a new CA,
+<!-- some corporations do certificate man in the middle, it requires to add a new CA (as explained below),
 Firefox will tell "Connection verified by a certificate issuer that is not Mozilla" 
 https://support.mozilla.org/en-US/kb/enterprise-roots?as=u&utm_source=inproduct
 Except that than that It changes nothing (here server would be hp and client/browser on corpo
+
+Sometimes it causes issues: 
+- https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/archlinux-dev-vm-with-minikube.md (step 1 and 3) and pycharm
+- docker insecure certificate: https://github.com/scoulomb/myk8s/blob/master/Setup/MinikubeSetup/insecureCertificate.sh
+- pycharm certificate 
 -->
-
-We can add our own certificate authority at OS level: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
-
-<!-- this was esb does for outbound (client), while for inbound (server) we have a certificate as done in Python script, it can also be in ingress/lb as we will see -->
 
 Note we will have a domain mismatch if we do
 
@@ -396,24 +397,50 @@ establish a secure connection to it. To learn more about this situation and
 how to fix it, please visit the web page mentioned above.
 ````
 
+We can do insecure curl 
+
+````shell script
+sylvain@sylvain-hp:~$ curl --insecure https://scoulomb.ddns.net:9443 | head -n 5
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   954  100   954    0     0  25105      0 --:--:-- --:--:-- --:--:-- 25105
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Directory listing for /</title>
+````
+
 In browser we can "Accept the Risk and Continue"
 Here is a screenshot
 
 ![Name mismatch](6-part-h-use-certificates-signed-by-ca/Capture-name-mismatch.PNG).
 
-We can compare it to "Unknown issuer sreenshot", made here in [part g, step 4](6-use-linux-nameserver-part-g.md#step-4-deploy-in-kubernetes-with-nodeport).
+We can compare it to "Unknown issuer screenshot", made here in [part g, step 4](6-use-linux-nameserver-part-g.md#step-4-deploy-in-kubernetes-with-nodeport).
 
-Both requires to "Accept the risk", to allow the untrusted certificate.
+Both requires to "Accept the risk", to allow the untrusted certificate. Equivalent to curl option `-k/--insecure`.
 
 This is in a browser known as "server certificate error exceptions" visible in `> about:preferences#privacy > View certificates` in firefox.
+
 To not confused with Authorities visible in next tab. We can see, it is also possible to add CA here.
 See: https://support.mozilla.org/en-US/questions/1240298
+
+We can add our own certificate authority at OS level: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
+
+<!-- this was esb does for outbound (client): add authority (CA bundle) or certificate exception (saw priv key there)
+while for inbound (server) we have a certificate as done in Python script, it can also be in lb (f5) or ingress as we will see -->
+
 
 <!-- I consider same exception for self signed or mismatch (not check osef suffit)
 it is mismatch when server != ca name: like "scoulomb.ddns.net:9443 *.coulombel.it" here (which is harder to do with ingress)
 or cf. specific automation DNS, we have specific url != PAAS wildcard, search in this doc for comment "Comment: In real OpenShift"
 
-DNS33 as CA osef-->
+We can option --k / --insecure works herem and for self signed in part g
+
+However adding manual CA should require name to match
+
+DNS33 has CA osef
+=> ALL OK here STOP-->
 
 
 Note the wildcard for which the certificate was generated `*.coulombel.it`.
