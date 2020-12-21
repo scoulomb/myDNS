@@ -34,3 +34,5 @@ So if DNS maybe broken `scoulomb.github.io` is safer as can disable CNAME file
 ## VLC consequence 
 
 can use pcloud instead
+
+## make prez (opt)
