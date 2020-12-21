@@ -50,6 +50,7 @@ python3 http_server.py
 
 It is exposed on port 9443.
 We can access via curl or browser on host machine via [localhost:9443](https://localhost:9443).
+Be careful and mention https.
 
 output is 
 
@@ -417,6 +418,10 @@ In a browser (or using openssl) the certificate is not `Kubernetes Ingress Contr
 Deleting the secret has for impact to go back to `Kubernetes Ingress Controller Fake Certificate`.
 
 
-Note: firefox considers that localhost is always valid.
+Note: firefox considers that localhost is always valid. Github has an amazing feature to detect we pushed cert to repo. 
+
+````shell script
+GitGuardian has detected the following Generic Private Key exposed within your GitHub account.
+````
 
 In next [section](6-use-linux-nameserver-part-h.md) we will see how to have a certificate signed by an authority (not self signed).

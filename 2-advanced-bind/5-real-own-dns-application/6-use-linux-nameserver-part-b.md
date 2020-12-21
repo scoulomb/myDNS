@@ -391,7 +391,8 @@ coulombel.it.		300	IN	NS	scoulomb.ddns.net.
 </details>
 
 
-## Achieve with our own DNS the same service performed by Gandi for application deployed in section part A to abstract dynamic DNS name.
+## Achieve with our own DNS the same service performed by Gandi
+... for application deployed in section part A to abstract dynamic DNS name.
  
 We want to achieve what we did [here in 6 part A](6-use-linux-nameserver-part-a.md#abstract-dynamic-dns-via-a-cname)
 

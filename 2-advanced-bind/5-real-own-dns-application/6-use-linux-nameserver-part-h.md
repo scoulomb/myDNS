@@ -31,17 +31,21 @@ you can see [DNS entries](./6-docker-bind-dns-use-linux-nameserver-rather-route5
 
 ## Step 1: How to generate a self-signed certificate
 
-### How to generate a self-signed certificate: Server validation (certbot server or own server)
-
 This step is equivalent in [part g with self signed certificate : step 1](./6-use-linux-nameserver-part-g.md#step-1-how-to-generate-a-self-signed-certificate)
 
-You need the DNS started as it will be used by let's encrypt. This is what we did in previous step.
-We will follow proecdure described here with `--standalone`:
-From: https://letsencrypt.org/getting-started/
+From: https://letsencrypt.org/getting-started/ we have 2 methods
 - without shell access (they support provider, but it is server, unlike gcr it is not insert a record in DNS)
 - with shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other
 
-We use with "with shell access" option. <!-- subpart ok -->
+We use with "with shell access" option. <!-- subpart ok as use certbot server or own + renewal and dns method added -->
+
+### How to generate a self-signed certificate: Server validation 
+
+(certbot server or own server)
+
+You need the DNS started as it will be used by let's encrypt. This is what we did in previous step.
+We will follow procedure described here with `--standalone`:
+
 
 ````shell script
 sudo snap install core; sudo snap refresh core
@@ -842,6 +846,8 @@ Only `home.coulombel.it` working as it was not checked via DNS TXT record.
 sudo certbot certonly --standalone --domains home.coulombel.it
 ````
 
+Some third party solution like Venafi exists.
+
 ## To understand better certificate 
 
 - See tls explained to myself: https://github.com/scoulomb/misc-notes/tree/master/tls#man-in-the-middle-attach-and-need-of-a-ca
@@ -849,4 +855,8 @@ sudo certbot certonly --standalone --domains home.coulombel.it
 
 <!-- this is clear enough ! STOP OK NO FURTHER - doubt but well studied tls explained to myself stop
 amendment and conclusion doubt but clear stop ok - see commit STOP and reread globally ok stop, forbidden
-next step is link with coulombel.it in gh-->
+step 1 updated ok
+next step is link with coulombel.it in gh => ok
+open issue in k8s for service name => osef
+
+-->

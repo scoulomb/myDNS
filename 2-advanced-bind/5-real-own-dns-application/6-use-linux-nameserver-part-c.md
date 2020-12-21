@@ -7,7 +7,7 @@ In
 - [part B](6-use-linux-nameserver-part-b.md#use-dns-name-to-switch)
 
 We have used DNS name to switch between public IP when outside the LAN and private IP when inside the LAN.
-It avoids traffic to go outisde when in same LAN,
+It avoids traffic to go outside when in same LAN,
 
 Note that the option to use box nameserver enables to also stay in the LAN for DNS resolution (gtm).
 
