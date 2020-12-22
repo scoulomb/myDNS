@@ -33,6 +33,7 @@ Also we can not expose admin via NAT :(. `192.168.1.1` is invalid.
 ## Corp
 
 Some corp setup where we are part of local network, while we have VPN etc + VM out of scope.
+<!-- can access other machine via dns name. useful for jupyter -->
 
 <!-- this is concluded and next.md is removed as done -->
 
