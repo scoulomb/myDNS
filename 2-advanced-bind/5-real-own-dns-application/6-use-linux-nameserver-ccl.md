@@ -31,8 +31,22 @@ curl: (23) Failed writing body (532 != 1384)
 
 So if DNS maybe broken `scoulomb.github.io` is safer as can disable CNAME file
 
+## Add lien http over socket
+
+Project: https://github.com/scoulomb/http-over-socket
+
+- lien cert: https://github.com/scoulomb/misc-notes/tree/master/tls
+- lien host header and cert: https://github.com/scoulomb/http-over-socket/blob/master/README_SUITE_2_HOST_HEADER.md 
+
+(concluded OK)
+
+
 ## VLC consequence 
 
-can use pcloud instead
+can use pcloud instead 
 
-## make prez (opt)
+(concluded ok)
+
+## make prez 
+
+(optional)
