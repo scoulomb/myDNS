@@ -36,6 +36,3 @@ Some corp setup where we are part of local network, while we have VPN etc + VM o
 <!-- can access other machine via dns name. useful for jupyter -->
 
 <!-- this is concluded and next.md is removed as done -->
-
-
-

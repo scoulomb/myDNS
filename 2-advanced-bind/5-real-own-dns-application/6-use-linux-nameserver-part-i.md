@@ -71,10 +71,20 @@ We could actually push it directly (as README welcome page).
 Behind it generates CNAME mapping but also the certificate.
 <!-- proof coulombel.site started certif process -->
 
-Unlike GCR we did DNS validation, here we understand it is more similar to certbot with server validation technique.
+Unlike GCR we did DNS validation, **here we understand it is more similar to certbot with server validation technique.**
 This was described in [part h](6-use-linux-nameserver-part-h.md#how-to-generate-a-self-signed-certificate-server-validation-certbot-server-or-own-server).
 
 <!-- all above is ok -->
 
+## Use Gandi live DNS
+
+For domain `coulombel.it`, we use our own nameserver.
+To set back to Gandi live DNS.
+Go to Gandi, select domain, choose domain, nameserver tab and edit.
+And configure records: https://github.com/scoulomb/dns-config/blob/master/it/fwd.coulombel.it.db
+
+(be aware of [negative TTL](../6-cache/negative-ttl.md) if record were not present,)
+
+<!-- can see dns corp is != -->
 
 
