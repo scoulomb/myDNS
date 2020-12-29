@@ -29,17 +29,34 @@ We use following [script](./6-docker-bind-dns-use-linux-nameserver-rather-route5
 
 you can see [DNS entries](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) we will use in this section.
 
-## Step 1: How to generate a self-signed certificate
+## Step 1: How to generate a certificate signed by CA
+
+**Terminology**: we will see in ["chain of trust](#chain-of-trust), that root CA is also called self signed.
 
 This step is equivalent in [part g with self signed certificate : step 1](./6-use-linux-nameserver-part-g.md#step-1-how-to-generate-a-self-signed-certificate)
 
-From: https://letsencrypt.org/getting-started/ we have 2 methods
-- without shell access (they support provider, but it is server, unlike gcr it is not insert a record in DNS)
-- with shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other
+From: https://letsencrypt.org/getting-started/.
 
-We use with "with shell access" option. <!-- subpart ok as use certbot server or own + renewal and dns method added -->
+We have 2 methods:
 
-### How to generate a self-signed certificate: Server validation 
+- Without shell access (they support different hosting providers, it is equivalent to shell access server validation).
+Github page falls into that [category](https://community.letsencrypt.org/t/web-hosting-who-support-lets-encrypt/6920).
+It relies on the fact DNS (own or Gandi live DNS) is pointing to server. 
+This is performed in [part i](6-use-linux-nameserver-part-i.md).
+
+- With shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other where we have
+    - Server validation (standalone or not). Explored [here](#how-to-generate-a-self-signed-certificate-server-validation).
+    - TXT record validation. Explored [here](#how-to-generate-a-self-signed-certificate-txt-record-validation).
+    
+Note:
+- Google Cloud Run had something to TXT record validation with automation based on DNS provider API.
+- AWS certificate attached to ELB is similar.
+
+See ["parallel"](#parallel).
+
+We explore below with "with shell access" option. <!-- subpart ok as use certbot server or own + renewal and dns method added -->
+
+### How to generate a certificate signed by a CA: Server validation 
 
 (certbot server or own server)
 
@@ -162,7 +179,7 @@ We can see certificate and key are generated at: `/etc/letsencrypt/live/home.cou
 
 I prefer DNS validation.
 
-### How to generate a self-signed certificate: TXT record validation
+### How to generate a certificate signed by a CA: TXT record validation
 
 https://serverfault.com/questions/750902/how-to-use-lets-encrypt-dns-challenge-validation
 
@@ -747,8 +764,9 @@ As name mismatch Kubernetes return the fake certificate.
 <!-- 
 Comment: In real OpenShift
 we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
-If the route is matching the wildcard ok,
+If the route is matching the wildcard ok. This also assumes CA is valid, more exactly root CA (-> [here](#chain-of-trust)). 
 If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
+This completes [this](6-use-linux-nameserver-part-f.md#adding-on-top-route-with-host-matching-dns-name-the-one-without-host-thus-matching-the-wildcard) OK close to real setup.
 We will have to define specific DNS at Openshift route level to override it as we did here in this document 
 So E. was right we need a certif but it was not self signed but a domain mismatch (J.)
 Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
@@ -759,6 +777,8 @@ Case for nw, but lnk etc not secure, osef
 
 ## Parallel 
 
+to Ingress evolution (replacing Python certificate management) and let's encrypt certificate
+
 - OpenShift route is ingress equivalent and has https too: https://docs.openshift.com/container-platform/3.9/architecture/networking/routes.html#secured-routes
 
 - Google could run, custom domain mapping generates certificate for you:
@@ -768,7 +788,7 @@ https://cloud.google.com/run/docs/mapping-custom-domains?hl=fr.
 So the custom domain configures the ingress but also generates a certificate.
 They even plug to DNS provider API like Gandi to verify we are domain owner.
 
-- Here had mention we could attach certif to Ingress: https://github.com/scoulomb/aws-sa-exo/blob/master/sa-question-c.adoc
+- Here had mention we could attach certificate to Ingress: https://github.com/scoulomb/aws-sa-exo/blob/master/sa-question-c.adoc
 
 - In AWS when we manage certificate it is attached to the ELB.
 <!-- question I had -->
@@ -797,7 +817,7 @@ http://blog.uninets.com/how-to-configure-ssl-offloading-in-f5-step-by-step-confi
 
 - Github page also manages certificates and ingress:
 https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
-
+and [part i](6-use-linux-nameserver-part-i.md) and [intro](#step-1-how-to-generate-a-certificate-signed-by-ca).
 
 - In kubernetes 
 We had seen that each service account has a secret: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#side-note-on-service-account
@@ -825,7 +845,7 @@ https://stackoverflow.com/questions/7881122/cxf-restful-client-how-to-do-trust-a
 
 It is a certificate exception.
 
-## Certifcate renewal 
+## Certificate renewal 
 
 https://certbot.eff.org/lets-encrypt/ubuntufocal-other
 
@@ -860,3 +880,104 @@ next step is link with coulombel.it in gh => ok
 open issue in k8s for service name => osef
 
 -->
+
+## Chain of trust
+
+### Reminder
+
+- In [part g](6-use-linux-nameserver-part-g.md) we saw self-signed certificate.
+As a reminder from Wikipedia (https://en.wikipedia.org/wiki/Self-signed_certificate):
+> In cryptography and computer security, a self-signed certificate is a security certificate that is not signed by a certificate authority (CA).
+
+- In [part h](6-use-linux-nameserver-part-h.md) we saw certificate signed by a CA (certificate authority).
+And as shown here in tls explained to myself: https://github.com/scoulomb/misc-notes/tree/master/tls#man-in-the-middle-attach-and-need-of-a-ca
+> Alice decode BOB certificate with CA public key  embedded in browser (signature)
+
+The public key of the CA is known by the browser and enable to check validity of the certificate.
+As seen in [step 2](#step-2-configure-the-server-to-use-https), we can add our own exception or CA.
+
+### Introducing chain of trust
+
+But we have to be aware that we usually have a chain of certificate/trust.
+The CA only self-signed the root certificate (with its private key) so that we have intermediate issue which signs with their private key.
+We can perform the validation up to the root certificate (using public key in next certificate of the chain), and public key of root certificate is known by browser.
+
+This is well shown here:
+
+![chain of trust](6-part-h-use-certificates-signed-by-ca/Chain_Of_Trust.svg).
+
+**Source**:  https://en.wikipedia.org/wiki/Root_certificate
+
+
+We can see (CN) is : https://support.dnsimple.com/articles/what-is-common-name
+> The Common Name (AKA CN) represents the server name protected by the SSL certificate.
+> [...]
+> The common name can only contain up to one entry: either a wildcard or non-wildcard name. It’s not possible to specify a list of names covered by an SSL certificate in the common name field.
+> The Subject Alternative Name extension (also called Subject Alternate Name or SAN) was introduced to solve this limitation. The SAN allows issuance of multi-name SSL certificates.
+
+So subject is synonym to CN.
+
+Then the distinguished name in document above are
+
+- Country Name (2 letter code) [AU]:
+- State or Province Name (full name) [Some-State]:
+- Locality Name (eg, city) []:
+- Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+- Organizational Unit Name (eg, section) []:
+- Common Name (e.g. server FQDN or YOUR name) []:
+- Email Address []:
+
+Proof output of `openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes`:
+> **What you are about to enter is what is called a Distinguished Name or a DN.**
+
+````shell script
+➤ openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes
+Generating a RSA private key
+.............................................................................................................................................................................................................................................................................................................++++
+...................................................................................................................................................................................................................................++++
+writing new private key to 'privkey.pem'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:
+Email Address []:
+````
+
+### Examples
+
+Taking example from [parallel](#parallel).
+
+- Github page and [using Gandi live DNS](6-use-linux-nameserver-part-i.md#use-gandi-live-dns) to  https://coulombel.it
+Go to `coulombel.it`. <!-- phone not corp always, tested with Gandi and certif is generated via Github -->
+And you should see a chain of certificate.
+
+`coulombel.it -> R3 -> DST Root CA X3`
+
+Note that R3 is the intermediate certificate, where the organization (O) is let's encrypt.
+
+In firefox we can see that this CA is known
+in [privacy](about:preferences#privacy), certificates, view certificates, authorities.
+
+<!-- did not test cert bot but use let's encrypt as github so stop -->
+
+- GCR to https://attestationcovid.site:
+Chain is `attestationcovid.site -> GTS CA 102 ->  Global Sign`. 
+
+
+- See https://github.com/scoulomb/private_script/blob/main/infoblox_throughput/README.md
+
+**Links**:
+
+- https://en.wikipedia.org/wiki/Root_certificate
+- https://en.wikipedia.org/wiki/Chain_of_trust
+- https://www.venafi.com/blog/how-do-certificate-chains-work
