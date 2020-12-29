@@ -819,10 +819,14 @@ http://blog.uninets.com/how-to-configure-ssl-offloading-in-f5-step-by-step-confi
 https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
 and [part i](6-use-linux-nameserver-part-i.md) and [intro](#step-1-how-to-generate-a-certificate-signed-by-ca).
 
-- In kubernetes 
-We had seen that each service account has a secret: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#side-note-on-service-account
-We had seen that when using a service account, a token is attached to it and mounted as volume in the pod. See section on service account.
-This enable the pod to use kube API.
+- In kubernetes
+We have Kind secret but it can have different type ([Opaque, kubernetes.io/service-account-token](https://github.com/scoulomb/myk8s/blob/master/Security/2-service-account.md#listing-secret), [tls-secret](#step-3-deploy-using-kubernetes-ingress-with-https)).
+
+ 
+We had seen that each service account has a secret: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#side-note-on-service-account.
+And it is actually a `kubernetes.io/service-account-token`
+And we also have a secret + cert here: https://github.com/scoulomb/myk8s/blob/master/Security/2-service-account.md#default-service-account-inspection
+This enable the pod to use [kube API](https://github.com/scoulomb/myk8s/blob/master/Security/2-service-account.md#target-k8s-api-from-a-pod-with-that-default-token).
 
 If we do 
 
@@ -837,6 +841,10 @@ kind: Secret
 ````
 
 We can see we have a certificate.
+
+Even if type is `kubernetes.io/service-account-token` and not [`tls/secret`](https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets).
+It is the [cluster certificate (API server?)](https://medium.com/better-programming/k8s-tips-using-a-serviceaccount-801c433d0023).
+<!-- to not be used in curl IMO as done in my doc and medium, but has to be valid or insecure, stop here-->
 
 - Kubernetes offers operator to renew certificate on expiration
 
