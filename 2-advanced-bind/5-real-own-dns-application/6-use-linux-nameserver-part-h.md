@@ -29,17 +29,34 @@ We use following [script](./6-docker-bind-dns-use-linux-nameserver-rather-route5
 
 you can see [DNS entries](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) we will use in this section.
 
-## Step 1: How to generate a self-signed certificate
+## Step 1: How to generate a certificate signed by CA
+
+**Terminology**: we will see in ["chain of trust](#chain-of-trust), that root CA is also called self signed.
 
 This step is equivalent in [part g with self signed certificate : step 1](./6-use-linux-nameserver-part-g.md#step-1-how-to-generate-a-self-signed-certificate)
 
-From: https://letsencrypt.org/getting-started/ we have 2 methods
-- without shell access (they support provider, but it is server, unlike gcr it is not insert a record in DNS)
-- with shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other
+From: https://letsencrypt.org/getting-started/.
 
-We use with "with shell access" option. <!-- subpart ok as use certbot server or own + renewal and dns method added -->
+We have 2 methods:
 
-### How to generate a self-signed certificate: Server validation 
+- Without shell access (they support different hosting providers, it is equivalent to shell access server validation).
+Github page falls into that [category](https://community.letsencrypt.org/t/web-hosting-who-support-lets-encrypt/6920).
+It relies on the fact DNS (own or Gandi live DNS) is pointing to server. 
+This is performed in [part i](6-use-linux-nameserver-part-i.md).
+
+- With shell access: https://certbot.eff.org/lets-encrypt/ubuntufocal-other where we have
+    - Server validation (standalone or not). Explored [here](#how-to-generate-a-self-signed-certificate-server-validation).
+    - TXT record validation. Explored [here](#how-to-generate-a-self-signed-certificate-txt-record-validation).
+    
+Note:
+- Google Cloud Run had something to TXT record validation with automation based on DNS provider API.
+- AWS certificate attached to ELB is similar.
+
+See ["parallel"](#parallel).
+
+We explore below with "with shell access" option. <!-- subpart ok as use certbot server or own + renewal and dns method added -->
+
+### How to generate a certificate signed by a CA: Server validation 
 
 (certbot server or own server)
 
@@ -162,7 +179,7 @@ We can see certificate and key are generated at: `/etc/letsencrypt/live/home.cou
 
 I prefer DNS validation.
 
-### How to generate a self-signed certificate: TXT record validation
+### How to generate a certificate signed by a CA: TXT record validation
 
 https://serverfault.com/questions/750902/how-to-use-lets-encrypt-dns-challenge-validation
 
@@ -749,7 +766,7 @@ Comment: In real OpenShift
 we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
 If the route is matching the wildcard ok. This also assumes CA is valid, more exactly root CA (-> [here](#chain-of-trust)). 
 If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
-
+This completes [this](6-use-linux-nameserver-part-f.md#adding-on-top-route-with-host-matching-dns-name-the-one-without-host-thus-matching-the-wildcard) OK close to real setup.
 We will have to define specific DNS at Openshift route level to override it as we did here in this document 
 So E. was right we need a certif but it was not self signed but a domain mismatch (J.)
 Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
@@ -759,6 +776,7 @@ Case for nw, but lnk etc not secure, osef
 -->
 
 ## Parallel 
+
 to Ingress evolution (replacing Python certificate management) and let's encrypt certificate
 
 - OpenShift route is ingress equivalent and has https too: https://docs.openshift.com/container-platform/3.9/architecture/networking/routes.html#secured-routes
@@ -770,7 +788,7 @@ https://cloud.google.com/run/docs/mapping-custom-domains?hl=fr.
 So the custom domain configures the ingress but also generates a certificate.
 They even plug to DNS provider API like Gandi to verify we are domain owner.
 
-- Here had mention we could attach certif to Ingress: https://github.com/scoulomb/aws-sa-exo/blob/master/sa-question-c.adoc
+- Here had mention we could attach certificate to Ingress: https://github.com/scoulomb/aws-sa-exo/blob/master/sa-question-c.adoc
 
 - In AWS when we manage certificate it is attached to the ELB.
 <!-- question I had -->
@@ -799,7 +817,7 @@ http://blog.uninets.com/how-to-configure-ssl-offloading-in-f5-step-by-step-confi
 
 - Github page also manages certificates and ingress:
 https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#go
-and [part i](6-use-linux-nameserver-part-i.md).
+and [part i](6-use-linux-nameserver-part-i.md) and [intro](#step-1-how-to-generate-a-certificate-signed-by-ca).
 
 - In kubernetes 
 We had seen that each service account has a secret: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#side-note-on-service-account
@@ -827,7 +845,7 @@ https://stackoverflow.com/questions/7881122/cxf-restful-client-how-to-do-trust-a
 
 It is a certificate exception.
 
-## Certifcate renewal 
+## Certificate renewal 
 
 https://certbot.eff.org/lets-encrypt/ubuntufocal-other
 
@@ -950,12 +968,13 @@ Note that R3 is the intermediate certificate, where the organization (O) is let'
 In firefox we can see that this CA is known
 in [privacy](about:preferences#privacy), certificates, view certificates, authorities.
 
-<!-- did not test cert bot but use let's encrypt as github -->
+<!-- did not test cert bot but use let's encrypt as github so stop -->
 
 - GCR to https://attestationcovid.site:
 Chain is `attestationcovid.site -> GTS CA 102 ->  Global Sign`. 
 
 
+- See https://github.com/scoulomb/private_script/blob/main/infoblox_throughput/README.md
 
 **Links**:
 

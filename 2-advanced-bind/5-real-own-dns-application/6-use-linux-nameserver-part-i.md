@@ -71,8 +71,7 @@ We could actually push it directly (as README welcome page).
 Behind it generates CNAME mapping but also the certificate.
 <!-- proof coulombel.site started certif process -->
 
-Unlike GCR we did DNS validation, **here we understand it is more similar to certbot with server validation technique.**
-This was described in [part h](6-use-linux-nameserver-part-h.md#how-to-generate-a-self-signed-certificate-server-validation-certbot-server-or-own-server).
+Certificate generation was described here [part h](6-use-linux-nameserver-part-h.md#step-1-how-to-generate-a-certificate-signed-by-ca).
 
 <!-- all above is ok -->
 
