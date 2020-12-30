@@ -106,7 +106,7 @@ particular, Section 2.1 of **this document liberalizes
 slightly the syntax of a legal Internet host name that
 was defined in RFC-952 [DNS:4].**
 
-New valid hostnames are define in section 2.1 of same doc here:
+New valid hostnames are defined in section 2.1 of same doc here:
 https://tools.ietf.org/html/rfc1123#section-2.1
 
 > The syntax of a legal Internet host name was specified in RFC-952
@@ -122,7 +122,7 @@ address in dotted-decimal ("#.#.#.#") form.  The host SHOULD check
 the string syntactically for a dotted-decimal number before
 looking it up in the Domain Name System.
 
-Thos overrides old RFC-952
+This overrides old RFC-952
 https://tools.ietf.org/html/rfc952
 
 >  A "name" (Net, Host, Gateway, or Domain name) is a text string up
@@ -495,7 +495,7 @@ Address:        127.0.0.1#53
 
 ````
 
-If we comment in [fwd.coulombel.it](./docker-bind-dns/fwd.coulombel.it.db) the record whcih were not passing the checkzone
+If we comment in [fwd.coulombel.it](./docker-bind-dns/fwd.coulombel.it.db) the record which were not passing the checkzone
 
 ````shell script
 /etc/bind/fwd.coulombel.it.db:15: -scoulomb.fwd.coulombel.it: bad owner name (check-names)
