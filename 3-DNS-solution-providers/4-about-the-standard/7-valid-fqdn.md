@@ -614,3 +614,16 @@ route.route.openshift.io/a-route created
 The Route "a_route" is invalid: metadata.name: Invalid value: "a_route": a DNS-1123 subdomain must consist of lower case alphanumeric characters, '-' or '.', and must start and end with an alphanumeric character (e.g. 'example.com', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*')
 ````
 See [ingress](../../2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-f.md).
+
+## Note on Infoblox
+
+Actually Infoblox  can be configured to allow underscore ("`_`") in hostname.
+
+This is shown here
+
+![Capture Infoblox](docker-bind-dns/Capture-infoblox-regex.PNG)
+
+Length check is not done there.
+See: https://stackoverflow.com/questions/2616974/limit-length-of-characters-in-a-regular-expression.
+
+See next part on [length](7-valid-fqdn-2-length.md).

@@ -1,0 +1,26 @@
+$TTL    300
+@       IN      SOA     scoulomb.ddns.net. root.coulombel.it. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                        300         ; Minimum TTL
+)
+; Name Server
+@        IN      NS       scoulomb.ddns.net.
+@        IN      NS       scoulomb2.ddns.net.
+
+scoulomb         IN      A       42.42.42.42
+
+; unlimited number of dots is allowed
+a.b.c.d.e.f.coul IN      A       42.42.42.42
+
+; > 63 octet NOT allowed
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa IN      A       42.42.42.42
+; each part is < 63 so allowed
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa IN      A       42.42.42.42
+;  each part is < 63, and Full name < 255 so  allowed
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.a IN      A       42.42.42.42
+;  each part is < 63, but Full name > 255 so NOT allowed
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaa IN      A       42.42.42.42
+
