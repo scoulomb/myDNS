@@ -340,30 +340,36 @@ And at same time we had <username> <password > which is matching placeholder in 
     => Secrets in SRE scripts: PR#76 (we have to repush the secret otherwise overridden with secret along the cj, when automated it is not an issue to re-enter pwd).
     This faces same challenge as ns pr#68 and as described here with the rollout and https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#do-we-need-to-forward-declare-the-secret
     PR#76 not ported to other components.
-    [TODO: communicate] When testing this script deleted secrets which invalidates token: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#pr-25027
+    [TODO: communicate, DONE] When testing this script deleted secrets which invalidates token: https://github.com/scoulomb/myk8s/blob/master/Volumes/secret-doc-deep-dive.md#pr-25027
      It is better, and reduces drastically sporadic errors but still issue. 
-    - hypothesis 5: we just do too many requests in a short amount of time and authentication failure was making it reach the throughput limit faster
+    - hypothesis 5: we just do too many requests in a short amount of time and authentication failure was making it reach the throughput limit faster (this is based on observations)
     See: https://community.infoblox.com/t5/API-Integration/Recommended-API-call-rate-limit/td-p/17939 (related question how to prevent from ddos attack)
     Here is an analysis on credentials + error management on Infoblox: https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/6-Infoblox-error-management/infoblox_api_content_type.md 
     For invalid credentials retry it returns a 403. So it does not drop packet for invalid credentials, but makes reach the throughput limit reached faster.
         
     The actual fix is described here: https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/known-issues.md#issue-b (**before we had to fix several issues**)
-    [TODO: could determine Infoblox throughput via JMeter => scoulombel/repos/stress_test/browse + document]
+    [TODO: could determine Infoblox throughput via JMeter => scoulombel/repos/stress_test/browse,
+    DONE HERE: https://github.com/scoulomb/private_script/blob/main/infoblox_throughput/README.md and there link to mirror "Infoblox+throughput+test" OK]
     Some very rare cases still have timeout but fine.
+
+    All hypothesis now aligned with: "DNS+non+regression+sporadic+failures" page OK
+
 - Thus same analysis on infoblox error for hypo 5 also enables to improve **Infoblox credentials management and error forwarding** (see status end of page: https://raw.githubusercontent.com/scoulomb/myDNS/master/3-DNS-solution-providers/1-Infoblox/6-Infoblox-error-management/infoblox_api_content_type.md)''
 https://github.com/scoulomb/private_script/blob/main/dns-auto/nocommit_test_error_fw_invalid_cred.sh
-[TODO move last version]
+[TODO move last version, DONE: https://github.com/scoulomb/private_script/tree/main/dns-auto]
 - Misc:
     => non-reg nightly had some issue because tag was not put on good commit, so it runs version without the fix, and also because of pull rate limit did not deliver last version (base image not mirrored)
     => Auto load in des ok (had to relaunch via script as got  500, so do before oc delete cj --all, oc delete dc --all then manual_deploy
-    will see later it was issue with find API which is not homogeneous: [TODO fix]
+    will see later it was issue with find API which is not homogeneous: [TODO fix, DONE: https://github.com/scoulomb/private_script/blob/main/dns-auto/README_find_bug.md]
     https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/3-suite-b-dns-ip-search-api.md#search-endpoint  and
      ../../3-DNS-solution-providers/1-Infoblox/3-suite-b-ip-search-non-homogeneous.md. 
     
     => UAT OOM killed increase mem lim and all worked (pr#91)-> to PRD (load proc: Procedure+for+DEV+to+Load+Network+Automation, 20500184, script follows same version as code, maybe we should ensure to checkout good script version)
+    [TODO: Check also fixed DONE:  https://github.com/scoulomb/private_script/blob/main/dns-auto/end_of_year_2020.md#adjust-requests-done]
     => feature loaded was v1lalpha1 to v1 (dns pr#90)
     => We had some point on readiness: https://github.com/scoulomb/myk8s/blob/master/Deployment/resilient-deployment.md (oc describe to see probe + initialdelayseconds with start up probes => OK)
 
+All 5 [TODO] issues here are also referenced: https://github.com/scoulomb/private_script/blob/main/dns-auto/end_of_year_2020.md (put direct link ok)
 -->
 
 ## Note on exec from and Kubernetes shell expansion
