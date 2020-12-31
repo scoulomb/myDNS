@@ -577,3 +577,56 @@ And same error as `scoul_om@b` as [there](7-valid-fqdn.md).
 Assume it would not be catched by Openapi hostname or regex, error fw would still work
 as in [consequence](#consequence).
 -->
+
+## What about Ä  (shift + " + a)
+
+````shell script
+payload=$(cat <<EOF
+{
+  "name": "dddÄddd.test.loc",
+  "view": "default",
+  "ipv4addrs": [
+    {
+      "ipv4addr": "4.4.4.2"
+    }
+  ]
+}
+EOF
+)
+echo $payload | jq -M
+
+curl -k -u admin:infoblox\
+                -H "Content-Type: application/json" \
+                -X POST \
+                -d "$payload"\
+                https://$API_ENDPOINT/wapi/v2.5/record:host
+````
+
+output is 
+
+````shell script
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:RR name 'ddd\u00e4ddd' does not comply with policy 'Allow Underscore')",
+  "code": "Client.Ibap.Data.Conflict",
+  "text": "RR name 'ddd\u00e4ddd' does not comply with policy 'Allow Underscore'"
+}
+````
+
+And `A` is working.
+
+Using bind
+
+````
+scáoulomb        IN      A       42.42.42.42
+````
+
+````shell script
+Step 11/17 : RUN named-checkzone fwd.coulombel.it /etc/bind/fwd.coulombel.it.db
+ ---> Running in ffa4902e9043
+/etc/bind/fwd.coulombel.it.db:14: sc\195\161oulomb.fwd.coulombel.it: bad owner name (check-names)
+/etc/bind/fwd.coulombel.it.db:16: scoul_omb.fwd.coulombel.it: bad owner name (check-names)
+[Note build continues but search "However any lookup in that zone will fail." in 7-valid-fqdn.md]
+```` 
+
+And A is working.
+
+It is not compliant with RFC2181.
