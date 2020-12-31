@@ -431,12 +431,13 @@ Address:        <API SERVER IP>#53
 We can see all working except 
 
 - `-scoulomb`: we can create but can not perform a lookup
-- `scoul_om@b`: we can not do it which is expected but it shown an issue with error message
+- `scoul_om@b`: we can not do it which is expected.
 ````shell script
 "text": "RR name 'scoul_om@b.28f9ee78-d489-4f91-9836-2a46c7354240' does not comply with policy 'Allow Underscore'"
 ````
 
-It is wrong because we have seen it worked in some other example.
+The error message is weird but it actually matches the policy name.
+See screenshot [below](#note-on-infoblox).
 
 See [How to run docker DNS](../../2-advanced-bind/5-real-own-dns-application/6-use-linux-nameserver-part-e.md#show-we-can-deploy-dns-via-docker-container-directly).
 

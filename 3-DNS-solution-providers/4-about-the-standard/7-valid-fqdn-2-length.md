@@ -505,3 +505,75 @@ if OpenAPI hostname is not satisfying to allow underscore we can change it with 
 
 -->
 
+## Appendix about space
+
+<!--
+````shell script
+17:53:42.733 assertion failed: path: $.errors[0], actual: {"code":4926,"detail":"'testi ngqa' does not match 'THE_BIG_REGEX' - 'metadata.name'","title":"INVALID DATA RECEIVED","status":400}, expected: {code=4926, detail='testi ngqa' is not a 'hostname' - 'metadata.name', status=400, title=INVALID DATA RECEIVED}, reason: [path: $.errors[0].detail, actual: ''testi ngqa' does not match 'THE_BIG_REGEX' - 'metadata.name'', expected: ''testi ngqa' is not a 'hostname' - 'metadata.name'', reason: not equal]
+````
+because OpenAPI error message changed.
+before space not accepted by OpenAPI hostname built in
+and now rejected as does not match the regex
+the error message is different
+
+visible by switching des, (qcp as loaded see adjust requests) vs uat
+-->
+
+### In BIND
+if zone contains a space
+
+````shell script
+sco ulomb         IN      A       42.42.42.42
+````
+
+When building we have
+
+````shell script
+Step 11/17 : RUN named-checkzone fwd.coulombel.it /etc/bind/fwd.coulombel.it.db
+ ---> Running in 4e6d56dd464e
+/etc/bind/fwd.coulombel.it.db:13: unknown RR type 'ulomb'
+````
+
+### and with Infoblox
+
+````shell script
+payload=$(cat <<EOF
+{
+  "name": "yo p.test.loc",
+  "view": "default",
+  "ipv4addrs": [
+    {
+      "ipv4addr": "4.4.4.2"
+    }
+  ]
+}
+EOF
+)
+echo $payload | jq -M
+
+curl -k -u admin:infoblox\
+                -H "Content-Type: application/json" \
+                -X POST \
+                -d "$payload"\
+                https://$API_ENDPOINT/wapi/v2.5/record:host
+````
+
+output is
+
+````shell script
+Status: 400
+{ "Error": "AdmConDataError: None (IBDataConflictError: IB.Data.Conflict:RR name 'yo p' does not comply with policy 'Allow Underscore')",
+  "code": "Client.Ibap.Data.Conflict",
+  "text": "RR name 'yo p' does not comply with policy 'Allow Underscore'"
+}
+
+````
+
+
+It is actually [this](7-valid-fqdn.md#note-on-infoblox) policy name.
+And same error as `scoul_om@b` as [there](7-valid-fqdn.md).
+
+<!--
+Assume it would not be catched by Openapi hostname or regex, error fw would still work
+as in [consequence](#consequence).
+-->
