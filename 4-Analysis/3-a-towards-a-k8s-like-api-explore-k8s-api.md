@@ -4,7 +4,7 @@
 
 ````
 sudo minikube start --vm-driver=none
-
+alias k='sudo kubectl'
 k delete ns testapi
 k delete ns testapi2
 
@@ -112,7 +112,7 @@ This lead to the error even when no  change or when just changing the image
 From: https://blog.nillsf.com/index.php/2019/08/05/ckad-series-part-6-pod-design/
 Do edit or delete and apply
 
-This gave me the idea to export manifest and change version of nginx in exported file
+This gave me the idea to export manifest and change version of nginx in exported file. (we could have edited deployment).
 
 ````
 k get pods nginx-via-api -n testapi --export -o json > poddata.json
@@ -140,6 +140,16 @@ k get pods nginx-via-api -n testapi --export -o json > poddata.json
 
 ````
 Note in metadata we have name and self link but not the namespace.
+
+
+Note in last version `--export` is deprecated. Ypu will have to do
+
+````shell script
+k get pods nginx-via-api -n testapi -o json | jq 'del(.metadata.namespace,.metadata.resourceVersion,.metadata.uid,.metadata.managedFields,.status) | .metadata.creationTimestamp=null' > poddata.json
+````
+
+**Source**: https://stackoverflow.com/questions/61392206/kubectl-export-is-deprecated-any-alternative
+Where I also delete: `.metadata.managedFields,.status`
  
 Change the version:
 
@@ -172,6 +182,8 @@ output is
   Normal  Started    25s (x2 over 6m23s)  kubelet, archlinux  Started container nginx
   Normal  Pulled     25s                  kubelet, archlinux  Successfully pulled image "nginx:1.18.0"
 ````
+
+<!-- retested 4/01/2021 ok -->
 
 ## Delete 
 
@@ -484,6 +496,64 @@ curl -H 'content-type: application/json' -X DELETE http://localhost:8080/api/v1/
 curl -H 'content-type: application/json' -X DELETE http://localhost:8080/api/v1/namespaces/testapi2/pods  
 ````
 
+## API version and Kind not matching the body
+
+### API version not matching
+
+````shell script
+➤ curl -H 'content-type: application/json' -X POST http://localhost:8080/api/v1alpha1/namespaces/testapi/pods  -d \
+  '{"kind":"Pod","apiVersion":"v1","metadata":{"name":"nginx-via-api","labels":{"run":"nginx"}},"spec":{"containers":[{"name":"nginx","image":"nginx"}],"restartPolicy":"Never"}}'
+
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+
+  },
+  "status": "Failure",
+  "message": "the server could not find the requested resource",
+  "reason": "NotFound",
+  "details": {
+
+  },
+  "code": 404
+}⏎
+[10:44] ~
+➤ curl -H 'content-type: application/json' -X POST http://localhost:8080/api/v1/namespaces/testapi/pods  -d \
+  '{"kind":"Pod","apiVersion":"v1alpha1","metadata":{"name":"nginx-via-api","labels":{"run":"nginx"}},"spec":{"containers":[{"name":"nginx","image":"nginx"}],"restartPolicy":"Never"}}'
+
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+
+  },
+  "status": "Failure",
+  "message": "Pod in version \"v1alpha1\" cannot be handled as a Pod: no kind \"Pod\" is registered for version \"v1alpha1\" in scheme \"k8s.io/kubernetes/pkg/api/legacyscheme/scheme.go:30\"",
+  "reason": "BadRequest",
+  "code": 400
+}⏎
+````
+
+### Kind not matching
+
+````shell script
+➤ curl -H 'content-type: application/json' -X POST http://localhost:8080/api/v1/namespaces/testapi/pods  -d \
+    '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"nginx-via-api","labels":{"run":"nginx"}},"spec":{"containers":[{"name":"nginx","image":"nginx"}],"restartPolicy":"Never"}}'
+
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+
+  },
+  "status": "Failure",
+  "message": "Secret in version \"v1\" cannot be handled as a Pod: converting (v1.Secret) to (core.Pod): unknown conversion",
+  "reason": "BadRequest",
+  "code": 400
+}⏎
+````
+
 ## Clean-up global
 
 ````
@@ -528,7 +598,7 @@ As seen also [here](#what-happens-if-i-update-a-pod-where-name-in-path-is-differ
 In context of GitOps it is interesting to have this metadata for controller to determine which API path to target.
 Also for listing operation,
  
-`apiVersion` in body also redundant with path. 
+`apiVersion` and `kind` in body also redundant with path as seen [here](#api-version-and-kind-not-matching-the-body).. 
 
 
 #### Side Notes
@@ -559,10 +629,12 @@ metadata:
 
 See [myk8s here](https://github.com/scoulomb/myk8s/blob/7c530b14194d95ca7176a9077cf27782679f5fa2/Deployment/advanced/article.md#load-new-software-version-v2-and-trigger-a-new-deployment) and [here](https://github.com/scoulomb/myk8s/blob/1e2db05beff94342a751767ffd28493568044423/Master-Kubectl/cheatsheet.md#generate-manifest):
 In kubectl we can easily guess (not checked):
-- `k apply` is declarative (if resource does not exist do `POST`, if exist perform diff and `PUT/PATCH` new conf) 
-- `k create/run` is imperative (`POST` and error if object is not created).
+- `k apply` is declarative (guess it is implemented by always performing a `PUT` or {if resource does not exist: do `POST`, if exist perform: diff and `PATCH` new conf or do a `PUT`]) 
+- `k create/run` is imperative (can be implemented as `POST` and error if object is not created).
 If need update need `k replace` which will do the PUT.
 
 We can see go client is used in kubectl:
 - https://github.com/kubernetes/client-go/blob/cf84c08bad11b3ad990800f50914f8114d28a6c3/kubernetes/typed/core/v1/pod.go#L115
 - https://github.com/kubernetes/kubectl/blob/d838edc0263aa1efd6c533d880c0f111567e57f1/pkg/cmd/run/run.go#L39
+
+we will details in [imperative and declarative approach section](3-c-imperative-declarative.md).

@@ -126,16 +126,57 @@ all presentation of method was not accurate and error in POST which does not hav
 https://github.com/scoulomb/myDNS/blob/47809cfdba46b083ea3dc43101be84dd9031aca2/4-Analysis/3-towards-a-k8s-like-api.md#note-possibility-to-gather-records
 -->
 
+
 #### Comments
 
 Note that [Conclusion API server metadata ns and name are redundant with API path](./3-a-towards-a-k8s-like-api-explore-k8s-api.md#Conclusion-redundancy):
 would apply here.
-- `{view-name}` and `{record-type}` <=> `{namespace}`
+- `{view-name}` and `{zone-name}` <=> `{namespace}`
 - `{relative-DNS-name}` <=> `{ (pod) name}`
+- `{apiVersion}` and `{kind}` <=> `{apiVersion}` and `{kind/record-type}`
 
-Also for list all entries a not same level as ns it applies to 2 different resources.
+Also for list all entries is not at same level as ns it applies to 2 different resources.
 
 And metadata has name, zone and view.
+
+<!--
+
+- I decided to remove `{view-name}` and `{zone-name}` from the body **metadata** to not have consistency check (we only rely on view and zone provided in path arguments + name in body).
+This also enables to return directly the body.
+
+See DNS PR#95.
+
+Those Metadata are optional as
+redundant with path query parameters. 
+
+Metadata could have been used for retrieve use-case and to perform GitOps pattern. A controller could use it to
+know which API path to target.
+
+Redundancy does not apply for metadata.name which is
+mandatory in POST body as not present in the path.
+
+- Thus check on mame only needed for update => OK
+
+- API version and kind 
+    - API version: accept only v1 so if v2 in kind: OpenAPI error, if v2 in path OpenAPI 404 => OK
+    - Kind: With OpenAPI, I made the necessary so that path for a given kind only accept object of one kind =< OK
+
+
+{
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "yop",
+    "externalReferenceId": "88888888"
+  },
+  "kind": "Host",
+  "spec": {
+    "ipv4Address": "172.17.2.9"
+  }
+}
+
+See BB: repos/private/browse/myDNS/4-Analysis/4-private-proposal.md, actually deprecated
+mirror conf: "DNS+auto+API+v1alpha1"
+-->
 
 I excluded network view from path and body: https://github.com/scoulomb/myDNS/blob/master/3-DNS-solution-providers/1-Infoblox/1-Infoblox-API-overview.md#network-view-direct-access.
 But could include for dynamic IP allocation.
