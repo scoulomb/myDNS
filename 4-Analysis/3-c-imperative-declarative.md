@@ -830,7 +830,7 @@ and same apply for AS3 (layer above F5 big ip API).
 <!--
 See https://stackoverflow.com/questions/65225688/why-kubernetes-rest-api-is-imperative (from your link, the Kubernetes API works exactly the same when you apply yaml-manifest files using e.g. kubectl apply -f deployment.yaml)
 -->
-Same apply for k8s operator. Automation would be at that level.
+Same apply for k8s operator. Automation would be at that level (and could be used by operator).
 
 <!--
 +e s b conf eng
@@ -842,3 +842,6 @@ Use case to think is fallback of a modify, which is working well with blueprint 
 
 <!-- section concluded, OK !! -->
  
+Good reading on the topic: https://www.thedevcoach.co.uk/declarative-vs-imperative-infra/.
+Here it is closer to the `k apply` layer/
+Also no Infoblox terraform provider does not manage config drift and update.
