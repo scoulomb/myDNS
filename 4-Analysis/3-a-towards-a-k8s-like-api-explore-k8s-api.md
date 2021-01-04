@@ -185,6 +185,8 @@ output is
 
 <!-- retested 4/01/2021 ok -->
 
+Note the namespace in the body is not mandatory.
+
 ## Delete 
 
 ````
@@ -276,7 +278,7 @@ k delete testapi2
 ````
 
 
-Add namespace wiht Jq
+Add namespace with Jq (it was not there before)
 
 ````shell script
 https://stackoverflow.com/questions/49632521/how-to-add-a-field-to-a-json-object-with-the-jq-command
@@ -340,8 +342,6 @@ And kubernetes is doing the check as seen in output
 I take example made [here](#put-to-modify-a-pod)
 
 ````shell script
-
-sed 's/"image": "nginx"/"image": "nginx:1.18.0"/g' poddata.json > newpoddata-inconsistent.json
 cat poddata.json | jq '.metadata.name="nginx-via-api-inconsistent"' > newpoddata-inconsistent.json
 
 curl -H 'content-type: application/json' -X PUT http://localhost:8080/api/v1/namespaces/testapi/pods/nginx-via-api  -d @newpoddata-inconsistent.json
@@ -365,13 +365,25 @@ Output is
 }⏎
 ````
 
-Note no need to have pod running
+
+If we also remove the name.
 
 ````shell script
-➤ k get po -n testapi                                                                                                                                                         vagrant@archlinux
-No resources found in testapi namespace.
+➤ curl -H 'content-type: application/json' -X PUT http://localhost:8080/api/v1/namespaces/testapi/pods/nginx-via-api  -d @newpoddata-inconsistent.json
+{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {
+
+  },
+  "status": "Failure",
+  "message": "the name of the object (nginx-via-api based on URL) was undeterminable: name must be provided",
+  "reason": "BadRequest",
+  "code": 400
+}⏎
 ````
-A check is done
+
+Name is mandatory.
 
 ## Delete pod with body
 
@@ -591,14 +603,18 @@ In old API version we had watch equivalent under `/api/v1/wacth`, it is now a qu
 
 For
 - `Write/create POD`: `{namespace}` in PATH is redundant with `.body.metadata.namespace`.
-If they are not compliant we are rejected as seen [above](#Create-with-inconsistent-namespace-between-body-and-API-path)
+If they are not compliant we are rejected as seen [above](#Create-with-inconsistent-namespace-between-body-and-API-path).
+`.body.metadata.namespace` is optional.
 - For `Write/replace`: Same is true for  namespace, but it is also the case for the `{name}` in path and `.body.metadata.name`.
+`.body.metadata.name` is mandatory.
 As seen also [here](#what-happens-if-i-update-a-pod-where-name-in-path-is-different-from-name-in-body).
+
 
 In context of GitOps it is interesting to have this metadata for controller to determine which API path to target.
 Also for listing operation,
  
-`apiVersion` and `kind` in body also redundant with path as seen [here](#api-version-and-kind-not-matching-the-body).. 
+`apiVersion` and `kind` in body also redundant with path as seen [here](#api-version-and-kind-not-matching-the-body).
+
 
 
 #### Side Notes
@@ -629,12 +645,12 @@ metadata:
 
 See [myk8s here](https://github.com/scoulomb/myk8s/blob/7c530b14194d95ca7176a9077cf27782679f5fa2/Deployment/advanced/article.md#load-new-software-version-v2-and-trigger-a-new-deployment) and [here](https://github.com/scoulomb/myk8s/blob/1e2db05beff94342a751767ffd28493568044423/Master-Kubectl/cheatsheet.md#generate-manifest):
 In kubectl we can easily guess (not checked):
-- `k apply` is declarative (guess it is implemented by always performing a `PUT` or {if resource does not exist: do `POST`, if exist perform: diff and `PATCH` new conf or do a `PUT`]) 
+- `k apply` is declarative (guess it is implemented by {if resource does not exist: do `POST`, if exist merge and `PATCH`, see [exp 3](3-c-imperative-declarative#experience-3)).
 - `k create/run` is imperative (can be implemented as `POST` and error if object is not created).
-If need update need `k replace` which will do the PUT.
+- `k replace` is imperative (and be implemented as `PUT`: https://github.com/kubernetes/kubectl/issues/798 )
 
 We can see go client is used in kubectl:
 - https://github.com/kubernetes/client-go/blob/cf84c08bad11b3ad990800f50914f8114d28a6c3/kubernetes/typed/core/v1/pod.go#L115
 - https://github.com/kubernetes/kubectl/blob/d838edc0263aa1efd6c533d880c0f111567e57f1/pkg/cmd/run/run.go#L39
 
-we will details in [imperative and declarative approach section](3-c-imperative-declarative.md).
+we will see details in [imperative and declarative approach section](3-c-imperative-declarative.md).
