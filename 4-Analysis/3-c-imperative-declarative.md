@@ -52,7 +52,7 @@ From https://developer.mozilla.org/en-US/docs/Glossary/Idempotent
 
 > Another implication of DELETE being idempotent is that developers should not implement RESTful APIs with a delete last entry functionality using the DELETE method.
 
-See also: https://youtu.be/UaKZ4wKytcA 
+See also: https://youtu.be/UaKZ4wKytcA and https://tools.ietf.org/html/rfc7231#section-6.5.3 (search for idempotent)
 
 ### Comments on POST and retry
 
