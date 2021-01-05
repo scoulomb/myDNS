@@ -171,10 +171,11 @@ We can also use private ip in 192 (given by box or ipconfig/ethernet adapter).
 
 External access seems blocked (windows firewall?, I did not push windows + vm investigations)
 
+Last dev vm version integrates it: https://github.com/scoulomb/myk8s/blob/master/Setup/ArchDevVM/archlinux-dev-vm-with-minikube.md#deploy-guest-archlinux-vm-with-vagrant
 
 </p>
 </details>
-
+<!-- github search: "jupyter in user:scoulomb" + tips to add a a search engine, add a keyword for this search in firefox  -->
 
 
 ## Configure a reverse NAT simple example
