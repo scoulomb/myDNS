@@ -1,6 +1,6 @@
 ## WIP
 
-### TODO
+### TODO => 5/01 => OK
 
 - all below ok except root/private.md
 
@@ -15,7 +15,7 @@ ADD OPTIONAL.FIX (after sent)
 - v0: spec.ipv4 is not an array, as we will allow only a 1-1 mapping => multi pillars (allowed it as evolution and + views, ask more details)
 - prx comment in [proposal](4-Analysis/4-private-proposal.md) 
 
-- fix k8s doc in [source ip](2-advanced-bind/1-bind-in-docker-and-kubernetes/2-understand-source-ip-in-k8s.md#doc-typo)
+- fix k8s doc in [source ip](2-advanced-bind/1-bind-in-docker-and-kubernetes/2-understand-source-ip-in-k8s.md#doc-typo) -> skip
 
 ### DONE
 
