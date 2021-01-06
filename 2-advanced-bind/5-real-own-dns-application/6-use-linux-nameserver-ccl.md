@@ -7,8 +7,10 @@
 
 ## Consequence of part i
 
-- Test if theme elegant is now fixed
+- Test if theme elegant is now fixed (then CI?)
 - Push CNAME and README 
+    - https://github.com/ValentinH/ValentinH/blob/master/README.md
+ <!-- seen from PR https://github.com/scoulomb/attestation-covid19-saison2-auto/pull/12 to ValentinH --> 
     - https://fullyunderstood.com/how-to-create-beautiful-github-profile-readmemd/
     - https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-your-github-profile/managing-your-profile-readme
 (I have to selection option share to profile as before july 2020)
@@ -30,6 +32,10 @@ curl: (23) Failed writing body (532 != 1384)
 ````
 
 So if DNS maybe broken `scoulomb.github.io` is safer as can disable CNAME file
+
+<!--
+(cert etc is clear)
+-->
 
 ## Add lien http over socket
 
