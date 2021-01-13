@@ -295,6 +295,8 @@ It is strictly equivalent to
 openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out appa.prd.coulombel.it.crt -keyout appa.prd.coulombel.it.key
 ```
 
+Note: in [chain of trust](#chain-of-trust), we understand certificate is made by CA, and not generated and signed after by CA.
+
 ## Step 2: Configure the server to use HTTPS
 
 This step is equivalent in [part g with self signed certificate : step 2](./6-use-linux-nameserver-part-g.md#step-2-configure-the-server-to-use-https).
@@ -445,24 +447,30 @@ We can compare it to "Unknown issuer screenshot", made here in [part g, step 4](
 
 Both requires to "Accept the risk", to allow the untrusted certificate. Equivalent to curl option `-k/--insecure`.
 
-This is in a browser known as "server certificate error exceptions" visible in `> about:preferences#privacy > View certificates` in firefox.
+This is in a browser known as "server certificate error exceptions" visible in `> about:preferences#privacy > View certificates > servers` in firefox.
+
+> These entries identify server certificate error exceptions
+
+We have a server + certificate name.
 
 To not confused with Authorities visible in next tab. We can see, it is also possible to add CA here.
 See: https://support.mozilla.org/en-US/questions/1240298
 
 We can add our own certificate authority at OS level: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
+Potentially authority can be any certificate in [chain of trust](#chain-of-trust).
 
-<!-- this was esb does for outbound (client): add authority (CA bundle) or certificate exception (saw priv key there)
-while for inbound (server) we have a certificate as done in Python script, it can also be in lb (f5) or ingress as we will see -->
+<!-- this was esb does
+for outbound (client): add authority (CA bundle) 
+while for inbound (server) we have a certificate as done in Python script, it can also be in lb (f5) or ingress as we will see, or esb itself (no CA bundle and we have a private key) -->
 
 
 <!-- I consider same exception for self signed or mismatch (not check osef suffit)
 it is mismatch when server != ca name: like "scoulomb.ddns.net:9443 *.coulombel.it" here (which is harder to do with ingress)
 or cf. specific automation DNS, we have specific url != PAAS wildcard, search in this doc for comment "Comment: In real OpenShift"
 
-We can option --k / --insecure works herem and for self signed in part g
+We can option --k / --insecure works here and for self signed in part g
 
-However adding manual CA should require name to match
+However adding manual CA should require name to match (it is not a certificate exception).
 
 DNS33 has CA osef
 => ALL OK here STOP-->
@@ -476,16 +484,21 @@ If I had put `coulombel.it` in domain, `home.coulombel.it` would lead to do `cer
 </details>
 
 ## This confirms, there are 3 possibilities
+
 1. Certificate is self-signed, so we have to add it manually or use `--insecure`
 1. Certificate is recognized by CA
-1. Certificate is recognized by CA but does not match the domain, so we can proceed unsafely or use `--insecure`
+1. Certificate is recognized by CA but does not match the domain, so we can proceed unsafely or use `--insecure`.
+We can have other error like certificate expired
+<!-- https://github.com/scoulomb/private_script/blob/main/infoblox_throughput/README.md#how-to-use-jmeter-with-a-self-signed-certificate
+where self signed + expired => here not a added a CA but a certificate error exception -->
 
 ## Step 3: Deploy using Kubernetes ingress with HTTPS
 
 This step is equivalent in [part g with self signed certificate : step 5b](./6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2).
 
 We will redeploy original application A and B from [part e](6-use-linux-nameserver-part-e.md).
-This python application does not manage the certificate as it will be handled by Kubernetes unlike application exposed in [step 2 of this file](#step-2-configure-the-server-to-use-https).
+This python application does not manage the certificate as it will be handled by Kubernetes unlike application
+exposed in [step 2 of this file](#step-2-configure-the-server-to-use-https).
 
 ````shell script
 cd /path/to/repo
@@ -586,9 +599,12 @@ CONNECTED(00000003)
 ````
 
 We can see we have `Kubernetes Ingress Controller Fake Certificate`.
-As if we did no configure any certificate in the ingress. See [part g](6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2).
+As if we did no configure any certificate in the ingress. 
+
+See [part g, step 5a](6-use-linux-nameserver-part-g.md#step-5a--deploy-using-kubernetes-ingress-with-https), from [6].
 
 If we change to the self-singed certificate used in [part g](6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2)
+(so doing strictly the same as in part g)
 
 ````shell script
 cd /path/to/repo
@@ -626,13 +642,13 @@ CONNECTED(00000003)
 ````
 
 We do not have the fake but self-signed certificate.
+
 So ingress is ok, secret is ok but we have an issue with our let's encrypt certificate.
 
 Moreover quoting: https://stackoverflow.com/questions/59356528/kubernetes-tls-secret-certificate-expiration
-
 > In general, "Kubernetes ingress Controller Fake certificate" indicates problems on the certificates itself or in your setup.
 
-I found that Kubernetes does not support wildcard on DNS name :(.
+I found that Minikube Ingress does not support wildcard on DNS name :(.
 
 Therefore I created a dedicated certificate for `appa.prd.coulombel.it`.
 Following same procedure as [How to generate a self-signed certificate: TXT record validation](#how-to-generate-a-self-signed-certificate-txt-record-validation).
@@ -727,7 +743,7 @@ sylvain@sylvain-hp:~$
 ````
 
 Conclusion is that ingress implements redirection from `http` to `https`.
-Connection to `appb` in `https` is diabled and we need to use insecure.
+Connection to `appb` in `https` is disabled and we need to use insecure.
 
 And if we add to ingressv5 a rule to `scoulomb.ddns.net`.
 We have [ingressv6](./6-part-h-use-certificates-signed-by-ca/ingressv6.yaml).
@@ -761,17 +777,28 @@ CONNECTED(00000003)
 
 As name mismatch Kubernetes return the fake certificate.
 
-<!-- 
-Comment: In real OpenShift
-we saw that default certificate can be a default one matching the wildcard rather than `Kubernetes Ingress Controller Fake Certificate`,
-If the route is matching the wildcard ok. This also assumes CA is valid, more exactly root CA (-> [here](#chain-of-trust)). 
-If the route is matching a specific DNS, certificate name will mismatch, see section ["This confirms, there are 3 possibilities"](#this-confirms-there-are-3-possibilities)
-This completes [this](6-use-linux-nameserver-part-f.md#adding-on-top-route-with-host-matching-dns-name-the-one-without-host-thus-matching-the-wildcard) OK close to real setup.
-We will have to define specific DNS at Openshift route level to override it as we did here in this document 
-So E. was right we need a certif but it was not self signed but a domain mismatch (J.)
-Here we also have a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db)
+## Fake certificate
 
-Case for nw, but lnk etc not secure, osef
+- We have seen in ([section g](./6-use-linux-nameserver-part-g.md), [section h](./6-use-linux-nameserver-part-h.md)) that in following cases:
+    - No certificate is defined in Ingress,
+    - Issue in certificate (wildcard, secret deletion),
+    - Name mismatch, 
+
+`Kubernetes Ingress Controller Fake Certificate` is returned.
+This certificate is not trusted by known CA.
+
+We could instead return a certificate usually trusted by a CA (known CA or CA exception) matching a wildcard DNS.
+<!-- CA exception can be company wide -->
+
+- Otherwise certificate defined in Ingress (override default) is used which can be not trusted ([section g](./6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2))
+or trusted by a CA (known CA or CA exception) ([section h](./6-use-linux-nameserver-part-h.md#step-3-deploy-using-kubernetes-ingress-with-https))
+
+<!-- 
+Comment: 
+real OpenShift is detailed here =>  certificate.md in scoulomb/private_script
+
+Note here we had a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) 
+so here same behavior as real OpenShift for override case, but difference is that we return the fake cert in Minikube
 
 -->
 
