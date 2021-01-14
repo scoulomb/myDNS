@@ -459,7 +459,7 @@ See: https://support.mozilla.org/en-US/questions/1240298
 We can add our own certificate authority at OS level: https://www.techrepublic.com/article/how-to-add-a-trusted-certificate-authority-certificate-to-chrome-and-firefox/
 Potentially authority can be any certificate in [chain of trust](#chain-of-trust).
 
-<!-- this was esb does
+<!-- this is what esb can do
 for outbound (client): add authority (CA bundle) 
 while for inbound (server) we have a certificate as done in Python script, it can also be in lb (f5) or ingress as we will see, or esb itself (no CA bundle and we have a private key) -->
 
@@ -794,7 +794,7 @@ We could instead return a certificate usually trusted by a CA (known CA or CA ex
 or trusted by a CA (known CA or CA exception) ([section h](./6-use-linux-nameserver-part-h.md#step-3-deploy-using-kubernetes-ingress-with-https))
 
 <!-- 
-Comment: 
+Comment: In real OpenShift
 real OpenShift is detailed here =>  certificate.md in scoulomb/private_script
 
 Note here we had a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) 
