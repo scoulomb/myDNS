@@ -779,7 +779,9 @@ As name mismatch Kubernetes return the fake certificate.
 
 ## Fake certificate
 
-- We have seen in ([section g](./6-use-linux-nameserver-part-g.md), [section h](./6-use-linux-nameserver-part-h.md)) that in following cases:
+### Default certificate
+
+We have seen in ([section g](./6-use-linux-nameserver-part-g.md), [section h](./6-use-linux-nameserver-part-h.md)) that in following cases:
     - No certificate is defined in Ingress,
     - Issue in certificate (wildcard, secret deletion),
     - Name mismatch, 
@@ -789,13 +791,27 @@ This certificate is not trusted by known CA.
 
 We could instead return a certificate usually trusted by a CA (known CA or CA exception) matching a wildcard DNS.
 <!-- CA exception can be company wide -->
+See here to change the default certificate:
+- https://github.com/kubernetes/minikube/issues/9335
+- https://kubernetes.github.io/ingress-nginx/user-guide/tls/#default-ssl-certificate
 
-- Otherwise certificate defined in Ingress (override default) is used which can be not trusted ([section g](./6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2))
+Similarly in OpenShift for route of type edge:
+- https://docs.openshift.com/container-platform/3.11/architecture/networking/routes.html#secured-route
+> With edge termination, TLS termination occurs at the router, prior to proxying traffic to its destination. 
+> TLS certificates are served by the front end of the router, so they must be configured into the route, 
+> otherwise the [router’s default certificate](https://docs.openshift.com/container-platform/3.11/install_config/router/default_haproxy_router.html#using-wildcard-certificates) will be used for TLS termination.
+
+### certificate in route
+
+Otherwise certificate defined in Ingress (override default) is used which can be not trusted ([section g](./6-use-linux-nameserver-part-g.md#step-5b--deploy-using-kubernetes-ingress-with-https-and-fix-case-2))
 or trusted by a CA (known CA or CA exception) ([section h](./6-use-linux-nameserver-part-h.md#step-3-deploy-using-kubernetes-ingress-with-https))
+
 
 <!-- 
 Comment: In real OpenShift
 real OpenShift is detailed here =>  certificate.md in scoulomb/private_script
+also with the details of other routes type (passthrough, Re-encryption)
+and case of wildcard 
 
 Note here we had a wildcard: [DNS entry](./6-docker-bind-dns-use-linux-nameserver-rather-route53/fwd.coulombel.it.db) 
 so here same behavior as real OpenShift for override case, but difference is that we return the fake cert in Minikube
