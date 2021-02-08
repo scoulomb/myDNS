@@ -86,7 +86,8 @@ Github has a similar feature to enforce https.
 Here in https://github.com/scoulomb/scoulomb.github.io/settings.
 In section GitHub Pages.
 
-![gh page](./medias/githubpage-setup-enforce-https.png).
+![gh page](./medias/githubpage-setup-enforce-https.png)
+
 We can tick enforce https. In that case there will be a redirection.
 See  [GH doc](https://docs.github.com/en/github/working-with-github-pages/securing-your-github-pages-site-with-https#enforcing-https-for-your-github-pages-site).
 
@@ -166,6 +167,7 @@ will have for output
 ````
 
 See doc on location header: https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Location
+
 We use protocol default port 443 nut could use custom port:
 https://stackoverflow.com/questions/27191946/redirect-to-another-site-with-not-standard-port-ipport
 
@@ -202,6 +204,7 @@ Redirection is not enforced and some plugin could say it is insecure but it does
 
 When we untick the box it did not have a direct effect
 https://github.community/t/the-enforce-https-button-isnt-working/10429/2
+
 To force it I updated the custom domain to `fake.it` and set back to `coulombel.it` to upate the CNAME file (commit).
 It did not reprovision the cert and works instantly.
 
