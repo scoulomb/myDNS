@@ -538,7 +538,7 @@ So we will use [ingress v5](6-part-g-use-certificates/ingressv5.yaml) provided i
 
 ````shell script
 sudo minikube addons enable ingress
-cd /path/t/repo
+cd /path/to/repo
 sudo kubectl delete ingress example-ingress
 sudo kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv5.yaml
 ````
@@ -742,8 +742,22 @@ Hello app B
 sylvain@sylvain-hp:~$
 ````
 
-Conclusion is that ingress implements redirection from `http` to `https`.
-Connection to `appb` in `https` is disabled and we need to use insecure.
+Conclusion is that ingress implements redirection from `http` to `https` as soon as we have `tls` option.
+This is confirmed by the doc: https://kubernetes.github.io/ingress-nginx/user-guide/tls/#server-side-https-enforcement-through-redirect
+
+> By default the controller redirects HTTP clients to the HTTPS port 443 using a 308 Permanent Redirect response if **TLS is enabled for that Ingress**.
+>
+> This can be disabled globally using ssl-redirect: "false" in the NGINX config map, or per-Ingress with the nginx.ingress.kubernetes.io/ssl-redirect: "false" annotation in the particular resource.
+
+As a consequence here connection to `appb` which is not setup in `https`, is redirected from `http` to `https`.
+This why we have to use insecure.
+(Did not check but it probably returns the fake ingress certificate as in [part G when use https](6-use-linux-nameserver-part-g.md#step-5a--deploy-using-kubernetes-ingress-with-https), consider this)
+
+When no certificate is defined in ingress there is no redirection, see [part G](6-use-linux-nameserver-part-g.md#step-5a--deploy-using-kubernetes-ingress-with-https).
+But it manages https and can return the fake ingress certificate.
+
+<!-- See also "different layer" of name mismatch + 2 levels of cert  (edge, redirect and passthrough) => DONE 
+and SNI in certificate, in https://github.com/scoulomb/private_script -->
 
 And if we add to ingressv5 a rule to `scoulomb.ddns.net`.
 We have [ingressv6](./6-part-h-use-certificates-signed-by-ca/ingressv6.yaml).
