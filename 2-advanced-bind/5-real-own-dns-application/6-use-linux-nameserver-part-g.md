@@ -252,8 +252,8 @@ sudo rm $temp_file
 ````
 
 And [configure ingress](6-part-g-use-certificates/ingressv3.yaml) so that:
--  `appa.prd.coulombel.it` routes to `c-server`.
--  `appb.prd.coulombel.it` routes to `b-server`.
+-  `appa.prd.coulombel.it` routes to `c-server` ([https](6-part-g-use-certificates/c.Dockerfile)).
+-  `appb.prd.coulombel.it` routes to `b-server` ([http](6-part-e-contenarized-http-server/b.Dockerfile)).
 
 ```shell script
 sudo kubectl apply -f 2-advanced-bind/5-real-own-dns-application/6-part-g-use-certificates/ingressv3.yaml
@@ -331,6 +331,7 @@ Analysis:
 - From [6], we can see that kubernetes adds its own self-signed certificate.
 Opening [6] in browser enables to see: `Kubernetes Ingress Controller Fake Certificate`.
 - Same applies for [2] the `Kubernetes Ingress Controller Fake Certificate`.`, except that as there is another certificate behind and it does not work.
+- And [1] has an issue because app A is in https in python layer
 
 ## Step 5b : Deploy using Kubernetes ingress with HTTPS and fix case [2]
 
