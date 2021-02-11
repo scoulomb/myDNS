@@ -212,6 +212,11 @@ F5 load balancer also offers a similar feature:
 https://clouddocs.f5.com/api/irules/HTTP__redirect.html.
 If we want both http/https we would define 2 virtual server, on vs with 80 and the other 443 and link to the same pool.
 
+OpenShift routes offers similar feature. This is configured by the `insecureEdgeTerminationPolicy`.
+See OpenShift [route documentation](https://docs.openshift.com/container-platform/4.6/networking/routes/route-configuration.html).
+
+<!-- see certificate in https://github.com/scoulomb/private_script -->
+
 ## Use Gandi live DNS
 
 For domain `coulombel.it`, we use our own nameserver.
