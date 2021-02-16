@@ -294,10 +294,14 @@ This step is optional.
 
 <!-- alternative config + openshift router and maybe NAT used is equivalent to what I know in real life
 it is well described "OpenShift+route+deep+dive" and all info already here now and consistent OK
+https://github.com/scoulomb/private_script/blob/main/sei-auto/certificate/certificate-doc/openshfit-deep-dive-conflu-mirror.md
 --> 
 
 It is what was described here: https://github.com/scoulomb/github-page-helm-deployer/blob/master/appendix-github-page-and-dns.md#similarities-with-openshift-route-and-ingress
 
+And also:
+- https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#when-using-ingress
+- https://github.com/scoulomb/myk8s/blob/master/Services/service_deep_dive.md#note-on-ingress
 
 ## Other advantages of the wildcard and intro to OpenShift route
 
