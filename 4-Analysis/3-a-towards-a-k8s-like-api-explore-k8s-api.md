@@ -646,6 +646,7 @@ metadata:
 See [myk8s here](https://github.com/scoulomb/myk8s/blob/7c530b14194d95ca7176a9077cf27782679f5fa2/Deployment/advanced/article.md#load-new-software-version-v2-and-trigger-a-new-deployment) and [here](https://github.com/scoulomb/myk8s/blob/1e2db05beff94342a751767ffd28493568044423/Master-Kubectl/cheatsheet.md#generate-manifest):
 In kubectl we can easily guess (not checked):
 - `k apply` is declarative (guess it is implemented by {if resource does not exist: do `POST`, if exist merge and `PATCH`, see [exp 3](3-c-imperative-declarative#experience-3)).
+(see [here](3-c-imperative-declarative#put-and-post-at-pod-level), we we will show we can not bypass the post)
 - `k create/run` is imperative (can be implemented as `POST` and error if object is not created).
 - `k replace` is imperative (and be implemented as `PUT`: https://github.com/kubernetes/kubectl/issues/798 )
 

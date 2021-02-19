@@ -216,8 +216,13 @@ k delete po --all -n testapi --force --grace-period=0
 ````
 
 Similarly AS3 is declarative because we declare the config: https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/http-methods.html
-And do create a pool and then attach a virtual server to a pool.
-As they do not have a PUT, their POST is a kind of idempotent, and does not return conflict.
+
+For instance we do not have to create a pool (+pool members) and then attach a virtual server to a pool.
+We give a declaration where we have AS3 declaration containing virtual server and pool. It is not distinct resources from declarative API point of view.
+- https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/examples.html
+- https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/composing-a-declaration.html#sample-declaration
+
+As they do not have a PUT, their POST is a kind of idempotent, and does not return conflict. (which is not really standard)
 
 ### PUT and POST at POD level
 
@@ -819,7 +824,7 @@ I remove what I said about the fact kubernetes API is imperative, as it was clea
 
 - a REST API POST with duplicate entry key (name) can actually return a 409 whether we are imperative or declarative. 
 <!-- (what we do now, where before duplicate was silently ignored based on the name). -->
-But we could make it idempotent for same payload: import existing conf  in blueprint format, make the diff with all attributes (not only primary a key). If there is a diff, raise a 40
+But we could make it idempotent for same payload: import existing conf  in blueprint format, make the diff with all attributes (not only primary a key). If there is a diff, raise a 400.
 
 Implement idempotency in POST, outside of this particular case,  could be a bad idea based on:  [RFC 7231](#comments-on-post-and-retry)
 
@@ -831,10 +836,22 @@ and same apply for AS3 (layer above F5 big ip API).
 See https://stackoverflow.com/questions/65225688/why-kubernetes-rest-api-is-imperative (from your link, the Kubernetes API works exactly the same when you apply yaml-manifest files using e.g. kubectl apply -f deployment.yaml)
 -->
 Same apply for k8s operator. Automation would be at that level (and could be used by operator).
+Thus [here](#put-and-post-at-pod-level), we had shown we can not bypass the post, but if we are at layer above (as apply) we could understand it.
 
 <!--
-+e s b conf eng
++e s b conf eng at that same level (as AS3)
+(splitted or not)
+Thus the PUT is the engine is OK
+When not split we have a type which indicates the action (like the verb of engine) used by the POST implement
 -->
+
+<!-- see engine splitted simulate_several_applications.feature, PR#24 impact, 
+and also case of 2 post as discussed above to return a 409 even if we consider layer above (see 2 successive `k create`),
+unlike a PUT
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/PUT,
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST,
+> The difference between PUT and POST is that PUT is idempotent: calling it once or several times successively has the same effect (that is no side effect), where successive identical POST may have additional effects, like passing an order several times.
+--> 
 
 <!--
 That way procedure to update an already existing object seems solved.
@@ -845,3 +862,76 @@ Use case to think is fallback of a modify, which is working well with blueprint 
 Good reading on the topic: https://www.thedevcoach.co.uk/declarative-vs-imperative-infra/.
 Here it is closer to the `k apply` layer/
 Also no Infoblox terraform provider does not manage config drift and update.
+
+## About dry-run 
+
+### Dedicated path 
+
+IMO a mistake could be to create a dedicated endpoint:
+- `POST /objects/{object-name}/simulate/create`
+- `POST /objects/{object-name}/simulate/set`
+- `POST /objects/{object-name}/simulate/delete`
+
+IMO this is a mistake because then come the question, what is the return code:
+
+- return 200 as we create no resource 
+- returns exact same status code as the operation we simulate
+
+
+Even in term of code organization this makes useless endpoint.
+This is also complex for the API end user to adapt a dry run for a  non dry run query. We also have to provide a mapping between HTTP verb and simulate action. This makes the API too complex to use and maintain.
+
+Also this request  `POST /objects/{object-name}/simulate/create`
+is not consistent with the POST where we do not have the `{object-name}` unlike the set we we map to a `PUT`.
+
+Also if we do simulate of a DELETE via a POST.
+We may have to send a post with no body (assuming the delete has no body, as not recommended see [other](3-d-other.md#delete-body), `"-"*"-"="+"`)
+Some framework not fan of this https://github.com/intuit/karate/issues/882 (cf nr)
+
+### We could use a `dryRun` query parameter?
+
+But we could argue it is Not RESTful.
+In REST, the resource location and the operation are carried by the HTTP path.
+Query strings are used for filtering (together with GET) or to control the display (with any HTTP operation), but not to change the behaviour.
+
+
+in Kubernetes API (fromv1.18) they decided to implement a server side dry run!
+And their API choice is to have a dryRun query parameter.
+
+- https://kubernetes.io/docs/reference/using-api/api-concepts/#dry-run 
+Note it is more than a boolean
+- https://kubernetes.io/blog/2019/01/14/apiserver-dry-run-and-kubectl-diff/
+Note the link with the client 
+
+> You can trigger the feature from kubectl by using kubectl apply --server-dry-run,
+> The flag kubectl apply --server-dry-run is deprecated in v1.18. Use the flag --dry-run=server for using server-side dry-run in kubectl apply and other subcommands.
+
+While --dry-run=client s the original kubectl apply --dry-run on client side.
+We can also do a diff.
+
+No kubernetes has some questionable choice cf. [body in delete](3-d-other.md#delete-body).
+
+### Dry-run boolean 
+
+If we are not for query parameter, an alternative solution could be to have a dry run boolean in the HTTP body.
+
+A real word usage of this solution is the big query API:
+
+- https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfiguration
+- https://cloud.google.com/bigquery/docs/dry-run-queries#api
+
+Also this is what is recommended here:
+
+https://stackoverflow.com/questions/15814341/rest-dry-run-option-for-put-or-post
+
+
+Also here for status code note
+> "while an invalid query will return the same error it would if it wasn't a dry run."
+
+So if non dry run operation returns a 201, dryRun should return a 201. 
+
+
+<!--
+Based on comment here
+configuration+engine+specifications
+-->
