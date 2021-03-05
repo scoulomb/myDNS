@@ -1,0 +1,22 @@
+$TTL    300
+@       IN      SOA     scoulomb.ddns.net. root.test.it. (
+                      10030         ; Serial
+                       3600         ; Refresh
+                       1800         ; Retry
+                     604800         ; Expiry
+                        300         ; Minimum TTL
+)
+; Name Server
+@        IN      NS       scoulomb.ddns.net.
+@        IN      NS       scoulomb2.ddns.net.
+
+; export a="definition below"  then echo $a.test.it | wc -c (same result in term of size (max size is 250) with zone coulombel.it and test.it)
+; $a.test.it | wc -c is 250
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaa    IN      A       42.42.42.42
+; $a.test.it | wc -c is 251
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaa   IN      A       42.42.42.42
+; $a.test.it | wc -c is 252
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaa  IN      A       42.42.42.42
+
+; dev/my_DNS/3-DNS-solution-providers/4-about-the-standard/docker-bind-dns-2-length-limit
+; docker-compose up --build
