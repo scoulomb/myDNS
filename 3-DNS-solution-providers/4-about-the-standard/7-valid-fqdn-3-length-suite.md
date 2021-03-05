@@ -176,4 +176,5 @@ do check on templ and not in input of engine comp (field with xl value) but chec
 Did not test japanese and bind
 Synced : "Note+on+length+2" OK
 SUITE-7809
+In dnsi had not check Did not total as zone + host in different place but use infoblox forwarding OK
 -->
