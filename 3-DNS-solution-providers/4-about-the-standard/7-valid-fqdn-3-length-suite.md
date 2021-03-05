@@ -124,9 +124,10 @@ $ echo "-" | wc -c
 2
 -->
 
-Therefore if we use allow underscore the logic here:
+Therefore if we want to allow underscore the logic here:
 https://codereview.stackexchange.com/questions/235473/fqdn-validation
 should be corrected with underscore in the regex.
+<!--only if we want to allow it for auto flow via dnsi or layer above so it works well -->
 If we would allow japanese character, it would not be appropriate.
 
 ## Note on printable char
