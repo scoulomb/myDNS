@@ -228,8 +228,10 @@ reading flow ok
 and added that dnsi allows underscore OK YES
 ms blogs also said
 If you use UTF-8 encoding, then the maximum length is harder to describe since UTF-8 is a variable-length encoding.
-cf. japanese in this doc
+cf. japanese in this doc STOP HERE
 https://www.figer.com/Publications/utf8.htm
-also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is ascii
+also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is extended ascii which is ascii
+https://fr.wikipedia.org/wiki/ASCII_%C3%A9tendu
+> Ce terme est informel et peut être critiqué pour deux raisons : d'une part cette dénomination pourrait laisser penser que le standard ASCII aurait été étendu, alors qu'il désigne en fait un ensemble de normes qui incluent le sous-ensemble ASCII ;
 Sufficient here OK
 -->
