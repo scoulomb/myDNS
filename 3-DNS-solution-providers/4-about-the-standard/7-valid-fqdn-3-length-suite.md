@@ -225,4 +225,11 @@ Synced : "Note+on+length+2" OK => 8/03/2021
 
 <!-- consider bind 9 issue stop there and not open bug OK FORBIDDEN 
 reading flow ok
-and added that dnsi allows underscore OK YES-->
+and added that dnsi allows underscore OK YES
+ms blogs also said
+If you use UTF-8 encoding, then the maximum length is harder to describe since UTF-8 is a variable-length encoding.
+cf. japanese in this doc
+https://www.figer.com/Publications/utf8.htm
+also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is ascii
+Sufficient here OK
+-->
