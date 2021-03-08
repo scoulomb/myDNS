@@ -3,9 +3,10 @@
 ## Why the 254
 
 When using Infoblox we had seen [in Note on length / section "Create host record with element longer than 63 or with global size > 255"](7-valid-fqdn-2-length.md#create-host-record-with-element-longer-than-63-or-with-global-size--255), max size was achieved when 
-`wc -c` returns 254.
+`wc -c` returns 254 (see `echo "$all_part_62_and_global_is_254.test.loc`).
 
-It actually means that max size is achieved when actual size / nb of octet (ascii char) is 253.
+It actually means that max size is achieved when actual size is 253.
+ 
 
 As a proof see 
 
@@ -23,6 +24,17 @@ As a proof see
 For n char, `wc -c` returns n+1.
 Note `wc -c`, `wc -m` returns same value.
 
+Why `wc` returns an extra char, because it counts new line, see:
+https://serverfault.com/questions/287370/why-wc-c-always-count-1-more-character
+
+````shell script
+[vagrant@archlinux ~]$  echo -n ABC | wc -c
+3
+[vagrant@archlinux ~]$  echo -n ABC | wc -m
+3
+````
+
+<!-- STOP IS NOW OK -->
 
 However from https://tools.ietf.org/html/rfc2181
 
@@ -36,6 +48,25 @@ This is well explained here: https://devblogs.microsoft.com/oldnewthing/20120412
 resource/What-is-the-real-maximum-length-of-a-DNS-name.md -->
 
 Therefore it is consistent.
+
+Also note that
+
+````shell script
+[vagrant@archlinux ~]$ echo "$all_part_62_and_global_is_254.test.loc"
+faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.test.loc
+[vagrant@archlinux ~]$ export maxdns="$all_part_62_and_global_is_254.test.loc"
+[vagrant@archlinux ~]$ python
+Python 3.9.1 (default, Dec 13 2020, 11:55:53)
+[GCC 10.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import os
+>>> print(os.getenv("maxdns"))
+faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.test.loc
+>>> print(len((os.getenv("maxdns"))))
+253
+````
+
+We have `Python's len(dns_name) = 253 = 253 ascii char = 253 octet` where  `size_of(ascii_char) = 1 octet`.
 
 ## However it assumes we use ASCII characters.
 
@@ -54,6 +85,7 @@ Python 3.9.1 (default, Dec 13 2020, 11:55:53)
 Type "help", "copyright", "credits" or "license" for more information.
 >>> domain="ジェーピーニック.jp"
 >>> len(domain)
+11
 >>> len("Ä")
 1
 ```
@@ -127,7 +159,14 @@ $ echo "-" | wc -c
 Therefore if we want to allow underscore the logic here:
 https://codereview.stackexchange.com/questions/235473/fqdn-validation
 should be corrected with underscore in the regex.
-<!--only if we want to allow it for auto flow via dnsi or layer above so it works well -->
+<!--only if we want to allow it
+project SUITE-7809
+
+for auto flow via dnsi we dit it as some client wanted it but could have said automated record should not support it
+and layer above in template there said not allowed
+
+regex dnsi not crazy OK -> link non nr see end of year 2020: https://github.com/scoulomb/private_script  
+-->
 If we would allow japanese character, it would not be appropriate.
 
 ## Note on printable char
@@ -143,12 +182,15 @@ See [fwd.test.it.db](docker-bind-dns-2-length-limit/fwd.test.it.db) where
 ````shell script
 (line 13); export a="definition below"  then echo $a.test.it | wc -c 
 (line 14); $a.test.it | wc -c is 250
-(line 15)aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaa    IN      A       42.42.42.42
+(line 15)aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaa.test.loc    IN      A       42.42.42.42
 (line 16); $a.test.it | wc -c is 251
 (line 17) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaa   IN      A       42.42.42.42
 (line 18); $a.test.it | wc -c is 252
 (line 19) aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aaaaaaaaaaaaaaaaa  IN      A       42.42.42.42
 ````
+And as seen we have to remove 1 char from `wc -c` output.
+<!-- 
+also jetbrains highlight return same as wc -c, add test.loc in definition file to see it --> 
 
 <!--
 cd 3-DNS-solution-providers/4-about-the-standard/docker-bind-dns-2-length-limit
@@ -169,13 +211,18 @@ dns_master_load: /etc/bind/fwd.test.it.db:19: ran out of space
 
 Whereas limit is not reached. 
 
-<!-- (stop here),
-do check on templ and not in input of engine comp (field with xl value) but check when assessing-->
-
+<!-- STOP here on why limit is different -->
+<!-- project SUITE-7809
+do check on templ and not in input of engine comp (field with xl value)
+but check when assessing or whatever OK (com EV)
+In dnsi had not check Did not total as zone + host in different place but use infoblox forwarding OK YES
+-->
 
 <!--
 Did not test japanese and bind
-Synced : "Note+on+length+2" OK
-SUITE-7809
-In dnsi had not check Did not total as zone + host in different place but use infoblox forwarding OK
+Synced : "Note+on+length+2" OK => 8/03/2021
 -->
+
+<!-- consider bind 9 issue stop there and not open bug OK FORBIDDEN 
+reading flow ok
+and added that dnsi allows underscore OK YES-->
