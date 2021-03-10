@@ -231,6 +231,10 @@ Synced : "Note+on+length+2" OK => 10/03/2021
 If you use UTF-8 encoding, then the maximum length is harder to describe since UTF-8 is a variable-length encoding.
 cf. japanese in this doc STOP HERE
 https://www.figer.com/Publications/utf8.htm
+http://www.unicode.org/faq/han_cjk.html
+https://fr.wikipedia.org/wiki/UTF-8
+https://stackoverflow.com/questions/49726646/python-encoding-japanese-characters
+
 also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is extended ascii which is ascii
 https://fr.wikipedia.org/wiki/ASCII_%C3%A9tendu
 > Ce terme est informel et peut être critiqué pour deux raisons : d'une part cette dénomination pourrait laisser penser que le standard ASCII aurait été étendu, alors qu'il désigne en fait un ensemble de normes qui incluent le sous-ensemble ASCII ;
