@@ -150,6 +150,8 @@ This will lead to
 ````
 
 However it allows underscore.
+<!-- so it is not as permissive as RFC-2181 but release constraints such as underscore-->
+<!-- and could create in infoblox + make a lookup in 7-valid-fqdn.md => "Test with _scoulomb" (note here even start with "_")--> 
 
 <!--
 $ echo "-" | wc -c
@@ -159,16 +161,42 @@ $ echo "-" | wc -c
 Therefore if we want to allow underscore the logic here:
 https://codereview.stackexchange.com/questions/235473/fqdn-validation
 should be corrected with underscore in the regex.
+
 <!--only if we want to allow it
 project SUITE-7809
 
 for auto flow via dnsi we did it as some client wanted it but could have said automated record should not support it
-and layer above in template (at create/assess) there said not allowed as we have this check https://codereview.stackexchange.com/questions/235473/fqdn-validation (could be non blocking)
-while back end itself is permissive => OK, here from this details angle and stor comment clear OK
+
+and layer above dns automation in template (at create/assess) there said not allowed as we have this check https://codereview.stackexchange.com/questions/235473/fqdn-validation (could be non blocking)
+while link back end itself allows any chain as long as below something like 1024 
+=> OK, here from this details angle and story comment clear OK
+
+Also explains why implem proposed in https://codereview.stackexchange.com/questions/235473/fqdn-validation
+has 61 and not 63 because avoid first character to start with "-" (dash)
+but we could create in infoblox + but not do a lookup in 7-valid-fqdn.md => "Test with -scoulomb" 
+
+Allow first character to start with "-" (dash) is similar to  "_" (underscore) discussion 
 
 regex dnsi not crazy OK => link non nr see end of year 2020: https://github.com/scoulomb/private_script  
 -->
 If we would allow japanese character, it would not be appropriate.
+<!-- to do the check based on python len as in serverfault -->
+<!--
+ms blogs also said
+If you use UTF-8 encoding, then the maximum length is harder to describe since UTF-8 is a variable-length encoding.
+
+cf. japanese in this doc 
+https://www.figer.com/Publications/utf8.htm
+http://www.unicode.org/faq/han_cjk.html
+https://fr.wikipedia.org/wiki/UTF-8
+https://stackoverflow.com/questions/49726646/python-encoding-japanese-characters
+
+also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is extended ascii which is ascii
+https://fr.wikipedia.org/wiki/ASCII_%C3%A9tendu
+> Ce terme est informel et peut être critiqué pour deux raisons : d'une part cette dénomination pourrait laisser penser que le standard ASCII aurait été étendu, alors qu'il désigne en fait un ensemble de normes qui incluent le sous-ensemble ASCII ;
+Sufficient here OK
+-->
+
 
 ## Note on printable char
 
@@ -213,32 +241,14 @@ dns_master_load: /etc/bind/fwd.test.it.db:19: ran out of space
 Whereas limit is not reached. 
 
 <!-- STOP here on why limit is different -->
-<!-- project SUITE-7809
-do check on templ and not in input of engine comp (field with xl value)
-but check when assessing or whatever OK (com EV)
+<!-- consider bind 9 issue stop there and not open bug OK FORBIDDEN (and question on wc -c already answered above) -->
+<!-- 
 In dnsi had not check Did not total as zone + host in different place but use infoblox forwarding OK YES
 -->
 
 <!--
 Did not test japanese and bind
 Synced : "Note+on+length+2" OK => 10/03/2021
--->
-
-<!-- consider bind 9 issue stop there and not open bug OK FORBIDDEN 
-- reading flow ok
-- and added that dnsi allows underscore OK YES
-- ms blogs also said
-If you use UTF-8 encoding, then the maximum length is harder to describe since UTF-8 is a variable-length encoding.
-cf. japanese in this doc STOP HERE
-https://www.figer.com/Publications/utf8.htm
-http://www.unicode.org/faq/han_cjk.html
-https://fr.wikipedia.org/wiki/UTF-8
-https://stackoverflow.com/questions/49726646/python-encoding-japanese-characters
-
-also underscore: https://theasciicode.com.ar/ascii-printable-characters/underscore-understrike-underbar-low-line-ascii-code-95.html is extended ascii which is ascii
-https://fr.wikipedia.org/wiki/ASCII_%C3%A9tendu
-> Ce terme est informel et peut être critiqué pour deux raisons : d'une part cette dénomination pourrait laisser penser que le standard ASCII aurait été étendu, alors qu'il désigne en fait un ensemble de normes qui incluent le sous-ensemble ASCII ;
-Sufficient here OK
-- and wc -c cf. so answer
-So concluded
+Reading flow ok no japanes but underscore, then what to fix and not appropriate to use python len OK
+RECONCLUDED OK
 -->

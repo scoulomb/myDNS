@@ -431,6 +431,12 @@ Address:        <API SERVER IP>#53
 We can see all working except 
 
 - `-scoulomb`: we can create but can not perform a lookup
+<!--
+ nslookup up and - with "" does not change anything and even 
+ ➤ nslookup -- "-scoulomb.test.loc"
+*** Invalid option: -
+*** Invalid option: scoulomb.test.loc
+-->
 - `scoul_om@b`: we can not do it which is expected.
 ````shell script
 "text": "RR name 'scoul_om@b.28f9ee78-d489-4f91-9836-2a46c7354240' does not comply with policy 'Allow Underscore'"
@@ -631,4 +637,4 @@ See next part on [length](7-valid-fqdn-2-length.md).
 
 <!-- remove picture link,
  try - at beginning but not :, skip
- nslookup up and - with "" does not change anything -->
+-->
