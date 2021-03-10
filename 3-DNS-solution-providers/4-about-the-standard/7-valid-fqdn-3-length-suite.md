@@ -162,10 +162,11 @@ should be corrected with underscore in the regex.
 <!--only if we want to allow it
 project SUITE-7809
 
-for auto flow via dnsi we dit it as some client wanted it but could have said automated record should not support it
-and layer above in template there said not allowed
+for auto flow via dnsi we did it as some client wanted it but could have said automated record should not support it
+and layer above in template (at create/assess) there said not allowed as we have this check https://codereview.stackexchange.com/questions/235473/fqdn-validation (could be non blocking)
+while back end itself is permissive => OK, here from this details angle and stor comment clear OK
 
-regex dnsi not crazy OK -> link non nr see end of year 2020: https://github.com/scoulomb/private_script  
+regex dnsi not crazy OK => link non nr see end of year 2020: https://github.com/scoulomb/private_script  
 -->
 If we would allow japanese character, it would not be appropriate.
 
@@ -220,7 +221,7 @@ In dnsi had not check Did not total as zone + host in different place but use in
 
 <!--
 Did not test japanese and bind
-Synced : "Note+on+length+2" OK => 8/03/2021
+Synced : "Note+on+length+2" OK => 10/03/2021
 -->
 
 <!-- consider bind 9 issue stop there and not open bug OK FORBIDDEN 

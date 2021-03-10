@@ -628,3 +628,7 @@ Length check is not done there.
 See: https://stackoverflow.com/questions/2616974/limit-length-of-characters-in-a-regular-expression.
 
 See next part on [length](7-valid-fqdn-2-length.md).
+
+<!-- remove picture link,
+ try - at beginning but not :, skip
+ nslookup up and - with "" does not change anything -->
