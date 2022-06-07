@@ -87,8 +87,10 @@ sylvain@sylvain-hp:~$ curl --insecure https://localhost:9443
 
 We can see the certificate is recognized but that it is self-signed.
 There are 3 possibilities:
-- Certificate is self-signed, so we have to add it manually or use `--insecure`
-- Certificate is recognized by CA
+- Certificate is self-signed, so we have to add certificate exception manually in browser or use `--insecure`
+- Certificate is valid as signed by
+   - Public CA (or sub CA)
+   - Private CA (we add CA as trusted in browser (truststore) or use `--insecure`)
 - Certificate is recognized by CA but does not match the domain
 
 We will configure reverse NAT as follows
