@@ -172,3 +172,5 @@ RUN "source file"    # now translates to: RUN /bin/bash -c "source file"
 ````
 
 > Additional Note: You could also add --login option which would start a login shell. This means ~/.bashrc for example would be read and you don't need to source it explicitly before your command
+
+See application here: https://github.com/open-denon-heos/discovery/blob/main/heos_docker_initial_project/poc.Dockerfile#L13 
