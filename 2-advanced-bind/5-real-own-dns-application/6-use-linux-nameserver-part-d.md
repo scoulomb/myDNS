@@ -607,4 +607,8 @@ And args enables to
 `RUN` as `ENTRYPOINT` also has shell and exec form
 See https://docs.docker.com/engine/reference/builder/#run 
 
-<! see RUN pipenv synv, Service 'my-automation-server' failed to build : The command '/bin/sh -c pipenv sync' returned a non-zero code: -->
+<!-- see RUN pipenv synv, Service 'my-automation-server' failed to build : The command '/bin/sh -c pipenv sync' returned a non-zero code: -->
+
+## Complements
+
+See [very good summary](6-use-linux-nameserver-part-d0-summary.md)/
