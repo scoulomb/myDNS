@@ -145,6 +145,8 @@ CMD ["1s"]
 
 > **In general, use the shell form for RUN, and the exec form for everything else.**
 
+See also https://docs.docker.com/engine/reference/builder/#run
+
 ## Note on default shell
 
 We can change the default shell, see https://stackoverflow.com/questions/20635472/using-the-run-instruction-in-a-dockerfile-with-source-does-not-wor
