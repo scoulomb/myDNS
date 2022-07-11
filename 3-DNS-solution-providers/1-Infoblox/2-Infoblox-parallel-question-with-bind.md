@@ -20,8 +20,10 @@ To reproduce the same same we would need to create 1 Infoblox host record with 2
 ### [Canonical CNAME case](../../1-basic-bind-lxa/p2-1-xx-questions.md#Canonical-CNAME-case)
 
 Implementation of this with Infoblox could be:
-- 1 CNAME record and (1 host record xor 1 A record)
-- 1 Host record with an alias (see [API doc](https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf)).
+- 1 CNAME record and (1 host record xor 1 A record) [if 2 IP as shown in bind example: host rec with 2 IP xor 2 A record]
+- 1 Host record with an alias (see [API doc](https://www.infoblox.com/wp-content/uploads/infoblox-deployment-infoblox-rest-api.pdf)). [if 2 IP as shown in bind example: host rec with 2 IP]
+
+
 
 ### Can I have 2 different A record pointing to same IP?
 
